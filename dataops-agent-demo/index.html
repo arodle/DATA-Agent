@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DataOps Agent Demo</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="rail" aria-label="主导航">
+      <div class="logo">DA</div>
+      <button class="rail-btn active" data-view="agent" title="Agent 工作台" aria-label="Agent 工作台">
+        <span class="icon">⌘</span>
+      </button>
+      <button class="rail-btn" data-view="requirements" title="需求" aria-label="需求">
+        <span class="icon">□</span>
+      </button>
+      <button class="rail-btn" data-view="tasks" title="任务" aria-label="任务">
+        <span class="icon">▣</span>
+      </button>
+      <button class="rail-btn" data-view="quality" title="质量" aria-label="质量">
+        <span class="icon">◇</span>
+      </button>
+      <button class="rail-btn" data-view="knowledge" title="知识库" aria-label="知识库">
+        <span class="icon">≡</span>
+      </button>
+    </aside>
+
+    <aside class="conversation-panel">
+      <header class="panel-header">
+        <div>
+          <div class="eyebrow">DataOps Agent</div>
+          <h1>数据标采交付工作台</h1>
+        </div>
+        <span class="status-dot">Demo</span>
+      </header>
+
+      <section class="project-card">
+        <div class="project-title">
+          <strong id="activeProjectName">人体关键点标注项目</strong>
+          <span class="badge green" id="activeProjectStage">供应商执行</span>
+        </div>
+        <div class="project-meta">
+          <span id="activeProjectId">PRJ-002</span>
+          <span id="activeProjectVolume">6996 张</span>
+          <span id="activeProjectRisk">预算单待确认</span>
+        </div>
+      </section>
+
+      <section class="quick-actions" aria-label="演示动作">
+        <button class="quick-action active" data-scenario="createTask">创建任务</button>
+        <button class="quick-action" data-scenario="repair">返修说明</button>
+        <button class="quick-action" data-scenario="settlement">结算复核</button>
+      </section>
+
+      <section class="chat" id="chat" aria-live="polite"></section>
+
+      <footer class="composer">
+        <textarea id="promptInput" aria-label="给 Agent 输入消息">帮我根据这个人体关键点需求创建任务草稿，并检查提交前风险。</textarea>
+        <button id="sendBtn" class="send-btn" aria-label="发送">›</button>
+      </footer>
+    </aside>
+
+    <main class="workspace">
+      <header class="workspace-topbar">
+        <div>
+          <div class="workspace-label" id="viewLabel">Agent Workspace</div>
+          <h2 id="viewTitle">创建任务草稿</h2>
+        </div>
+        <div class="topbar-actions">
+          <button id="saveDraftBtn" class="ghost-btn">保存草稿</button>
+          <button id="confirmWriteBtn" class="dark-btn">确认写入</button>
+        </div>
+      </header>
+
+      <section class="workspace-grid">
+        <section class="main-surface" id="mainSurface"></section>
+        <aside class="inspector" id="inspector"></aside>
+      </section>
+
+      <footer class="tool-log" id="toolLog"></footer>
+    </main>
+  </div>
+
+  <script src="./data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
