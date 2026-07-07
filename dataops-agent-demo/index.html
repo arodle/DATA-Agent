@@ -1,86 +1,67 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DataOps Agent Demo</title>
+  <title>DataOps Agent 数据标采交付平台</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="rail" aria-label="主导航">
-      <div class="logo">DA</div>
-      <button class="rail-btn active" data-view="agent" title="Agent 工作台" aria-label="Agent 工作台">
-        <span class="icon">⌘</span>
-      </button>
-      <button class="rail-btn" data-view="requirements" title="需求" aria-label="需求">
-        <span class="icon">□</span>
-      </button>
-      <button class="rail-btn" data-view="tasks" title="任务" aria-label="任务">
-        <span class="icon">▣</span>
-      </button>
-      <button class="rail-btn" data-view="quality" title="质量" aria-label="质量">
-        <span class="icon">◇</span>
-      </button>
-      <button class="rail-btn" data-view="knowledge" title="知识库" aria-label="知识库">
-        <span class="icon">≡</span>
-      </button>
+  <div id="app" class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">DA</div>
+        <div>
+          <strong>DataOps Agent</strong>
+          <span>数据标采交付平台</span>
+        </div>
+      </div>
+
+      <section class="role-switch" aria-label="角色切换">
+        <button class="role-btn active" data-role="customer">用户端</button>
+        <button class="role-btn" data-role="operator">运营端</button>
+        <button class="role-btn" data-role="vendor">供应商端</button>
+        <button class="role-btn" data-role="quality">质检端</button>
+        <button class="role-btn" data-role="manager">管理端</button>
+      </section>
+
+      <nav id="nav" class="nav" aria-label="主导航"></nav>
+
+      <div class="sidebar-footer">
+        <button id="exportBtn" class="plain-btn">导出数据</button>
+        <button id="resetBtn" class="plain-btn danger">重置样例</button>
+      </div>
     </aside>
 
-    <aside class="conversation-panel">
-      <header class="panel-header">
+    <main class="main">
+      <header class="topbar">
         <div>
-          <div class="eyebrow">DataOps Agent</div>
-          <h1>数据标采交付工作台</h1>
+          <div id="roleLabel" class="eyebrow">用户端</div>
+          <h1 id="pageTitle">工作台</h1>
         </div>
-        <span class="status-dot">Demo</span>
+        <div class="top-actions">
+          <span id="dataScope" class="scope-pill">组织视角：示例组织 A</span>
+          <button id="saveBtn" class="dark-btn">保存当前数据</button>
+        </div>
       </header>
 
-      <section class="project-card">
-        <div class="project-title">
-          <strong id="activeProjectName">人体关键点标注项目</strong>
-          <span class="badge green" id="activeProjectStage">供应商执行</span>
+      <section id="content" class="content" aria-live="polite"></section>
+    </main>
+
+    <aside class="agent-panel">
+      <header class="agent-header">
+        <div>
+          <div class="eyebrow">Agent</div>
+          <h2>流程助手</h2>
         </div>
-        <div class="project-meta">
-          <span id="activeProjectId">PRJ-002</span>
-          <span id="activeProjectVolume">6996 张</span>
-          <span id="activeProjectRisk">预算单待确认</span>
-        </div>
-      </section>
-
-      <section class="quick-actions" aria-label="演示动作">
-        <button class="quick-action active" data-scenario="createTask">创建任务</button>
-        <button class="quick-action" data-scenario="repair">返修说明</button>
-        <button class="quick-action" data-scenario="settlement">结算复核</button>
-      </section>
-
-      <section class="chat" id="chat" aria-live="polite"></section>
-
-      <footer class="composer">
-        <textarea id="promptInput" aria-label="给 Agent 输入消息">帮我根据这个人体关键点需求创建任务草稿，并检查提交前风险。</textarea>
-        <button id="sendBtn" class="send-btn" aria-label="发送">›</button>
+        <span class="status">本地可用</span>
+      </header>
+      <section id="agentFeed" class="agent-feed"></section>
+      <footer class="agent-composer">
+        <textarea id="agentInput" rows="3" placeholder="例如：帮我创建一个图像标注需求，或者查看当前延期风险"></textarea>
+        <button id="agentSend" class="dark-btn">发送</button>
       </footer>
     </aside>
-
-    <main class="workspace">
-      <header class="workspace-topbar">
-        <div>
-          <div class="workspace-label" id="viewLabel">Agent Workspace</div>
-          <h2 id="viewTitle">创建任务草稿</h2>
-        </div>
-        <div class="topbar-actions">
-          <button id="saveDraftBtn" class="ghost-btn">保存草稿</button>
-          <button id="confirmWriteBtn" class="dark-btn">确认写入</button>
-        </div>
-      </header>
-
-      <section class="workspace-grid">
-        <section class="main-surface" id="mainSurface"></section>
-        <aside class="inspector" id="inspector"></aside>
-      </section>
-
-      <footer class="tool-log" id="toolLog"></footer>
-    </main>
   </div>
 
   <script src="./data.js"></script>
