@@ -173,8 +173,12 @@
     { id: "RULE-5002", version: "V1.1", name: "车辆 2D 框标注规则", type: "标注规范", modality: "图像", scope: "道路车辆检测", content: "框紧贴车辆可见边界，遮挡部分不脑补，白色车辆同样必须标注。", metric: "IoU 大于 0.85，类别准确率不低于 95%。", status: "启用" },
     { id: "RULE-5003", version: "V1.0", name: "语音转写清洗规则", type: "清洗规范", modality: "音频", scope: "客服通话转写", content: "逐字转写，区分说话人，姓名、手机号、证件号等敏感信息需脱敏。", metric: "转写准确率不低于 98%。", status: "启用" }
   ],
+  prelabels: [],
   operations: [],
   settlements: [
     { id: "SET-7001", projectId: "TASK-1001", supplier: "Vendor-02", period: "2026-07", volume: 2000, status: "未开始", checkResult: "质量事件未关闭，暂不进入结算" }
   ]
 };
+
+
+
