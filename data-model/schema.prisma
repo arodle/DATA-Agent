@@ -1,0 +1,663 @@
+﻿generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductMode {
+  PROFESSIONAL
+  EDUCATION
+}
+
+enum OrgType {
+  CUSTOMER
+  INTERNAL
+  SUPPLIER
+  SCHOOL
+  COMMUNITY
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  OPERATOR
+  CUSTOMER
+  SUPPLIER
+  QUALITY
+  TEACHER
+  STUDENT
+  VIEWER
+}
+
+enum ProjectExecutionStatus {
+  DRAFT
+  SELF_RUNNING
+  TOOL_RUNNING
+  AGENT_RUNNING
+  SUPPLIER_RUNNING
+  ACCEPTANCE
+  COMPLETED
+  PAUSED
+  CANCELLED
+}
+
+enum OperationStatus {
+  NO_NEED
+  PENDING_REVIEW
+  OPERATOR_TAKEN_OVER
+  RETURNED
+  APPROVED
+  EXCEPTION_INTERVENTION
+}
+
+enum StageType {
+  CREATE
+  REVIEW
+  EXECUTE
+  ACCEPT
+  TRAIN
+  IMPROVE
+}
+
+enum TaskExecutorType {
+  USER_SELF
+  AGENT_TOOL
+  OPEN_SOURCE_MODEL
+  INTERNAL_TOOL
+  SUPPLIER
+  REMOTE_COLLECTION_TOOL
+}
+
+enum TaskStatus {
+  DRAFT
+  READY
+  RUNNING
+  WAITING_REVIEW
+  REWORKING
+  DONE
+  FAILED
+  CANCELLED
+}
+
+enum DataAssetType {
+  RAW
+  SAMPLE
+  ANNOTATION
+  QUALITY_RESULT
+  REWORK_VERSION
+  DELIVERY
+  TRAINING_SET
+  VALIDATION_SET
+  TEST_SET
+  BADCASE_SET
+  PUBLIC_REFERENCE
+}
+
+enum PublicAssetType {
+  PUBLIC_DATASET
+  DATA_FORMAT
+  LABEL_RULE
+  COLLECTION_SPEC
+  TOOL_TEMPLATE
+  MODEL_CAPABILITY
+  FAQ
+  CASE_STUDY
+  INDUSTRY_TEMPLATE
+  QUALITY_SCRIPT_TEMPLATE
+}
+
+enum AgentActionStatus {
+  PREVIEW
+  WAITING_AUTH
+  CONFIRMED
+  REJECTED
+  EXECUTED
+  FAILED
+  CANCELLED
+}
+
+enum AgentActorContext {
+  USER_ASSISTANT
+  OPERATOR_ASSISTANT
+  SUPPLIER_ASSISTANT
+  TEACHING_ASSISTANT
+  COMMUNITY_ASSISTANT
+}
+
+enum ModelTaskType {
+  CLASSIFICATION
+  OBJECT_DETECTION
+  SEGMENTATION
+  KEYPOINT
+  OCR
+  ASR
+  MULTIMODAL
+  LLM_FINETUNE
+  OTHER
+}
+
+enum CommunityVisibility {
+  PRIVATE
+  TEAM
+  PUBLIC
+  OFFICIAL
+}
+
+model Organization {
+  id          String    @id @default(cuid())
+  name        String
+  type        OrgType
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  members     OrganizationMember[]
+  projects    Project[]             @relation("ProjectOwnerOrg")
+  supplier    Supplier?
+}
+
+model User {
+  id          String    @id @default(cuid())
+  name        String
+  email       String?   @unique
+  phone       String?
+  avatarUrl   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  orgMembers  OrganizationMember[]
+  createdProjects Project[]          @relation("ProjectCreator")
+  operatedProjects Project[]         @relation("ProjectOperator")
+  projectMembers ProjectMember[]
+  agentSessions AgentSession[]
+  operationLogs OperationLog[]
+  skills      Skill[]                @relation("SkillAuthor")
+}
+
+model OrganizationMember {
+  id             String       @id @default(cuid())
+  organizationId String
+  userId         String
+  role           MemberRole
+  createdAt      DateTime     @default(now())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@unique([organizationId, userId, role])
+}
+
+model Supplier {
+  id              String       @id @default(cuid())
+  organizationId  String       @unique
+  capabilityTags  String[]
+  supportedModes  ProductMode[]
+  qualityLevel    String?
+  efficiencyRange String?
+  riskNote        String?
+  status          String       @default("ACTIVE")
+
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  tasks           ProjectTask[]
+}
+
+model Project {
+  id                  String                 @id @default(cuid())
+  code                String                 @unique
+  name                String
+  mode                ProductMode
+  ownerOrgId          String
+  creatorId           String
+  operatorId          String?
+  executionStatus     ProjectExecutionStatus @default(DRAFT)
+  operationStatus     OperationStatus        @default(NO_NEED)
+  currentStage        StageType              @default(CREATE)
+  priority            String?
+  startDate           DateTime?
+  expectedEndDate     DateTime?
+  completedAt         DateTime?
+  budgetName          String?
+  budgetAmount        Decimal?               @db.Decimal(12, 2)
+  companyName         String?
+  departmentName      String?
+  contactName         String?
+  contactInfo         String?
+  currentRisk         String?
+  nextAction          String?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+
+  ownerOrg            Organization           @relation("ProjectOwnerOrg", fields: [ownerOrgId], references: [id])
+  creator             User                   @relation("ProjectCreator", fields: [creatorId], references: [id])
+  operator            User?                  @relation("ProjectOperator", fields: [operatorId], references: [id])
+  members             ProjectMember[]
+  requirement         ProjectRequirement?
+  stages              ProjectStage[]
+  tasks               ProjectTask[]
+  datasets            Dataset[]
+  toolConfigs         ProjectToolConfig[]
+  prelabelRuns        PrelabelRun[]
+  qualityEvents       QualityEvent[]
+  modelBindings       ProjectModelBinding[]
+  trainingRuns        ModelRun[]
+  agentSessions       AgentSession[]
+  operationLogs       OperationLog[]
+  retrospectives      ProjectRetrospective[]
+}
+
+model ProjectMember {
+  id        String     @id @default(cuid())
+  projectId String
+  userId    String
+  role      MemberRole
+  canEdit   Boolean    @default(false)
+  canAudit  Boolean    @default(false)
+  createdAt DateTime   @default(now())
+
+  project   Project    @relation(fields: [projectId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@unique([projectId, userId, role])
+}
+
+model ProjectRequirement {
+  id               String   @id @default(cuid())
+  projectId         String   @unique
+  title             String
+  demandType        String
+  dataModality      String
+  scenario          String?
+  estimatedVolume   Int?
+  acceptanceCriteria String?
+  safetyRequirement String?
+  sampleStatus      String?
+  rawDocumentUrl    String?
+  agentStructuredJson Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  project           Project  @relation(fields: [projectId], references: [id])
+}
+
+model ProjectStage {
+  id          String    @id @default(cuid())
+  projectId   String
+  type        StageType
+  status      String    @default("PENDING")
+  summary     String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  sortOrder   Int
+
+  project     Project   @relation(fields: [projectId], references: [id])
+
+  @@unique([projectId, type])
+}
+
+model ProjectTask {
+  id              String           @id @default(cuid())
+  projectId        String
+  name             String
+  executorType     TaskExecutorType
+  supplierId       String?
+  stage            StageType
+  status           TaskStatus       @default(DRAFT)
+  dataVolume       Int?
+  estimatedEffort  Decimal?         @db.Decimal(10, 2)
+  actualEffort     Decimal?         @db.Decimal(10, 2)
+  plannedStart     DateTime?
+  plannedEnd       DateTime?
+  actualEnd        DateTime?
+  risk             String?
+  resultSummary    String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  project          Project          @relation(fields: [projectId], references: [id])
+  supplier         Supplier?        @relation(fields: [supplierId], references: [id])
+  datasets         Dataset[]
+  qualityEvents    QualityEvent[]
+}
+
+model Dataset {
+  id          String       @id @default(cuid())
+  projectId   String
+  taskId      String?
+  name        String
+  type        DataAssetType
+  modality    String?
+  itemCount   Int?
+  format      String?
+  storagePath String?
+  version     String       @default("v1")
+  source      String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  project     Project      @relation(fields: [projectId], references: [id])
+  task        ProjectTask? @relation(fields: [taskId], references: [id])
+  files       FileObject[]
+  versions    DatasetVersion[]
+  modelRuns   ModelRun[]
+}
+
+model DatasetVersion {
+  id           String   @id @default(cuid())
+  datasetId    String
+  version      String
+  changeNote   String?
+  itemCount    Int?
+  storagePath  String?
+  createdById  String?
+  createdAt    DateTime @default(now())
+
+  dataset      Dataset  @relation(fields: [datasetId], references: [id])
+
+  @@unique([datasetId, version])
+}
+
+model FileObject {
+  id          String        @id @default(cuid())
+  datasetId   String?
+  filename    String
+  mimeType    String?
+  sizeBytes   BigInt?
+  storagePath String
+  checksum    String?
+  assetType   DataAssetType?
+  createdAt   DateTime      @default(now())
+
+  dataset     Dataset?      @relation(fields: [datasetId], references: [id])
+}
+
+model PublicAsset {
+  id          String          @id @default(cuid())
+  type        PublicAssetType
+  name        String
+  source      String?
+  license     String?
+  modality    String?
+  taskType    ModelTaskType?
+  format      String?
+  description String?
+  tags        String[]
+  url         String?
+  metadata    Json?
+  isOfficial  Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model ToolTemplate {
+  id          String    @id @default(cuid())
+  name        String
+  toolType    String
+  modality    String?
+  taskType    ModelTaskType?
+  configSchema Json?
+  previewMode String?
+  description String?
+  isPublic    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  configs     ProjectToolConfig[]
+}
+
+model ProjectToolConfig {
+  id          String       @id @default(cuid())
+  projectId   String
+  templateId  String?
+  name        String
+  configJson  Json
+  previewJson Json?
+  status      String       @default("DRAFT")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  project     Project      @relation(fields: [projectId], references: [id])
+  template    ToolTemplate? @relation(fields: [templateId], references: [id])
+}
+
+model PrelabelRun {
+  id          String   @id @default(cuid())
+  projectId   String
+  modelName   String
+  imageName   String?
+  inputPath   String?
+  boxCount    Int      @default(0)
+  status      String   @default("PREVIEW")
+  resultJson  Json?
+  confirmedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  project     Project  @relation(fields: [projectId], references: [id])
+}
+
+model QualityEvent {
+  id          String       @id @default(cuid())
+  projectId   String
+  taskId      String?
+  ruleId      String?
+  type        String
+  severity    String
+  sampleScope String?
+  location    String?
+  impact      String?
+  status      String       @default("OPEN")
+  action      String?
+  rootCause   String?
+  needRework  Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  closedAt    DateTime?
+
+  project     Project      @relation(fields: [projectId], references: [id])
+  task        ProjectTask? @relation(fields: [taskId], references: [id])
+}
+
+model QualityScript {
+  id          String   @id @default(cuid())
+  name        String
+  targetError String
+  modality    String?
+  scriptType  String
+  prompt      String?
+  code        String?
+  configJson  Json?
+  createdBy   String?
+  visibility  CommunityVisibility @default(PRIVATE)
+  createdAt   DateTime @default(now())
+}
+
+model ModelEntity {
+  id          String        @id @default(cuid())
+  name        String
+  taskType    ModelTaskType
+  ownerOrgId  String?
+  source      String?
+  description String?
+  createdAt   DateTime      @default(now())
+
+  bindings    ProjectModelBinding[]
+  runs        ModelRun[]
+}
+
+model ProjectModelBinding {
+  id          String      @id @default(cuid())
+  projectId   String
+  modelId     String
+  purpose     String?
+  status      String      @default("BOUND")
+  createdAt   DateTime    @default(now())
+
+  project     Project     @relation(fields: [projectId], references: [id])
+  model       ModelEntity @relation(fields: [modelId], references: [id])
+
+  @@unique([projectId, modelId])
+}
+
+model ModelRun {
+  id          String      @id @default(cuid())
+  projectId   String?
+  modelId     String
+  datasetId   String?
+  runName     String
+  externalUrl String?
+  tool        String?
+  status      String      @default("IMPORTED")
+  metricsJson Json?
+  badcaseJson Json?
+  conclusion  String?
+  createdAt   DateTime    @default(now())
+
+  project     Project?    @relation(fields: [projectId], references: [id])
+  model       ModelEntity @relation(fields: [modelId], references: [id])
+  dataset     Dataset?    @relation(fields: [datasetId], references: [id])
+  recommendations TrainingRecommendation[]
+}
+
+model TrainingRecommendation {
+  id          String   @id @default(cuid())
+  modelRunId  String
+  title       String
+  reason      String
+  nextDataNeed String?
+  priority    String?
+  generatedBy String   @default("AGENT")
+  accepted    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  modelRun    ModelRun @relation(fields: [modelRunId], references: [id])
+}
+
+model AgentSession {
+  id          String            @id @default(cuid())
+  projectId   String?
+  userId      String
+  context     AgentActorContext
+  title       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  project     Project?          @relation(fields: [projectId], references: [id])
+  user        User              @relation(fields: [userId], references: [id])
+  messages    AgentMessage[]
+  actions     AgentAction[]
+}
+
+model AgentMessage {
+  id          String       @id @default(cuid())
+  sessionId   String
+  role        String
+  content     String
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+
+  session     AgentSession @relation(fields: [sessionId], references: [id])
+}
+
+model AgentAction {
+  id            String            @id @default(cuid())
+  sessionId     String
+  projectId     String?
+  actionType    String
+  targetEntity  String?
+  targetId      String?
+  status        AgentActionStatus @default(PREVIEW)
+  previewJson   Json
+  diffJson      Json?
+  resultJson    Json?
+  authorizedBy  String?
+  authorizedAt  DateTime?
+  executedAt    DateTime?
+  createdAt     DateTime          @default(now())
+
+  session       AgentSession      @relation(fields: [sessionId], references: [id])
+}
+
+model OperationLog {
+  id          String    @id @default(cuid())
+  projectId   String?
+  userId      String?
+  actorRole   String
+  action      String
+  detail      String?
+  entityType  String?
+  entityId    String?
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+
+  project     Project?  @relation(fields: [projectId], references: [id])
+  user        User?     @relation(fields: [userId], references: [id])
+}
+
+model ProjectRetrospective {
+  id          String   @id @default(cuid())
+  projectId   String
+  outcome     String
+  successScore Int?
+  summary     String
+  reusablePattern Json?
+  isTrainingCandidate Boolean @default(false)
+  desensitized Boolean @default(false)
+  createdAt   DateTime @default(now())
+
+  project     Project  @relation(fields: [projectId], references: [id])
+}
+
+model AgentTrainingExample {
+  id          String   @id @default(cuid())
+  sourceType  String
+  sourceId    String?
+  input       String
+  expectedOutput String
+  tags        String[]
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Skill {
+  id          String              @id @default(cuid())
+  authorId    String
+  name        String
+  category    String
+  description String?
+  visibility  CommunityVisibility @default(PRIVATE)
+  official    Boolean             @default(false)
+  usageCount  Int                 @default(0)
+  rating      Decimal?            @db.Decimal(3, 2)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  author      User                @relation("SkillAuthor", fields: [authorId], references: [id])
+  versions    SkillVersion[]
+}
+
+model SkillVersion {
+  id          String   @id @default(cuid())
+  skillId     String
+  version     String
+  inputSchema Json?
+  outputSchema Json?
+  prompt      String?
+  code        String?
+  changelog   String?
+  createdAt   DateTime @default(now())
+
+  skill       Skill    @relation(fields: [skillId], references: [id])
+
+  @@unique([skillId, version])
+}
+
+model OfficialPost {
+  id          String   @id @default(cuid())
+  title       String
+  type        String
+  content     String
+  startsAt    DateTime?
+  endsAt      DateTime?
+  visibility  CommunityVisibility @default(PUBLIC)
+  createdAt   DateTime @default(now())
+}
