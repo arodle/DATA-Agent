@@ -187,6 +187,9 @@ export default function WorkspaceClient({ projects }: Props) {
             </div>
           </div>
           <div className="wsCenterActions">
+            <Link href="/user/agent" className="outlineBtn" title="Agent 控制台">
+              🤖
+            </Link>
             <Link href={`/user/projects/${activeProject?.code ?? ""}`} className="outlineBtn">
               打开项目详情
             </Link>
