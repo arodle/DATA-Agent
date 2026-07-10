@@ -18,6 +18,7 @@ const navConfig = [
     ],
   },
   { label: "帮助中心", href: "/user/help", icon: "❓" },
+  { label: "设置", href: "/user/settings", icon: "⚙️" },
 ];
 
 export default function UserLayout({
