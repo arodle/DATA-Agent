@@ -5982,6 +5982,101 @@ li {
   background: #0aa866;
 }
 
+/* Agent module cards in settings */
+.agentModuleGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.agentModuleCard {
+  border: 1px solid #edf1f5;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.agentModuleHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  background: linear-gradient(135deg, #f0faf5 0%, #fafbfc 100%);
+  border-bottom: 1px solid #edf1f5;
+}
+
+.agentModuleIcon {
+  font-size: 22px;
+}
+
+.agentModuleHead strong {
+  display: block;
+  font-size: 14px;
+  color: #0d2137;
+  font-weight: 600;
+}
+
+.agentModuleHead p {
+  margin: 0;
+  font-size: 11px;
+  color: #697889;
+}
+
+.agentModuleBody {
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+  flex: 1;
+}
+
+.moduleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 4px 0;
+}
+
+.moduleRow span {
+  color: #697889;
+}
+
+.moduleRow strong {
+  color: #0d2137;
+  font-weight: 600;
+}
+
+.moduleRow strong.success {
+  color: #0aa866;
+}
+
+.agentModuleFooter {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid #edf1f5;
+  background: #fafbfc;
+}
+
+.agentModuleFooter button {
+  flex: 1;
+}
+
+@media (max-width: 1200px) {
+  .agentModuleGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .agentModuleGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
   .opMainRow {
