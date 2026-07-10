@@ -6,7 +6,6 @@ import { useState } from "react";
 
 const navConfig = [
   { label: "用户工作台", href: "/user/workspace", icon: "🏠" },
-  { label: "Agent 控制", href: "/user/agent", icon: "🤖" },
   { label: "数据资产", href: "/user/data", icon: "📊" },
   { label: "算力资源", href: "/user/compute", icon: "⚡" },
   { label: "模型中心", href: "/user/models", icon: "🧠" },
