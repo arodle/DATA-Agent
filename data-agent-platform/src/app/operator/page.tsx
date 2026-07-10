@@ -128,39 +128,53 @@ export default async function OperatorWorkbench() {
 
       <div className="quickEntry">
         <div className="quickGrid">
-          <Link href="/operator/projects" className="quickCard">
-            <span className="quickIcon">📁</span>
+          <Link href="/operator/collection" className="quickCard">
+            <span className="quickIcon">📡</span>
             <div>
-              <strong>项目管理</strong>
-              <p>查看全部项目、分配供应商</p>
+              <strong>数据采集</strong>
+              <p>采集任务管理、进度追踪</p>
             </div>
           </Link>
-          <Link href="/operator/review" className="quickCard">
-            <span className="quickIcon">✅</span>
+          <Link href="/operator/annotation" className="quickCard">
+            <span className="quickIcon">📝</span>
             <div>
-              <strong>审核中心</strong>
-              <p>工具配置、需求文档审核</p>
-            </div>
-          </Link>
-          <Link href="/operator/agent" className="quickCard">
-            <span className="quickIcon">🤖</span>
-            <div>
-              <strong>Agent管理</strong>
-              <p>授权执行、任务编排</p>
-            </div>
-          </Link>
-          <Link href="/operator/quality" className="quickCard">
-            <span className="quickIcon">📊</span>
-            <div>
-              <strong>质量监控</strong>
-              <p>质量事件、缺陷分析</p>
+              <strong>数据标注</strong>
+              <p>标注任务管理、质量审核</p>
             </div>
           </Link>
           <Link href="/operator/suppliers" className="quickCard">
             <span className="quickIcon">🏭</span>
             <div>
               <strong>供应商管理</strong>
-              <p>供应商分配、QC管理</p>
+              <p>供应商分配、绩效评估</p>
+            </div>
+          </Link>
+          <Link href="/operator/assets" className="quickCard">
+            <span className="quickIcon">📊</span>
+            <div>
+              <strong>数据资产管理</strong>
+              <p>数据集管理、版本控制</p>
+            </div>
+          </Link>
+          <Link href="/operator/agent" className="quickCard">
+            <span className="quickIcon">🤖</span>
+            <div>
+              <strong>Agent 助手</strong>
+              <p>授权执行、任务编排</p>
+            </div>
+          </Link>
+          <Link href="/operator/finance" className="quickCard">
+            <span className="quickIcon">💰</span>
+            <div>
+              <strong>财务结算</strong>
+              <p>账单管理、结算审核</p>
+            </div>
+          </Link>
+          <Link href="/operator/settings" className="quickCard">
+            <span className="quickIcon">⚙️</span>
+            <div>
+              <strong>系统设置</strong>
+              <p>通用配置、安全策略</p>
             </div>
           </Link>
         </div>
