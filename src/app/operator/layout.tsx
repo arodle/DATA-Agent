@@ -6,21 +6,19 @@ import { useState } from "react";
 
 const navConfig = [
   { label: "运营工作台", href: "/operator", icon: "🏠" },
-  { label: "项目管理", href: "/operator/projects", icon: "📁" },
-  { label: "审核中心", href: "/operator/review", icon: "✅", badge: "12" },
-  { label: "Agent管理", href: "/operator/agent", icon: "🤖" },
   {
-    label: "质量监控",
-    icon: "📊",
-    badge: "47",
+    label: "项目运营",
+    icon: "📁",
     children: [
-      { label: "质量事件", href: "/operator/quality" },
-      { label: "缺陷分析", href: "/operator/quality/defects" },
+      { label: "数据采集", href: "/operator/collection" },
+      { label: "数据标注", href: "/operator/annotation" },
     ],
   },
   { label: "供应商管理", href: "/operator/suppliers", icon: "🏭" },
-  { label: "操作日志", href: "/operator/logs", icon: "📝" },
-  { label: "权限管理", href: "/operator/permissions", icon: "🔒" },
+  { label: "数据资产管理", href: "/operator/assets", icon: "📊" },
+  { label: "Agent 助手", href: "/operator/agent", icon: "🤖" },
+  { label: "财务结算", href: "/operator/finance", icon: "�" },
+  { label: "系统设置", href: "/operator/settings", icon: "⚙️" },
 ];
 
 export default function OperatorLayout({
@@ -49,7 +47,6 @@ export default function OperatorLayout({
                   >
                     <span className="navIcon">{item.icon}</span>
                     <span className="navLabel">{item.label}</span>
-                    {item.badge && <span className="navBadge">{item.badge}</span>}
                     <span className="navArrow">{qualityOpen ? "▾" : "▸"}</span>
                   </button>
                   {qualityOpen && (
@@ -76,7 +73,6 @@ export default function OperatorLayout({
               >
                 <span className="navIcon">{item.icon}</span>
                 <span className="navLabel">{item.label}</span>
-                {item.badge && <span className="navBadge">{item.badge}</span>}
               </Link>
             );
           })}
