@@ -5706,6 +5706,282 @@ li {
   border-left-color: #356df3;
 }
 
+/* Settings page */
+.settingsPage {
+  display: grid;
+  gap: 14px;
+}
+
+.settingsBanner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #0d2137 0%, #1a3a5c 100%);
+  border-radius: 8px;
+  color: #fff;
+}
+
+.settingsIcon {
+  font-size: 32px;
+}
+
+.settingsInfo strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.settingsInfo p {
+  margin: 0;
+  font-size: 13px;
+  color: #8ea6bd;
+}
+
+.settingsTabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #d8dee6;
+  background: #fff;
+  border-radius: 6px 6px 0 0;
+  overflow: hidden;
+}
+
+.settingsTab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 20px;
+  border: 0;
+  background: transparent;
+  color: #697889;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-weight: 500;
+}
+
+.settingsTab:hover {
+  color: #0d2137;
+}
+
+.settingsTab.active {
+  color: #18c57a;
+  border-bottom-color: #18c57a;
+  font-weight: 600;
+}
+
+.settingsContent {
+  background: #fff;
+  border: 1px solid #d8dee6;
+  border-radius: 0 0 6px 6px;
+  padding: 20px;
+}
+
+.settingsPanel {
+  display: grid;
+  gap: 20px;
+}
+
+.settingsSection {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.settingsSection:last-child {
+  border-bottom: none;
+}
+
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0d2137;
+  margin: 0 0 14px 0;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.formItem {
+  display: grid;
+  gap: 6px;
+}
+
+.formItem label {
+  font-size: 12px;
+  color: #697889;
+}
+
+.formItem input,
+.formItem select {
+  height: 36px;
+  border: 1px solid #d8dee6;
+  border-radius: 4px;
+  background: #fff;
+  padding: 0 10px;
+  font-size: 13px;
+  color: #0d2137;
+}
+
+.formItem input:focus,
+.formItem select:focus {
+  outline: 0;
+  border-color: #18c57a;
+}
+
+.formItem input:disabled {
+  background: #f5f7fa;
+  color: #9aa7b5;
+}
+
+.toggleList {
+  display: grid;
+  gap: 8px;
+}
+
+.toggleItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #fafbfc;
+  border-radius: 6px;
+}
+
+.toggleItem strong {
+  display: block;
+  font-size: 14px;
+  color: #0d2137;
+  margin-bottom: 2px;
+}
+
+.toggleItem p {
+  margin: 0;
+  font-size: 12px;
+  color: #697889;
+}
+
+.toggleSwitch {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: #d8dee6;
+  position: relative;
+}
+
+.toggleSwitch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s;
+}
+
+.toggleSwitch.on {
+  background: #18c57a;
+}
+
+.toggleSwitch.on::after {
+  left: 22px;
+}
+
+.integrationList {
+  display: grid;
+  gap: 10px;
+}
+
+.integrationItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #fafbfc;
+  border-radius: 6px;
+}
+
+.integrationIcon {
+  font-size: 20px;
+}
+
+.integrationItem strong {
+  display: block;
+  font-size: 13px;
+  color: #0d2137;
+}
+
+.integrationItem p {
+  margin: 0;
+  font-size: 12px;
+  color: #697889;
+}
+
+.integrationItem button {
+  margin-left: auto;
+}
+
+.securityLog {
+  display: grid;
+  gap: 6px;
+}
+
+.logItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid #edf1f5;
+  font-size: 12px;
+}
+
+.logItem:last-child {
+  border-bottom: none;
+}
+
+.logTime {
+  color: #9aa7b5;
+  width: 140px;
+}
+
+.logAction {
+  color: #0d2137;
+  flex: 1;
+}
+
+.logIP {
+  color: #697889;
+}
+
+.settingsFooter {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.primaryBtn {
+  height: 36px;
+  padding: 0 20px;
+  border: 0;
+  background: #18c57a;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.primaryBtn:hover {
+  background: #0aa866;
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
   .opMainRow {
