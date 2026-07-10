@@ -1,0 +1,7 @@
+{
+  "buildCommand": "prisma generate && next build --webpack",
+  "env": {
+    "DATABASE_URL": "file:./dev.db"
+  },
+  "installCommand": "npm install"
+}
