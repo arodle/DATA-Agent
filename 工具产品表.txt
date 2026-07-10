@@ -1,0 +1,341 @@
+TOOL-001 · PointTool
+字段	内容
+工具类型	标注工具
+适用任务类型	关键点标注
+适用模态	图像
+功能描述	用于人体/手部/物体关键点标注；支持自定义关键点列表和顺序；支持图片缩放和点拖拽调整
+负责团队	内部工具团队
+访问地址	https://标注平台/point-tool
+文档链接	内部Wiki-PointTool使用指南
+适用规则ID	RULE-009、RULE-010
+配置状态	已配置
+当前版本	V3.2
+备注	支持21点手部和24点人体关键点标注
+输出格式说明
+每张图输出一个JSON对象；width/height记录图片尺寸；step_1.result数组记录每个关键点；每个点含x/y坐标、attribute标签、valid是否有效、order序号、label关键点名称。
+输出格式JSON示例
+json
+{
+  "width": 1920,
+  "height": 1080,
+  "rotate": 0,
+  "valid": true,
+  "step_1": {
+    "dataSourceStep": 0,
+    "toolName": "pointTool",
+    "result": [
+      {
+        "x": 670.07,
+        "y": 617.71,
+        "attribute": "",
+        "valid": true,
+        "id": "LV0iF3Ve",
+        "sourceID": "",
+        "textAttribute": "",
+        "order": 1,
+        "label": "0_pelvis"
+      },
+      {
+        "x": 770.70,
+        "y": 605.76,
+        "attribute": "",
+        "valid": true,
+        "id": "vHnkZugJ",
+        "sourceID": "",
+        "textAttribute": "",
+        "order": 2,
+        "label": "1_left_hip"
+      }
+    ]
+  }
+}
+
+TOOL-002 · BBoxTool
+字段	内容
+工具类型	标注工具
+适用任务类型	2D框标注
+适用模态	图像
+功能描述	用于目标检测2D矩形框标注；支持多类别标签；支持框的拖拽/缩放/复制；支持属性标注（颜色/类型/遮挡程度）
+负责团队	内部工具团队
+访问地址	https://标注平台/bbox-tool
+文档链接	内部Wiki-BBoxTool使用指南
+适用规则ID	RULE-001、RULE-002、RULE-007
+配置状态	已配置
+当前版本	V2.1
+备注	支持多属性标注
+输出格式说明
+每张图输出一个JSON对象；width/height记录图片尺寸；step_1.result数组记录每个框；每个框含bbox坐标[x1,y1,x2,y2]、category类别、attribute属性、valid是否有效。
+输出格式JSON示例
+json
+{
+  "width": 1920,
+  "height": 1080,
+  "step_1": {
+    "dataSourceStep": 0,
+    "toolName": "bboxTool",
+    "result": [
+      {
+        "bbox": [320, 240, 480, 360],
+        "category": "car",
+        "attribute": {
+          "color": "white",
+          "type": "sedan",
+          "occlusion": "none"
+        },
+        "valid": true,
+        "id": "BOX_00123",
+        "order": 1
+      }
+    ]
+  }
+}
+
+TOOL-003 · SegTool
+字段	内容
+工具类型	标注工具
+适用任务类型	分割标注
+适用模态	图像
+功能描述	用于目标分割标注；支持多边形/自由曲线分割；支持前景背景分割和实例分割
+负责团队	内部工具团队
+访问地址	https://标注平台/seg-tool
+文档链接	内部Wiki-SegTool使用指南
+适用规则ID	RULE-003
+配置状态	已配置
+当前版本	V1.8
+备注	支持图片分割；视频需先抽帧
+输出格式说明
+每张图输出一个JSON对象；step_1.result数组记录每个分割区域；每个区域含polygon多边形坐标数组、category类别、area面积。
+输出格式JSON示例
+json
+{
+  "width": 1920,
+  "height": 1080,
+  "step_1": {
+    "dataSourceStep": 0,
+    "toolName": "segTool",
+    "result": [
+      {
+        "polygon": [[100,200], [150,200], [150,280], [100,280]],
+        "category": "hand",
+        "area": 4000,
+        "valid": true,
+        "id": "SEG_00001",
+        "order": 1
+      }
+    ]
+  }
+}
+
+TOOL-004 · 3DBoxTool
+字段	内容
+工具类型	标注工具
+适用任务类型	3D框标注
+适用模态	点云
+功能描述	用于3D点云目标框标注；支持7自由度框调整（cx/cy/cz/dx/dy/dz/yaw）；支持点云旋转/缩放/切片视图
+负责团队	内部工具团队
+访问地址	https://标注平台/3dbox-tool
+文档链接	内部Wiki-3DBoxTool使用指南
+适用规则ID	RULE-004
+配置状态	已配置
+当前版本	V2.5
+备注	支持框复制和批量属性修改
+输出格式说明
+每帧点云输出一个JSON对象；step_1.result数组记录每个3D框；每个框含center中心坐标、dimensions尺寸、rotation旋转角、category类别。
+输出格式JSON示例
+json
+{
+  "frame_id": "PC_0520_00001",
+  "step_1": {
+    "dataSourceStep": 0,
+    "toolName": "3dboxTool",
+    "result": [
+      {
+        "center": {"x": 2.1, "y": 0.5, "z": 0.3},
+        "dimensions": {"dx": 1.8, "dy": 4.2, "dz": 1.6},
+        "rotation": {"yaw": 0.785},
+        "category": "traffic_sign",
+        "attribute": {
+          "type": "speed_limit",
+          "value": "120"
+        },
+        "valid": true,
+        "id": "BOX_3D_00567",
+        "order": 1
+      }
+    ]
+  }
+}
+
+TOOL-005 · AudioTransTool
+字段	内容
+工具类型	标注工具
+适用任务类型	语音转写
+适用模态	语音
+功能描述	用于语音转写文本标注；支持波形图可视化；支持说话人分离标签；支持时间戳标记
+负责团队	内部工具团队
+访问地址	https://标注平台/audio-trans
+文档链接	内部Wiki-AudioTransTool使用指南
+适用规则ID	RULE-003
+配置状态	已配置
+当前版本	V1.5
+备注	支持双声道分离
+输出格式说明
+每段音频输出一个JSON对象；segments数组记录每个转写片段；每个片段含start_ms/end_ms起止时间、speaker说话人、text转写文本。
+输出格式JSON示例
+json
+{
+  "audio_id": "AUD_0625_00001",
+  "duration_ms": 3600000,
+  "segments": [
+    {
+      "start_ms": 3420,
+      "end_ms": 4120,
+      "speaker": "speaker_A",
+      "text": "您好请问有什么可以帮您",
+      "id": "seg_00342"
+    }
+  ]
+}
+
+TOOL-006 · VideoTagTool
+字段	内容
+工具类型	标注工具
+适用任务类型	视频片段标注
+适用模态	视频
+功能描述	用于视频时间点标记和片段描述；支持逐帧播放；支持片段标签分类；支持多标签并行标注
+负责团队	内部工具团队
+访问地址	https://标注平台/video-tag
+文档链接	内部Wiki-VideoTagTool使用指南
+适用规则ID	RULE-003
+配置状态	已配置
+当前版本	V1.2
+备注	支持视频描述和时间点标注
+输出格式说明
+每段视频输出一个JSON对象；segments数组记录每个标注片段；每个片段含start_ms/end_ms起止时间、tags标签列表、description描述。
+输出格式JSON示例
+json
+{
+  "video_id": "VID_00001",
+  "duration_ms": 600000,
+  "segments": [
+    {
+      "start_ms": 12000,
+      "end_ms": 18000,
+      "tags": ["hand_object_contact", "grasping"],
+      "description": "右手抓取水杯并举起",
+      "id": "vseg_0001",
+      "order": 1
+    }
+  ]
+}
+
+TOOL-007 · QualityCheckTool
+字段	内容
+工具类型	质检工具
+适用任务类型	质检审核
+适用模态	图像、语音、点云
+功能描述	用于质检员审核标注结果；支持逐条审核通过/驳回；支持批注和返修说明；支持质检统计看板
+负责团队	内部工具团队
+访问地址	https://标注平台/qc-tool
+文档链接	内部Wiki-质检工具使用指南
+适用规则ID	RULE-008
+配置状态	已配置
+当前版本	V2.0
+备注	批注会同步到标注员端
+输出格式说明
+质检结果在原标注JSON基础上增加review字段；含status审核状态、comment批注、reviewer审核人、timestamp审核时间。
+输出格式JSON示例
+json
+{
+  "annotation_id": "BOX_00123",
+  "review": {
+    "status": "rejected",
+    "comment": "年龄段误标，实际为青年标为中年",
+    "reason": "attribute_error",
+    "reviewer": "质检员A",
+    "timestamp": "2026-07-14 14:30:00"
+  }
+}
+
+TOOL-008 · CollectApp
+字段	内容
+工具类型	采集工具
+适用任务类型	数据采集
+适用模态	图像、语音
+功能描述	用于外采人员现场采集数据；支持GPS定位记录；支持采集场景标签；支持采集质量初检（曝光/模糊检测）
+负责团队	内部工具团队
+访问地址	https://采集平台/app
+文档链接	内部Wiki-采集App使用指南
+适用规则ID	RULE-005、RULE-006
+配置状态	已配置
+当前版本	V1.3
+备注	支持离线采集在线同步
+输出格式说明
+每批采集数据输出一个manifest清单JSON；含采集时间/地点/设备/场景标签/数量统计/初检结果。
+输出格式JSON示例
+json
+{
+  "batch_id": "BATCH-001",
+  "collection_date": "2026-07-03",
+  "location": {"city": "北京", "district": "朝阳区"},
+  "device": "Camera_Model_X",
+  "scene_tags": ["night", "urban", "rainy"],
+  "image_count": 326,
+  "pre_check": {
+    "exposure_pass": 300,
+    "exposure_fail": 26,
+    "blur_pass": 320,
+    "blur_fail": 6
+  }
+}
+
+TOOL-009 · SenseBee
+字段	内容
+工具类型	标注执行平台
+适用任务类型	任务管理/供应商协作
+适用模态	图像、语音、视频、点云、文本
+功能描述	统一标注执行平台；支持任务创建/数据上传/供应商分配/进度查看/结果下载/批注沟通/验收结算
+负责团队	外部平台
+访问地址	https://标注执行平台/
+文档链接	内部Wiki-SenseBee操作指南
+适用规则ID	无
+配置状态	已配置
+当前版本	V5.1
+备注	主标注执行平台；支持多供应商协作
+输出格式说明
+平台API返回的标准任务状态JSON；含task_id任务编号、status状态、progress进度、supplier供应商、batches批次列表。
+输出格式JSON示例
+json
+{
+  "task_id": "TASK-001",
+  "project_name": "街道行人2D框标注",
+  "status": "in_progress",
+  "supplier": "SUP-005",
+  "progress": {
+    "total": 5000,
+    "completed": 5000,
+    "in_review": 5000
+  },
+  "batches": [
+    {"batch_id": "BATCH-008", "status": "completed"},
+    {"batch_id": "BATCH-009", "status": "in_review"}
+  ]
+}
+
+TOOL-010 · OnesWiki
+字段	内容
+工具类型	流程文档平台
+适用任务类型	文档管理/流程指引
+适用模态	通用
+功能描述	内部流程文档和操作指南平台；存储标注规则/SOP/操作手册/FAQ
+负责团队	内部IT团队
+访问地址	https://流程文档平台/
+文档链接	无
+适用规则ID	无
+配置状态	已配置
+当前版本	V3.0
+备注	所有操作文档和规则说明的源
+输出格式说明
+无固定JSON格式；文档以Wiki页面形式组织；支持Markdown/图片/表格/附件。
+输出格式JSON示例
+无

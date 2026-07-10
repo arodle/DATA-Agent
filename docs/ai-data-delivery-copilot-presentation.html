@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 数据标采交付机器人产品蓝图 V2.0</title>
+  <style>
+    :root {
+      --ink: #15202b;
+      --muted: #5c6773;
+      --line: #d9e0e8;
+      --bg: #f5f7fa;
+      --paper: #ffffff;
+      --teal: #1c7c78;
+      --blue: #2563a9;
+      --red: #be4b49;
+      --amber: #b46a1d;
+      --green: #33835c;
+      --violet: #7056a3;
+      --soft-teal: #e7f4f2;
+      --soft-blue: #e8f1fb;
+      --soft-red: #fae9e8;
+      --soft-amber: #fff1dc;
+      --soft-green: #e7f4ec;
+      --soft-violet: #eeeaf7;
+      --shadow: 0 24px 70px rgba(24, 39, 56, .16);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    .deck {
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
+
+    .slide {
+      display: none;
+      width: min(1280px, calc(100vw - 56px));
+      aspect-ratio: 16 / 9;
+      background: var(--paper);
+      border: 1px solid rgba(21, 32, 43, .08);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      padding: 56px 64px;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--amber), var(--green));
+    }
+
+    .kicker {
+      color: var(--teal);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 58px;
+      line-height: 1.08;
+      letter-spacing: 0;
+      max-width: 980px;
+    }
+
+    h2 {
+      font-size: 38px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 22px;
+      line-height: 1.28;
+    }
+
+    p,
+    li {
+      font-size: 19px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      font-size: 24px;
+      line-height: 1.5;
+      color: #3c4856;
+    }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 48px;
+      align-items: center;
+      height: 100%;
+    }
+
+    .hero-mark {
+      height: 440px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(28,124,120,.10), rgba(37,99,169,.04)),
+        repeating-linear-gradient(0deg, rgba(21,32,43,.035), rgba(21,32,43,.035) 1px, transparent 1px, transparent 36px),
+        repeating-linear-gradient(90deg, rgba(21,32,43,.035), rgba(21,32,43,.035) 1px, transparent 1px, transparent 36px);
+      position: relative;
+      padding: 28px;
+      display: grid;
+      align-content: center;
+      gap: 18px;
+    }
+
+    .node {
+      border: 1px solid rgba(21, 32, 43, .12);
+      background: rgba(255,255,255,.86);
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .node span {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .footer {
+      position: absolute;
+      left: 64px;
+      right: 64px;
+      bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #7c8794;
+      font-size: 14px;
+    }
+
+    .progress {
+      height: 4px;
+      width: 220px;
+      background: #e5eaf0;
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--teal);
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .card {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 20px;
+      min-height: 138px;
+    }
+
+    .card.compact {
+      min-height: auto;
+      padding: 16px 18px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+    }
+
+    .card p,
+    .card li {
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 3px 10px;
+      border: 1px solid currentColor;
+      color: var(--teal);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .accent-teal { color: var(--teal); }
+    .accent-blue { color: var(--blue); }
+    .accent-red { color: var(--red); }
+    .accent-amber { color: var(--amber); }
+    .accent-green { color: var(--green); }
+    .accent-violet { color: var(--violet); }
+
+    .soft-teal { background: var(--soft-teal); }
+    .soft-blue { background: var(--soft-blue); }
+    .soft-red { background: var(--soft-red); }
+    .soft-amber { background: var(--soft-amber); }
+    .soft-green { background: var(--soft-green); }
+    .soft-violet { background: var(--soft-violet); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .flow-item {
+      position: relative;
+      border: 1px solid var(--line);
+      padding: 16px;
+      min-height: 92px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+      background: #fff;
+    }
+
+    .flow-item::after {
+      content: "→";
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #98a3af;
+      font-weight: 800;
+      z-index: 2;
+    }
+
+    .flow-item:nth-child(4n)::after,
+    .flow-item:last-child::after {
+      display: none;
+    }
+
+    .flow-item strong {
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .flow-item span {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .metric {
+      border-left: 5px solid var(--teal);
+      padding: 14px 18px;
+      background: #fff;
+      border-top: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .metric b {
+      display: block;
+      font-size: 26px;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      line-height: 1.42;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef3f7;
+      color: #243241;
+      font-weight: 800;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #354252;
+      padding: 9px 12px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .controls {
+      position: fixed;
+      right: 24px;
+      bottom: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .controls button {
+      border: 1px solid rgba(21, 32, 43, .18);
+      background: #ffffff;
+      color: var(--ink);
+      min-width: 42px;
+      height: 38px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(21, 32, 43, .10);
+    }
+
+    .controls button:hover {
+      background: #eef4f7;
+    }
+
+    .slide-number {
+      font-weight: 700;
+      color: #5a6471;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .done { color: var(--green); background: var(--soft-green); }
+    .doing { color: var(--amber); background: var(--soft-amber); }
+    .todo { color: var(--muted); background: #f2f4f6; }
+
+    @media (max-width: 900px) {
+      body { overflow: auto; }
+      .deck {
+        display: block;
+        height: auto;
+        padding: 0;
+      }
+      .slide,
+      .slide.active {
+        display: flex;
+        width: 100%;
+        min-height: 100vh;
+        aspect-ratio: auto;
+        box-shadow: none;
+        border: 0;
+        padding: 36px 24px 72px;
+      }
+      .slide:not(.active) { display: none; }
+      .hero-layout,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .matrix,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+      .flow-item::after { display: none; }
+      h1 { font-size: 38px; }
+      h2 { font-size: 30px; }
+      .subtitle { font-size: 20px; }
+      .hero-mark { height: auto; }
+      .footer {
+        left: 24px;
+        right: 24px;
+        bottom: 20px;
+      }
+    }
+
+    @media print {
+      body { overflow: visible; background: #fff; }
+      .deck { display: block; height: auto; padding: 0; }
+      .slide,
+      .slide.active {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+        page-break-after: always;
+        box-shadow: none;
+        border: 0;
+      }
+      .controls { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-live="polite">
+    <section class="slide active">
+      <div class="hero-layout">
+        <div>
+          <div class="kicker">Product Blueprint V2.0</div>
+          <h1>AI 数据标采交付机器人</h1>
+          <p class="subtitle">面向数据采集、标注、清洗、质检返修、供应商协作与结算复盘的智能运营助手。</p>
+        </div>
+        <div class="hero-mark" aria-label="业务流程概览">
+          <div class="node">需求澄清 <span>模糊需求 → 标准文档</span></div>
+          <div class="node">平台操作 <span>上传 / 安全 / 任务</span></div>
+          <div class="node">供应商执行 <span>竞价 / 分配 / 进度</span></div>
+          <div class="node">质量闭环 <span>返修 / 验收 / 结算</span></div>
+        </div>
+      </div>
+      <footer class="footer"><span>AI Data Ops Copilot</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Positioning</div>
+        <h2>不是客服机器人，而是交付流程协同层</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card soft-teal">
+          <h3>对话入口</h3>
+          <p>理解客户、运营、供应商和质检在不同阶段的问题，把自然语言转成可执行动作。</p>
+        </div>
+        <div class="card soft-blue">
+          <h3>流程连接器</h3>
+          <p>连接飞书沟通、数据平台任务、供应商执行、质量返修和结算复核。</p>
+        </div>
+        <div class="card soft-amber">
+          <h3>知识沉淀层</h3>
+          <p>把运营经验、规则口径、FAQ、典型案例沉淀为可复用的数据交付能力。</p>
+        </div>
+      </div>
+      <div class="metric"><b>目标</b><span>把分散信息转化为可追踪、可复用、可审计的结构化交付流程。</span></div>
+      <footer class="footer"><span>产品定位</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Problems</div>
+        <h2>三类核心问题</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <span class="tag accent-teal">客户侧</span>
+          <ul>
+            <li>不知道需求文档怎么写。</li>
+            <li>不清楚上传、安全填报、样例提交流程。</li>
+            <li>想了解单价、效率、质量，但涉及权限。</li>
+            <li>项目进度反馈零散。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="tag accent-blue">运营侧</span>
+          <ul>
+            <li>需求在飞书产生，最终回平台建单。</li>
+            <li>质量、返修在飞书沟通，结算回平台闭环。</li>
+            <li>平台数据和沟通内容缺少统一知识层。</li>
+            <li>经验依赖个人。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="tag accent-red">管理侧</span>
+          <ul>
+            <li>延期风险难以及时发现。</li>
+            <li>供应商效率与质量表现分散。</li>
+            <li>返修、规则更新、结算争议难复盘。</li>
+            <li>成熟能力难产品化输出。</li>
+          </ul>
+        </div>
+      </div>
+      <footer class="footer"><span>核心问题</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Vision</div>
+        <h2>从人工转述到智能协同</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card soft-teal"><h3>客户</h3><p>从“说不清需求”变成“可执行需求文档”。</p></div>
+        <div class="card soft-blue"><h3>运营</h3><p>从“人工转述和催办”变成“智能协同和异常处理”。</p></div>
+        <div class="card soft-green"><h3>供应商</h3><p>从“模糊返修要求”变成“明确质量事件和规则依据”。</p></div>
+        <div class="card soft-amber"><h3>管理层</h3><p>从“事后汇总”变成“过程可见和风险预警”。</p></div>
+      </div>
+      <div class="metric"><b>长期目标</b><span>把内部运营经验转化为可复制的数据交付产品能力。</span></div>
+      <footer class="footer"><span>产品愿景</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Users</div>
+        <h2>目标用户与角色</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card compact"><h3>外部客户</h3><p>提需求、上传数据、填安全信息、确认方案、看进度、验收交付。</p></div>
+        <div class="card compact"><h3>内部运营</h3><p>需求评估、项目建单、工具配置、供应商选配、任务推进、结算复核。</p></div>
+        <div class="card compact"><h3>供应商</h3><p>执行采集、标注、清洗或质检任务，接收规则和返修反馈。</p></div>
+        <div class="card compact"><h3>质检负责人</h3><p>质量抽检、缺陷归因、规则更新、返修确认和质量复盘。</p></div>
+        <div class="card compact"><h3>管理层</h3><p>关注交付效率、供应商表现、质量风险和经营结果。</p></div>
+        <div class="card compact soft-violet"><h3>机器人价值</h3><p>同一业务链路，不同角色看到不同范围、不同粒度的答案。</p></div>
+      </div>
+      <footer class="footer"><span>角色视角</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Workflow</div>
+        <h2>全流程业务蓝图</h2>
+      </div>
+      <div class="flow">
+        <div class="flow-item soft-teal"><strong>模糊需求</strong><span>客户在飞书或平台提出初始想法</span></div>
+        <div class="flow-item"><strong>需求文档</strong><span>机器人澄清并生成结构化文档</span></div>
+        <div class="flow-item"><strong>平台提交</strong><span>上传数据、填写安全信息、提交样例</span></div>
+        <div class="flow-item soft-blue"><strong>运营配置</strong><span>评估需求、配置工具、拆分任务</span></div>
+        <div class="flow-item"><strong>供应商选配</strong><span>竞价、质量对比、产能确认</span></div>
+        <div class="flow-item"><strong>执行与进度</strong><span>平台记录批次状态与交付量</span></div>
+        <div class="flow-item soft-amber"><strong>质量沟通</strong><span>飞书沟通返修、异常和细节问题</span></div>
+        <div class="flow-item"><strong>事件沉淀</strong><span>机器人关联规则、质量事件和案例</span></div>
+        <div class="flow-item"><strong>返修闭环</strong><span>供应商返修，平台更新状态</span></div>
+        <div class="flow-item"><strong>客户验收</strong><span>确认交付结果</span></div>
+        <div class="flow-item"><strong>结算复核</strong><span>检查交付量、返修、质量扣减</span></div>
+        <div class="flow-item soft-green"><strong>复盘沉淀</strong><span>规则更新、供应商表现、案例库</span></div>
+      </div>
+      <footer class="footer"><span>端到端流程</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Capabilities</div>
+        <h2>核心能力模块</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card compact"><h3>1. 需求顾问</h3><p>口语需求 → 标准需求文档，追问缺失字段。</p></div>
+        <div class="card compact"><h3>2. 平台操作向导</h3><p>引导上传、安全填报、任务提交、验收结算。</p></div>
+        <div class="card compact"><h3>3. 方案与规则助手</h3><p>生成规则草案、质量检查点和验收口径。</p></div>
+        <div class="card compact"><h3>4. 供应商选配</h3><p>基于质量、效率、产能和价格风险辅助决策。</p></div>
+        <div class="card compact"><h3>5. 项目进度助手</h3><p>查询项目阶段、批次状态、延期风险。</p></div>
+        <div class="card compact"><h3>6. 批次与效率查询</h3><p>预估效率、实际效率、逾期和人天投入。</p></div>
+        <div class="card compact"><h3>7. 质量协同监督</h3><p>质量事件、规则条款、返修说明和复盘建议。</p></div>
+        <div class="card compact"><h3>8. 结算复核</h3><p>交付量、返修关闭、质量扣罚、结算口径。</p></div>
+        <div class="card compact"><h3>9. FAQ 问答</h3><p>流程、操作、财务、规则、供应商高频问题。</p></div>
+      </div>
+      <footer class="footer"><span>能力地图</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">MVP Validation</div>
+        <h2>已实现的 MVP 能力</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card soft-teal">
+          <h3>需求结构化</h3>
+          <ul>
+            <li>从口语描述提取需求类型、数据模态、场景、数据量。</li>
+            <li>主动追问需求方、验收标准、优先级。</li>
+            <li>信息齐全后生成结构化需求文档。</li>
+          </ul>
+        </div>
+        <div class="card soft-blue">
+          <h3>规则与规范问答</h3>
+          <ul>
+            <li>按关键词匹配规则表。</li>
+            <li>输出规则名称、版本、适用场景和质量度量。</li>
+            <li>支持规则版本化管理。</li>
+          </ul>
+        </div>
+        <div class="card soft-green">
+          <h3>项目与批次查询</h3>
+          <ul>
+            <li>列出进行中项目。</li>
+            <li>根据需求ID关联项目状态。</li>
+            <li>按团队/供应商查看任务和效率。</li>
+          </ul>
+        </div>
+        <div class="card soft-amber">
+          <h3>质量事件分析</h3>
+          <ul>
+            <li>按项目、规则、事件类型、严重级别筛选。</li>
+            <li>列出 P0/P1 事件和处理状态。</li>
+            <li>严格基于表中数据回答。</li>
+          </ul>
+        </div>
+      </div>
+      <footer class="footer"><span>Dify 实测能力</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Data Model</div>
+        <h2>数据对象设计</h2>
+      </div>
+      <div class="grid-4">
+        <div class="card compact"><h3>需求表</h3><p>REQ、需求类型、模态、验收标准、优先级、状态、负责人。</p></div>
+        <div class="card compact"><h3>项目表</h3><p>PRJ、关联需求、阶段、供应商、工具、质量、验收、结算。</p></div>
+        <div class="card compact"><h3>规则表</h3><p>RULE、版本、规则类型、适用模态、质量度量、启停状态。</p></div>
+        <div class="card compact"><h3>任务批次表</h3><p>BATCH、任务类型、分配团队、数据量、效率、状态、风险。</p></div>
+        <div class="card compact"><h3>质量事件表</h3><p>QINC、批次、规则、缺陷对象、坐标、影响量、处理动作。</p></div>
+        <div class="card compact"><h3>供应商表</h3><p>能力标签、支持模态、可用产能、历史质量、效率区间。</p></div>
+        <div class="card compact"><h3>返修/结算表</h3><p>返修原因、复检结果、结算数据量、扣减项、结算状态。</p></div>
+        <div class="card compact"><h3>FAQ/案例/关联表</h3><p>高频问答、典型案例、多实体关系，支持知识复用。</p></div>
+      </div>
+      <footer class="footer"><span>核心数据表</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Quality & Efficiency</div>
+        <h2>效率字段与精准缺陷定位</h2>
+      </div>
+      <div class="matrix">
+        <div class="card">
+          <h3>任务批次效率</h3>
+          <ul>
+            <li>预估生产效率 + 实际生产效率 + 效率单位。</li>
+            <li>支持张/人天、小时/人天、帧/人天。</li>
+            <li>自动计算效率偏差率、总人天投入、是否逾期。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>质量事件定位</h3>
+          <ul>
+            <li>2D框：<code>(x1;y1;x2;y2)</code></li>
+            <li>3D框：<code>(cx;cy;cz;dx;dy;dz;yaw)</code></li>
+            <li>语音片段：<code>(start_ms;end_ms)</code></li>
+            <li>缺失类：<code>缺失(说明)</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="pill-row">
+        <span class="pill">漏标</span><span class="pill">错标</span><span class="pill">属性错误</span><span class="pill">采集不合格</span><span class="pill">一致性问题</span><span class="pill">客户投诉</span>
+      </div>
+      <footer class="footer"><span>批次与质量设计</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Security</div>
+        <h2>权限与数据安全</h2>
+      </div>
+      <div class="grid-2">
+        <div>
+          <h3>内容分级</h3>
+          <table>
+            <tr><th>等级</th><th>内容</th></tr>
+            <tr><td>L0 公共</td><td>FAQ、通用规则、平台操作说明</td></tr>
+            <tr><td>L1 内部通用</td><td>运营 SOP、工具配置说明、质检方法</td></tr>
+            <tr><td>L2 项目受限</td><td>需求、项目、任务批次、质量事件</td></tr>
+            <tr><td>L3 敏感受限</td><td>客户名称、供应商报价、绩效、结算明细</td></tr>
+            <tr><td>L4 禁止进入 AI</td><td>原始数据、未脱敏样本、个人信息、密钥</td></tr>
+          </table>
+        </div>
+        <div>
+          <h3>执行原则</h3>
+          <div class="grid-1">
+            <div class="card compact soft-teal"><p>知识库按子团队拆分，Agent 实例隔离部署。</p></div>
+            <div class="card compact soft-blue"><p>系统提示词注入权限边界声明。</p></div>
+            <div class="card compact soft-amber"><p>敏感数据不进入公共知识库。</p></div>
+            <div class="card compact soft-green"><p>对外演示和作品集使用虚拟数据。</p></div>
+          </div>
+        </div>
+      </div>
+      <footer class="footer"><span>权限模型</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Access Matrix</div>
+        <h2>角色权限矩阵</h2>
+      </div>
+      <table>
+        <tr><th>角色</th><th>可查看</th><th>不可查看</th></tr>
+        <tr><td>外部客户</td><td>自己组织的需求、项目、L0 规则</td><td>其他客户、供应商报价、内部 SOP</td></tr>
+        <tr><td>内部运营</td><td>负责或协作的项目全链路数据</td><td>非负责项目的敏感受限数据</td></tr>
+        <tr><td>供应商</td><td>分配给自己的批次、规则、质检反馈</td><td>其他供应商、竞价、成本</td></tr>
+        <tr><td>质检负责人</td><td>授权项目的质量事件、规则、返修</td><td>非授权项目质量数据</td></tr>
+        <tr><td>管理层</td><td>汇总数据和授权明细</td><td>非必要敏感受限明细</td></tr>
+      </table>
+      <div class="metric"><b>关键原则</b><span>机器人不能拿全量数据后自行判断是否能说，应只接收已经按权限过滤后的结果。</span></div>
+      <footer class="footer"><span>访问边界</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Intent Routing</div>
+        <h2>机器人意图路由</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>需识别的用户意图</h3>
+          <div class="pill-row">
+            <span class="pill">新需求结构化</span><span class="pill">平台操作</span><span class="pill">项目进度</span><span class="pill">供应商选配</span><span class="pill">竞价对比</span><span class="pill">规则问答</span><span class="pill">质量事件</span><span class="pill">返修说明</span><span class="pill">效率查询</span><span class="pill">结算复核</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>推荐路由</h3>
+          <ul>
+            <li>需求类 → 需求表 + FAQ表 + 平台操作事项表。</li>
+            <li>项目进度类 → 项目表 + 任务批次表。</li>
+            <li>供应商选择类 → 供应商表 + 竞价记录表 + 项目表。</li>
+            <li>质量返修类 → 质量事件表 + 规则表 + 返修记录表。</li>
+            <li>结算复核类 → 结算记录表 + 返修记录表 + 质量事件表。</li>
+          </ul>
+        </div>
+      </div>
+      <footer class="footer"><span>路由策略</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Product Forms</div>
+        <h2>三种产品形态</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card soft-teal">
+          <h3>内部运营版</h3>
+          <p>飞书聊天 + 数据平台 + 飞书多维表格，优先服务需求澄清、平台操作、质量返修、进度摘要、结算检查。</p>
+        </div>
+        <div class="card soft-blue">
+          <h3>脱敏作品集版</h3>
+          <p>AI Data Ops Copilot。使用虚拟行业、项目、供应商和模拟数据，展示产品蓝图、数据模型、权限模型和对话样例。</p>
+        </div>
+        <div class="card soft-green">
+          <h3>对外商业化版</h3>
+          <p>面向数据标注服务商、采集服务商、AI 数据平台和大模型数据团队，支持 SaaS、私有化、按项目量或坐席计费。</p>
+        </div>
+      </div>
+      <footer class="footer"><span>产品化路径</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Progress</div>
+        <h2>MVP 版本规划与当前进度</h2>
+      </div>
+      <table>
+        <tr><th>表名</th><th>状态</th><th>说明</th></tr>
+        <tr><td>需求表</td><td><span class="status done">已建</span></td><td>脱敏版，含 5 条虚构数据</td></tr>
+        <tr><td>项目表</td><td><span class="status done">已建</span></td><td>与需求表关联</td></tr>
+        <tr><td>规则表</td><td><span class="status done">已建</span></td><td>含版本管理</td></tr>
+        <tr><td>质量事件表</td><td><span class="status done">已建</span></td><td>含坐标定位</td></tr>
+        <tr><td>任务批次表</td><td><span class="status done">已建</span></td><td>含效率字段</td></tr>
+        <tr><td>FAQ表</td><td><span class="status doing">进行中</span></td><td>已提炼 12 条，待建表</td></tr>
+        <tr><td>供应商 / 操作事项 / 返修 / 结算 / 竞价 / 案例</td><td><span class="status todo">待建</span></td><td>进入下一阶段的数据底座</td></tr>
+      </table>
+      <div class="metric"><b>当前进度：60%</b><span>已实现需求结构化、项目进度、规则问答、质量分析、任务批次与效率查询。</span></div>
+      <footer class="footer"><span>MVP 进度</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Metrics</div>
+        <h2>核心指标</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h3>运营效率</h3><p>需求文档整理耗时、需求一次性完整率、平台操作咨询量、重复解释次数、项目状态汇总耗时。</p></div>
+        <div class="card"><h3>项目交付</h3><p>需求到立项转化时长、立项到开工时长、批次准时完成率、返修关闭时长、验收通过率、结算周期。</p></div>
+        <div class="card"><h3>质量表现</h3><p>质量事件数量、返修次数、缺陷类型分布、规则命中率、同类问题复发次数、供应商质量等级变化。</p></div>
+        <div class="card"><h3>机器人效果</h3><p>意图识别准确率、需求字段抽取完整率、用户满意度、人工改写率、权限拦截准确率、幻觉率。</p></div>
+      </div>
+      <footer class="footer"><span>度量体系</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Risks</div>
+        <h2>风险与应对</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card soft-red"><h3>数据泄露风险</h3><p>由平台或飞书控制权限，敏感数据不进公共知识库，对外演示使用虚拟数据。</p></div>
+        <div class="card soft-amber"><h3>AI 编造风险</h3><p>所有数字和状态必须来自表记录，无匹配使用标准空结果话术，查询问题优先结构化数据。</p></div>
+        <div class="card soft-blue"><h3>流程落地风险</h3><p>每个输出绑定下一步动作，运营确认后写入正式系统，分阶段从半自动过渡到自动化。</p></div>
+        <div class="card soft-green"><h3>产品泛化风险</h3><p>抽象为需求、项目、批次、质量、返修、结算等通用对象，对外版支持字段、流程、权限可配置。</p></div>
+      </div>
+      <footer class="footer"><span>风险控制</span><span class="slide-number"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">One-Liner</div>
+        <h2>一句话产品介绍</h2>
+      </div>
+      <div class="card soft-teal" style="padding: 36px;">
+        <p class="subtitle">AI 数据标采交付机器人是一套面向数据采集与标注服务的智能运营助手，帮助客户把模糊需求转化为可执行项目，帮助运营连接平台操作、供应商协作、质量返修和结算复盘，并通过权限隔离和流程沉淀实现可复制的数据交付能力。</p>
+      </div>
+      <div class="grid-3">
+        <div class="metric"><b>需求自动澄清</b><span>模糊需求到标准文档</span></div>
+        <div class="metric"><b>交付闭环协同</b><span>平台、飞书、供应商、质量与结算</span></div>
+        <div class="metric"><b>可产品化输出</b><span>内部版、作品集版、商业化版</span></div>
+      </div>
+      <footer class="footer"><span>结尾</span><span class="slide-number"></span></footer>
+    </section>
+  </main>
+
+  <div class="controls" aria-label="幻灯片控制">
+    <button type="button" id="prev" aria-label="上一页">‹</button>
+    <button type="button" id="next" aria-label="下一页">›</button>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const numbers = Array.from(document.querySelectorAll(".slide-number"));
+    const progressBars = [];
+    let index = 0;
+
+    slides.forEach((slide) => {
+      const progress = document.createElement("div");
+      progress.className = "progress";
+      const bar = document.createElement("span");
+      progress.appendChild(bar);
+      progressBars.push(bar);
+      const footer = slide.querySelector(".footer");
+      if (footer) footer.insertBefore(progress, footer.lastElementChild);
+    });
+
+    function show(nextIndex) {
+      index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle("active", slideIndex === index);
+      });
+      const text = `${String(index + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+      numbers.forEach((number) => { number.textContent = text; });
+      const percent = ((index + 1) / slides.length) * 100;
+      progressBars.forEach((bar) => { bar.style.width = `${percent}%`; });
+    }
+
+    document.getElementById("prev").addEventListener("click", () => show(index - 1));
+    document.getElementById("next").addEventListener("click", () => show(index + 1));
+    window.addEventListener("keydown", (event) => {
+      if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+        event.preventDefault();
+        show(index + 1);
+      }
+      if (["ArrowLeft", "PageUp"].includes(event.key)) {
+        event.preventDefault();
+        show(index - 1);
+      }
+      if (event.key === "Home") show(0);
+      if (event.key === "End") show(slides.length - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>

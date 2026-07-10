@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>数据交付 Agent 对 Bee 平台的价值</title>
+  <style>
+    :root {
+      --bg: #f6f7f8;
+      --paper: #ffffff;
+      --ink: #171717;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --black: #111111;
+      --blue: #4f63f6;
+      --green: #147d52;
+      --amber: #9a6200;
+      --red: #b42318;
+      --soft-blue: #eef2ff;
+      --soft-green: #edf7f1;
+      --soft-amber: #fff7e6;
+      --soft-red: #fff1f0;
+      --shadow: 0 24px 64px rgba(0, 0, 0, .12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, "Microsoft YaHei", "PingFang SC", Arial, sans-serif; }
+    body { overflow: hidden; }
+
+    .deck {
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
+
+    .slide {
+      display: none;
+      width: min(1280px, calc(100vw - 56px));
+      aspect-ratio: 16 / 9;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      padding: 58px 66px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      height: 6px;
+      background: var(--black);
+    }
+
+    .kicker {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 56px; line-height: 1.08; letter-spacing: 0; max-width: 980px; }
+    h2 { font-size: 40px; line-height: 1.16; letter-spacing: 0; }
+    h3 { font-size: 22px; line-height: 1.28; }
+    p, li { font-size: 20px; line-height: 1.52; color: var(--muted); }
+
+    .subtitle {
+      max-width: 900px;
+      font-size: 24px;
+      color: #3f4650;
+      line-height: 1.5;
+    }
+
+    .hero {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr .86fr;
+      gap: 44px;
+      align-items: center;
+    }
+
+    .hero-card {
+      border: 1px solid var(--line);
+      background: #fafafa;
+      padding: 26px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .node {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .node span {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .grid-2, .grid-3 {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+    .card {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 22px;
+      min-height: 170px;
+    }
+
+    .card h3 { margin-bottom: 12px; }
+    .card p, .card li { font-size: 17px; line-height: 1.48; }
+
+    .soft-blue { background: var(--soft-blue); }
+    .soft-green { background: var(--soft-green); }
+    .soft-amber { background: var(--soft-amber); }
+    .soft-red { background: var(--soft-red); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .flow-item {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 18px;
+      min-height: 112px;
+      position: relative;
+    }
+
+    .flow-item::after {
+      content: "→";
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-weight: 900;
+    }
+
+    .flow-item:nth-child(4n)::after,
+    .flow-item:last-child::after { display: none; }
+    .flow-item strong { display: block; font-size: 18px; margin-bottom: 8px; }
+    .flow-item span { color: var(--muted); font-size: 14px; line-height: 1.4; }
+
+    .metric {
+      border-left: 5px solid #111;
+      border-top: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 16px 18px;
+      background: #fff;
+    }
+
+    .metric b {
+      display: block;
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .footer {
+      position: absolute;
+      left: 66px;
+      right: 66px;
+      bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #8a8f98;
+      font-size: 14px;
+    }
+
+    .progress {
+      width: 220px;
+      height: 4px;
+      background: #e7e7e7;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: #111;
+    }
+
+    .controls {
+      position: fixed;
+      right: 24px;
+      bottom: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .controls button {
+      width: 42px;
+      height: 38px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(0,0,0,.08);
+    }
+
+    @media (max-width: 900px) {
+      body { overflow: auto; }
+      .deck { display: block; height: auto; padding: 0; }
+      .slide, .slide.active { display: flex; width: 100%; min-height: 100vh; aspect-ratio: auto; box-shadow: none; border: 0; padding: 36px 24px 76px; }
+      .slide:not(.active) { display: none; }
+      .hero, .grid-2, .grid-3, .flow { grid-template-columns: 1fr; }
+      .flow-item::after { display: none; }
+      h1 { font-size: 38px; }
+      h2 { font-size: 30px; }
+      .subtitle { font-size: 20px; }
+      .footer { left: 24px; right: 24px; bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide active">
+      <div class="hero">
+        <div>
+          <div class="kicker">Value Logic</div>
+          <h1>从标采平台引流，到模型数据闭环</h1>
+          <p class="subtitle">数据交付 Agent 的第一层价值是降低 Bee 这类标采平台的使用门槛，长期价值是成为模型迭代的数据生产入口。</p>
+        </div>
+        <div class="hero-card">
+          <div class="node">客户需求 <span>说不清、不会写</span></div>
+          <div class="node">Agent 澄清 <span>文档、规则、任务草稿</span></div>
+          <div class="node">Bee 承接 <span>上传、标注、质检、交付</span></div>
+          <div class="node">模型迭代 <span>失败样本、补采补标、回流训练</span></div>
+        </div>
+      </div>
+      <footer class="footer"><span>AI Data Ops Agent</span><span class="num"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Core Answer</div>
+        <h2>它不只是给 Bee 引流</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card soft-blue">
+          <h3>短期：平台转化入口</h3>
+          <p>Agent 帮客户把模糊需求变成任务草稿，引导上传数据、填写安全信息、提交规则文档，最终把需求导向 Bee 平台生产。</p>
+        </div>
+        <div class="card soft-green">
+          <h3>长期：数据生产闭环</h3>
+          <p>Agent 连接模型问题、数据需求、标采任务、质量验收和数据回流，让 Bee 从工具平台升级为模型迭代的数据生产入口。</p>
+        </div>
+      </div>
+      <div class="metric"><b>定位升级</b><span>从“标采平台任务助手”升级为“面向 AI 模型迭代的数据生产 Agent”。</span></div>
+      <footer class="footer"><span>价值判断</span><span class="num"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Funnel</div>
+        <h2>给 Bee 的直接价值</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <h3>降低使用门槛</h3>
+          <p>客户不懂标注、不懂平台、不懂规则，也可以被 Agent 带着完成需求、上传、建任务。</p>
+        </div>
+        <div class="card">
+          <h3>提升需求转化率</h3>
+          <p>原本停在飞书沟通里的需求，可以被整理成任务草稿，推进到 Bee 平台。</p>
+        </div>
+        <div class="card">
+          <h3>减少运营重复沟通</h3>
+          <p>FAQ、规则解释、任务创建说明、返修话术由 Agent 先处理。</p>
+        </div>
+        <div class="card">
+          <h3>提升数据沉淀质量</h3>
+          <p>需求、规则、供应商反馈、质量事件被结构化，后续可复用。</p>
+        </div>
+        <div class="card">
+          <h3>增强平台粘性</h3>
+          <p>客户不是一次性下单，而是在 Agent 协助下持续跟踪项目和质量。</p>
+        </div>
+        <div class="card">
+          <h3>从工具到交付平台</h3>
+          <p>Bee 不只是发任务做标注，而是覆盖需求、规则、供应商、质量、结算。</p>
+        </div>
+      </div>
+      <footer class="footer"><span>Bee 平台价值</span><span class="num"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Workflow</div>
+        <h2>前期闭环：从需求到 Bee 任务</h2>
+      </div>
+      <div class="flow">
+        <div class="flow-item"><strong>客户不知道怎么提</strong><span>只描述目标、模型、数据想法</span></div>
+        <div class="flow-item"><strong>Agent 澄清需求</strong><span>模态、数据量、规则、验收标准</span></div>
+        <div class="flow-item"><strong>生成任务草稿</strong><span>任务名称、步骤、规则摘要、预算提醒</span></div>
+        <div class="flow-item"><strong>进入 Bee</strong><span>上传数据、填安全信息、创建任务</span></div>
+        <div class="flow-item"><strong>供应商执行</strong><span>试标、竞价、分配、进度跟踪</span></div>
+        <div class="flow-item"><strong>质量返修</strong><span>缺陷定位、规则依据、返修说明</span></div>
+        <div class="flow-item"><strong>验收交付</strong><span>交付量、质量状态、客户确认</span></div>
+        <div class="flow-item"><strong>结算复盘</strong><span>返修关闭、扣减项、供应商表现</span></div>
+      </div>
+      <footer class="footer"><span>需求转化链路</span><span class="num"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Model Loop</div>
+        <h2>后期闭环：从模型问题到数据回流</h2>
+      </div>
+      <div class="flow">
+        <div class="flow-item soft-red"><strong>模型效果不好</strong><span>识别失败、泛化差、误检漏检</span></div>
+        <div class="flow-item"><strong>Agent 分析失败样本</strong><span>归因到场景、类别、质量问题</span></div>
+        <div class="flow-item"><strong>生成补采/补标需求</strong><span>数据模态、规模、规则、验收标准</span></div>
+        <div class="flow-item soft-blue"><strong>创建 Bee 任务</strong><span>采集、标注、质检、交付</span></div>
+        <div class="flow-item"><strong>质量验收</strong><span>规则命中、缺陷闭环、返修关闭</span></div>
+        <div class="flow-item"><strong>数据回流训练集</strong><span>版本、样本、标签、质量记录</span></div>
+        <div class="flow-item"><strong>模型重训/评估</strong><span>对比指标和失败样本改善</span></div>
+        <div class="flow-item soft-green"><strong>形成数据飞轮</strong><span>模型问题持续驱动数据生产</span></div>
+      </div>
+      <footer class="footer"><span>模型数据闭环</span><span class="num"></span></footer>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Positioning</div>
+        <h2>一句话定位</h2>
+      </div>
+      <div class="card soft-green" style="padding: 38px;">
+        <p class="subtitle">前期，它给 Bee 引流和提效；后期，它把 Bee 变成模型迭代的数据生产入口。</p>
+      </div>
+      <div class="grid-3">
+        <div class="metric"><b>需求入口</b><span>从模糊需求到任务草稿</span></div>
+        <div class="metric"><b>生产入口</b><span>从任务草稿到 Bee 标采生产</span></div>
+        <div class="metric"><b>模型入口</b><span>从模型问题到数据回流</span></div>
+      </div>
+      <footer class="footer"><span>产品定位</span><span class="num"></span></footer>
+    </section>
+  </main>
+
+  <div class="controls">
+    <button id="prev" aria-label="上一页">‹</button>
+    <button id="next" aria-label="下一页">›</button>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const nums = Array.from(document.querySelectorAll(".num"));
+    const bars = [];
+    let index = 0;
+
+    slides.forEach((slide) => {
+      const progress = document.createElement("div");
+      progress.className = "progress";
+      const bar = document.createElement("span");
+      progress.appendChild(bar);
+      bars.push(bar);
+      const footer = slide.querySelector(".footer");
+      footer.insertBefore(progress, footer.lastElementChild);
+    });
+
+    function show(next) {
+      index = Math.max(0, Math.min(slides.length - 1, next));
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+      nums.forEach((num) => { num.textContent = `${String(index + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`; });
+      bars.forEach((bar) => { bar.style.width = `${((index + 1) / slides.length) * 100}%`; });
+    }
+
+    document.getElementById("prev").addEventListener("click", () => show(index - 1));
+    document.getElementById("next").addEventListener("click", () => show(index + 1));
+    window.addEventListener("keydown", (event) => {
+      if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+        event.preventDefault();
+        show(index + 1);
+      }
+      if (["ArrowLeft", "PageUp"].includes(event.key)) {
+        event.preventDefault();
+        show(index - 1);
+      }
+    });
+    show(0);
+  </script>
+</body>
+</html>

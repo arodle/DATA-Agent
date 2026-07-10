@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI-AGENT 标采控制台</title>
+  <style>
+    :root {
+      --nav: #0d2137;
+      --nav-2: #132d48;
+      --bg: #eef2f5;
+      --panel: #ffffff;
+      --line: #d8dee6;
+      --line-soft: #edf1f5;
+      --text: #142033;
+      --muted: #697889;
+      --green: #18c57a;
+      --green-dark: #0aa866;
+      --blue: #3478f6;
+      --orange: #ff9a32;
+      --red: #e25050;
+      --terminal: #1f2221;
+      --terminal-text: #1ee68b;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      font-size: 12px;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 132px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: var(--nav);
+      color: #d8e6f5;
+      min-height: 100vh;
+      border-right: 1px solid #07182b;
+    }
+
+    .brand {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      color: #fff;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: #0a1b2e;
+    }
+
+    .navItem {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      color: #d6e2ef;
+      border-left: 3px solid transparent;
+    }
+
+    .navItem.active {
+      background: var(--nav-2);
+      color: #fff;
+      border-left-color: var(--green);
+      font-weight: 700;
+    }
+
+    .navBadge {
+      margin-left: auto;
+      min-width: 18px;
+      height: 16px;
+      border-radius: 9px;
+      background: #e94242;
+      color: #fff;
+      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .main {
+      min-width: 1220px;
+    }
+
+    .topbar {
+      height: 38px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+    }
+
+    .topbar strong { color: var(--nav); }
+    .topRight { display: flex; align-items: center; gap: 14px; }
+    .statusOnline { color: var(--green-dark); font-weight: 700; }
+
+    .primaryBtn {
+      border: 1px solid var(--green);
+      background: var(--green);
+      color: #fff;
+      height: 26px;
+      padding: 0 14px;
+      font-weight: 700;
+    }
+
+    .workspace {
+      padding: 14px;
+    }
+
+    .filters {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .filters label { color: var(--muted); }
+    .filters input, .filters select {
+      height: 26px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 0 8px;
+      color: var(--text);
+    }
+
+    .projectHeader {
+      display: grid;
+      grid-template-columns: 1fr 92px 92px 92px 92px;
+      gap: 16px;
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 14px 18px;
+      margin-bottom: 14px;
+    }
+
+    .projectTitle p { color: var(--muted); margin: 0 0 6px; }
+    .projectTitle h1 { margin: 0; font-size: 18px; }
+    .projectTitle span {
+      display: inline-flex;
+      margin-top: 8px;
+      color: var(--green-dark);
+      background: #e9fbf3;
+      padding: 3px 8px;
+      font-weight: 700;
+    }
+
+    .metric { text-align: center; }
+    .metric span { display: block; color: var(--muted); margin-bottom: 5px; }
+    .metric strong { font-size: 20px; color: var(--green-dark); }
+    .metric.dark strong { color: var(--nav); }
+
+    .stageLine {
+      height: 52px;
+      background: #fff;
+      border: 1px solid var(--line);
+      margin-bottom: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      align-items: center;
+      padding: 0 90px;
+      gap: 16px;
+    }
+
+    .stage {
+      position: relative;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .stage::before {
+      content: attr(data-step);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #f2f4f7;
+      border: 1px solid var(--line);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .stage.done::before, .stage.current::before {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    .stage.current { color: var(--nav); font-weight: 700; }
+
+    .board {
+      display: grid;
+      grid-template-columns: 280px 1fr 280px 280px 280px;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      min-height: 120px;
+    }
+
+    .panelHead {
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .panelHead small {
+      color: var(--green-dark);
+      background: #e9fbf3;
+      padding: 2px 6px;
+      font-weight: 700;
+    }
+
+    .panelBody { padding: 12px; }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .tab {
+      height: 24px;
+      border: 1px solid var(--line-soft);
+      background: #f5f7f9;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tab.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+    .infoGrid { display: grid; gap: 9px; }
+    .infoRow { display: grid; grid-template-columns: 82px 1fr; gap: 8px; }
+    .infoRow span { color: var(--muted); }
+    .infoRow strong { font-weight: 600; color: var(--nav); }
+    .linkText { color: var(--blue); }
+    .dangerText { color: var(--red); }
+
+    .health {
+      margin-top: 12px;
+      height: 220px;
+    }
+
+    .healthStats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .healthStats strong { display: block; font-size: 16px; }
+    .bars {
+      height: 58px;
+      display: flex;
+      gap: 4px;
+      align-items: end;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .bars i {
+      width: 4px;
+      background: #dce4ec;
+      display: block;
+    }
+
+    .console {
+      min-height: 418px;
+    }
+
+    .terminal {
+      height: 280px;
+      background: var(--terminal);
+      color: var(--terminal-text);
+      padding: 16px;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.8;
+      overflow: hidden;
+    }
+
+    .terminal p { margin: 0; }
+    .terminal .system { color: #e8f1ff; }
+    .terminal .muted { color: #8ea0b2; }
+
+    .commandLine {
+      display: grid;
+      grid-template-columns: 1fr 64px;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .commandLine input {
+      height: 28px;
+      border: 1px solid var(--line);
+      padding: 0 8px;
+    }
+
+    .commandLine button {
+      border: 1px solid var(--green);
+      background: var(--green);
+      color: #fff;
+    }
+
+    .agentResult {
+      border-top: 1px solid var(--line);
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      min-height: 128px;
+    }
+
+    .score strong { display: block; font-size: 20px; color: var(--green-dark); margin-top: 4px; }
+    .sampleBoxes { display: flex; gap: 8px; margin-top: 10px; }
+    .sampleBoxes div { width: 60px; height: 32px; background: #e8e8e8; border: 1px solid #d5d5d5; }
+
+    .queueItem {
+      border-bottom: 1px solid var(--line-soft);
+      padding: 10px 0;
+      display: grid;
+      gap: 5px;
+    }
+
+    .queueItem:first-child { padding-top: 0; }
+    .queueItem strong { color: var(--nav); }
+    .queueMeta { display: flex; justify-content: space-between; color: var(--muted); }
+    .tag {
+      width: fit-content;
+      padding: 2px 6px;
+      color: var(--green-dark);
+      background: #e9fbf3;
+      font-weight: 700;
+    }
+    .tag.pending { color: #9b6400; background: #fff4dc; }
+    .tag.blue { color: #2d65c7; background: #edf4ff; }
+
+    .authorize {
+      height: 26px;
+      border: 1px solid var(--green);
+      background: var(--green);
+      color: #fff;
+      margin-top: 4px;
+    }
+
+    .auditScores {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .auditScores strong { display: block; color: var(--green-dark); font-size: 18px; }
+    .previewStrip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0; }
+    .previewStrip div { height: 28px; background: #e8e8e8; border: 1px solid #d6d6d6; }
+
+    .decision { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .decision button { height: 30px; border: 1px solid var(--line); background: #fff; }
+    .decision .approve { background: var(--green); border-color: var(--green); color: #fff; }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timelineItem {
+      display: grid;
+      grid-template-columns: 12px 1fr;
+      gap: 8px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #c5ced8;
+      margin-top: 4px;
+    }
+
+    .timelineItem strong { display: block; color: var(--nav); margin-top: 3px; }
+
+    .wideRow {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .logLine {
+      border-left: 2px solid var(--line);
+      padding-left: 10px;
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+    .logLine strong { display: block; color: var(--nav); }
+  
+.identitySwitch {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: grid;
+  gap: 7px;
+  background: #091a2c;
+}
+
+.identitySwitch span {
+  color: #8ea6bd;
+  font-size: 11px;
+}
+
+.identitySwitch strong {
+  color: #fff;
+  font-size: 13px;
+}
+
+.identitySwitch select {
+  height: 26px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: #102942;
+  color: #eaf4ff;
+  padding: 0 6px;
+}
+  </style>
+</head>
+<body>
+  <div class="app">
+        <aside class="sidebar">
+      <div class="brand">AI-AGENT / 标采</div>
+      <div class="navItem active">项目总览</div>
+      <div class="navItem">项目列表</div>
+      <div class="navItem">数据资产 <span class="navBadge">23</span></div>
+      <div class="navItem">代理助手</div>
+      <div class="navItem">需求文档</div>
+      <div class="navItem">工具配置</div>
+      <div class="navItem">质量事件 <span class="navBadge">47</span></div>
+      <div class="navItem">模型训练</div>
+      <div class="navItem">供应商/质检</div>
+      <div class="navItem">权限管理</div>
+      <div class="navItem">操作日志</div>
+      <div class="identitySwitch">
+        <span>当前身份</span>
+        <strong>运营管理端</strong>
+        <select>
+          <option>运营管理端</option>
+          <option>用户端</option>
+          <option>供应商/质检端</option>
+          <option>管理员</option>
+        </select>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>进行中的项目：<strong>#9901 通用大语言模型测试</strong></div>
+        <div class="topRight">
+          <span class="statusOnline">运行中</span>
+          <span>身份：运营主管</span>
+          <span>权限：负责项目 + 授权明细</span>
+          <button class="primaryBtn">新建任务</button>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <div class="filters">
+          <label>任务</label><input placeholder="搜索 ID..." />
+          <label>状态</label><select><option>全部进行中</option></select>
+          <label>模型</label><select><option>Deepseek-V2</option></select>
+          <label>操作员</label><select><option>W. Lei</option></select>
+          <button class="primaryBtn">刷新指标</button>
+        </div>
+
+        <section class="projectHeader">
+          <div class="projectTitle">
+            <p>项目编号 / ID #9901</p>
+            <h1>通用大语言模型测试</h1>
+            <span>正在运行 / Deepseek-V2-Base</span>
+          </div>
+          <div class="metric"><span>训练准确率</span><strong>94.2%</strong></div>
+          <div class="metric"><span>审计通过率</span><strong>99.1%</strong></div>
+          <div class="metric dark"><span>质检得分</span><strong>98.5%</strong></div>
+          <div class="metric"><span>待运营审核</span><strong>2</strong></div>
+        </section>
+
+        <section class="stageLine">
+          <div class="stage done" data-step="1">项目创建</div>
+          <div class="stage current" data-step="2">审计与配置</div>
+          <div class="stage" data-step="3">自动化执行</div>
+          <div class="stage" data-step="4">结果验收</div>
+        </section>
+
+        <section class="board">
+          <div>
+            <article class="panel">
+              <div class="panelHead">运营可见信息 <small>v2.1</small></div>
+              <div class="panelBody">
+                <div class="tabs"><div class="tab">准备</div><div class="tab active">审计</div><div class="tab">执行</div><div class="tab">完毕</div></div>
+                <div class="infoGrid">
+                  <div class="infoRow"><span>ID/名称</span><strong>#9901 通用大语言模型测试</strong></div>
+                  <div class="infoRow"><span>模型</span><strong>Deepseek-V2-Base</strong></div>
+                  <div class="infoRow"><span>需求文档</span><strong class="linkText">Spec_V2.1.pdf</strong></div>
+                  <div class="infoRow"><span>文档版本</span><strong>v1.2 最新版</strong></div>
+                  <div class="infoRow"><span>数据名称</span><strong>城市道路原始图像</strong></div>
+                  <div class="infoRow"><span>数据量</span><strong>142,000 帧</strong></div>
+                  <div class="infoRow"><span>存储路径</span><strong>/datasets/spec_v2/raw</strong></div>
+                  <div class="infoRow"><span>存储类型</span><strong>RAW / OSS</strong></div>
+                  <div class="infoRow"><span>权限范围</span><strong>负责项目全链路</strong></div>
+                  <div class="infoRow"><span>不可查看</span><strong class="dangerText">非负责项目敏感明细</strong></div>
+                  <div class="infoRow"><span>下一步建议</span><strong class="dangerText">增加夜间场景覆盖</strong></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel health">
+              <div class="panelHead">系统健康 <small>在线</small></div>
+              <div class="panelBody">
+                <div class="healthStats"><div>API 延迟<strong>24ms</strong></div><div>队列节点<strong>1240</strong></div></div>
+                <div class="bars">
+                  <i style="height:38%"></i><i style="height:55%"></i><i style="height:42%"></i><i style="height:70%"></i><i style="height:36%"></i><i style="height:62%"></i><i style="height:48%"></i><i style="height:72%"></i><i style="height:40%"></i><i style="height:58%"></i><i style="height:68%"></i><i style="height:45%"></i><i style="height:66%"></i><i style="height:52%"></i><i style="height:74%"></i><i style="height:50%"></i><i style="height:64%"></i><i style="height:41%"></i><i style="height:60%"></i><i style="height:46%"></i>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <article class="panel console">
+            <div class="panelHead">Agent 智能交互控制台 <small>自主</small></div>
+            <div class="terminal" id="terminal">
+              <p class="system">[系统] 正在校验 Spec_V2.1.pdf 中的验收口径...</p>
+              <p>[代理] 检测到 3 个字段存在执行风险，建议更新 schema。</p>
+              <p>[用户] 生成漏标质检脚本。</p>
+              <p>[代理] 已生成待授权动作：Generate_Quality_Check_Script</p>
+              <p class="muted">等待用户授权执行...</p>
+            </div>
+            <div class="commandLine">
+              <input id="cmd" placeholder="输入命令引导代理，例如：分析过去一小时的缺陷率波动原因..." />
+              <button id="send">发送</button>
+            </div>
+            <div class="agentResult">
+              <div class="score">质量得分<strong>98.5%</strong><div class="sampleBoxes"><div></div><div></div><div></div></div></div>
+              <div class="score">规则信心<strong>99.1%</strong><div class="sampleBoxes"><div></div><div></div><div></div></div></div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panelHead">执行队列 <small>2 待处理</small></div>
+            <div class="panelBody">
+              <div class="queueItem"><strong>Update_Schema_Config</strong><span class="tag">建议</span><div class="queueMeta"><span>目标：标注定义</span><span>14:20</span></div><button class="authorize">授权执行</button></div>
+              <div class="queueItem"><strong>Sync_Model_Weights</strong><span class="tag blue">已执行</span><div class="queueMeta"><span>Deepseek V2</span><span>14:20</span></div></div>
+              <div class="queueItem"><strong>Generate_QC_Script</strong><span class="tag pending">待授权</span><div class="queueMeta"><span>漏标检查</span><span>当前</span></div><button class="authorize">授权执行</button></div>
+              <div class="queueItem"><strong>Run_Prelabel</strong><span class="tag pending">等待</span><div class="queueMeta"><span>FRAME_400-800</span><span>-</span></div></div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panelHead">审计与质检 <small>99.1% 置信</small></div>
+            <div class="panelBody">
+              <div class="auditScores"><div>质量得分<strong>98.50%</strong></div><div>审计通过<strong>99.1%</strong></div></div>
+              <span>抽检样本预览</span>
+              <div class="previewStrip"><div></div><div></div><div></div><div></div></div>
+              <div class="decision"><button>拒绝</button><button class="approve">批准</button></div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panelHead">运营时间线 <small>历史</small></div>
+            <div class="panelBody timeline">
+              <div class="timelineItem"><i class="dot"></i><div>10月24日 16:45 · W. Lei<strong>更新质量抽检阈值至 98.5%</strong></div></div>
+              <div class="timelineItem"><i class="dot"></i><div>权限策略 · 系统<strong>运营仅可查看负责项目与授权明细</strong></div></div>
+              <div class="timelineItem"><i class="dot"></i><div>10月24日 14:20 · Agent<strong>已执行：Sync_Model_Weights</strong></div></div>
+              <div class="timelineItem"><i class="dot"></i><div>10月23日 10:00 · C. Jing<strong>创建项目 / 上传 Spec_V2.1.pdf</strong></div></div>
+              <div class="timelineItem"><i class="dot"></i><div>10月23日 09:32 · System<strong>生成 AC-001 至 AC-004 验收口径</strong></div></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="wideRow">
+                    <article class="panel">
+            <div class="panelHead">权限管理</div>
+            <div class="panelBody">
+              <div class="queueItem"><strong>角色：运营管理端</strong><span class="tag">可审核</span><div class="queueMeta"><span>可见：负责项目全链路、授权明细、质量事件、结算复核</span></div></div>
+              <div class="queueItem"><strong>角色：用户端</strong><span class="tag blue">仅自己项目</span><div class="queueMeta"><span>可见：自己组织的需求、数据资产、项目进度、验收结果</span></div></div>
+              <div class="queueItem"><strong>角色：供应商/质检端</strong><span class="tag pending">任务受限</span><div class="queueMeta"><span>可见：被分配批次、规则、质检反馈、返修要求</span></div></div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panelHead">操作日志与审计</div>
+            <div class="panelBody">
+              <div class="logLine"><strong>14:45 · 系统</strong>根据需求文档版本 v2.1 锁定 AC 验收条款。</div>
+              <div class="logLine"><strong>14:20 · Agent</strong>生成待授权动作 Generate_Quality_Check_Script。</div>
+              <div class="logLine"><strong>14:02 · 用户</strong>输入：帮我生成漏标质检脚本。</div>
+            </div>
+          </article>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const input = document.getElementById('cmd');
+    const send = document.getElementById('send');
+    const terminal = document.getElementById('terminal');
+    send.addEventListener('click', () => {
+      const value = input.value.trim() || '帮我生成漏标质检脚本';
+      terminal.insertAdjacentHTML('beforeend', `<p>[用户] ${value}</p><p>[代理] 已生成待授权动作，等待授权执行...</p>`);
+      input.value = '';
+      terminal.scrollTop = terminal.scrollHeight;
+    });
+  </script>
+</body>
+</html>

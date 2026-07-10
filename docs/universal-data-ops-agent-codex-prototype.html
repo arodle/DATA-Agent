@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Universal Data Ops Agent Prototype</title>
+  <style>
+    :root {
+      --bg: #f6f7f8;
+      --panel: #ffffff;
+      --panel-soft: #fafafa;
+      --ink: #171717;
+      --muted: #6f6f6f;
+      --faint: #9a9a9a;
+      --line: #e6e6e6;
+      --line-strong: #d4d4d4;
+      --accent: #111111;
+      --green: #147d52;
+      --amber: #9a6200;
+      --red: #b42318;
+      --blue: #2563eb;
+      --soft-green: #edf7f1;
+      --soft-amber: #fff6e7;
+      --soft-red: #fff0ee;
+      --soft-blue: #eef4ff;
+      --shadow: 0 18px 44px rgba(0, 0, 0, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, "SF Pro Display", "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    }
+
+    body { overflow: hidden; }
+    button, textarea, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 52px 360px minmax(620px, 1fr);
+    }
+
+    .rail {
+      border-right: 1px solid var(--line);
+      background: #fbfbfb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 6px;
+      gap: 8px;
+    }
+
+    .logo {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      background: #111;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .rail button {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      background: transparent;
+      color: #737373;
+      font-size: 17px;
+    }
+
+    .rail button.active {
+      background: #ededed;
+      color: #111;
+    }
+
+    .left {
+      min-width: 0;
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+    }
+
+    .header {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 18px; line-height: 1.3; letter-spacing: 0; }
+    h2 { font-size: 16px; line-height: 1.3; letter-spacing: 0; }
+    h3 { font-size: 14px; line-height: 1.3; letter-spacing: 0; }
+    p, li, td, th, label { font-size: 13px; line-height: 1.48; color: var(--muted); }
+
+    .workspace-card {
+      margin: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+    }
+
+    .workspace-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .workspace-title strong {
+      font-size: 14px;
+      line-height: 1.32;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 2px 7px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: #525252;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .chip.green { color: var(--green); background: var(--soft-green); border-color: #bee5ce; }
+    .chip.amber { color: var(--amber); background: var(--soft-amber); border-color: #f2d9a6; }
+    .chip.red { color: var(--red); background: var(--soft-red); border-color: #f0bbb6; }
+    .chip.blue { color: var(--blue); background: var(--soft-blue); border-color: #c9dbff; }
+
+    .chat {
+      min-height: 0;
+      overflow: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 9px;
+      align-items: start;
+    }
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: #f4f4f4;
+      color: #666;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .avatar.agent {
+      background: #111;
+      border-color: #111;
+      color: #fff;
+    }
+
+    .bubble {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 10px 11px;
+    }
+
+    .bubble.agent {
+      background: #fcfcfc;
+      border-color: #d9d9d9;
+    }
+
+    .bubble p + p { margin-top: 7px; }
+
+    .agent-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .fact {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 8px;
+    }
+
+    .fact b {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .fact span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .composer {
+      border-top: 1px solid var(--line);
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .composer textarea {
+      flex: 1;
+      min-height: 40px;
+      max-height: 100px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 9px 10px;
+      color: var(--ink);
+    }
+
+    .send {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #111;
+      background: #111;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .right {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: 54px 1fr 38px;
+    }
+
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 14px;
+    }
+
+    .top-title {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .top-title strong {
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .top-title span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .tool-btn {
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #333;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tool-btn.dark {
+      background: #111;
+      border-color: #111;
+      color: #fff;
+    }
+
+    .content {
+      min-height: 0;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: minmax(520px, 1fr) 330px;
+      gap: 12px;
+      overflow: auto;
+    }
+
+    .browser {
+      min-width: 0;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-rows: 42px 1fr;
+    }
+
+    .browser-bar {
+      border-bottom: 1px solid var(--line);
+      background: #fbfbfb;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #d4d4d4;
+    }
+
+    .address {
+      flex: 1;
+      height: 26px;
+      border: 1px solid var(--line);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .platform {
+      display: grid;
+      grid-template-columns: 118px 1fr;
+      min-height: 690px;
+      background: #eef1ff;
+    }
+
+    .platform-nav {
+      background: #6268f4;
+      color: #fff;
+      padding: 13px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .nav-item {
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 9px;
+      color: rgba(255,255,255,.9);
+      font-size: 12px;
+    }
+
+    .nav-item.active {
+      background: rgba(255,255,255,.24);
+      color: #fff;
+    }
+
+    .platform-main {
+      min-width: 0;
+      padding: 18px;
+      background: #f1f4ff;
+    }
+
+    .platform-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .platform-head h2 {
+      font-size: 18px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(68px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      min-height: 58px;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(88, 94, 230, .09);
+    }
+
+    .stat.active {
+      background: #6268f4;
+      color: #fff;
+    }
+
+    .stat b { font-size: 20px; }
+    .stat span { font-size: 11px; color: inherit; opacity: .75; }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .task-card {
+      background: #fff;
+      border: 1px solid rgba(88, 94, 230, .09);
+      padding: 13px;
+      min-height: 98px;
+    }
+
+    .blur-line {
+      height: 12px;
+      background: linear-gradient(90deg, #d5d9df, #b9c0c8, #dfe3e8);
+      margin-bottom: 9px;
+      opacity: .86;
+    }
+
+    .task-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .platform-tag {
+      background: #edf0ff;
+      color: #4f63f6;
+      font-size: 10px;
+      padding: 3px 6px;
+    }
+
+    .bar {
+      height: 5px;
+      background: #edf0f5;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      background: #6268f4;
+    }
+
+    .side {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .panel h3 {
+      padding: 12px 12px 0;
+    }
+
+    .panel-body {
+      padding: 10px 12px 12px;
+    }
+
+    .connector-list {
+      display: grid;
+      gap: 7px;
+    }
+
+    .connector {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      padding: 8px;
+      background: #fff;
+    }
+
+    .connector strong {
+      font-size: 12px;
+    }
+
+    .connector span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 8px;
+      padding: 7px 0;
+      border-bottom: 1px solid #eeeeee;
+    }
+
+    .kv:last-child { border-bottom: 0; }
+    .kv span { color: var(--muted); font-size: 12px; }
+    .kv b { color: var(--ink); font-size: 12px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 7px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    th {
+      color: #444;
+      background: var(--panel-soft);
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .log {
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      overflow: hidden;
+    }
+
+    .log span {
+      border: 1px solid var(--line);
+      background: #fafafa;
+      padding: 4px 7px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1180px) {
+      body { overflow: auto; }
+      .app {
+        height: auto;
+        min-height: 100vh;
+        grid-template-columns: 52px 360px minmax(560px, 1fr);
+      }
+      .content {
+        grid-template-columns: 1fr;
+      }
+      .side {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .app { display: block; }
+      .rail { display: none; }
+      .left { min-height: 58vh; }
+      .right { min-height: 100vh; }
+      .platform { grid-template-columns: 1fr; }
+      .platform-nav { display: none; }
+      .stats, .task-grid, .side { grid-template-columns: 1fr; }
+      .toolbar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <nav class="rail" aria-label="主导航">
+      <div class="logo">DO</div>
+      <button class="active" title="Agent">⌘</button>
+      <button title="任务">□</button>
+      <button title="连接器">▣</button>
+      <button title="知识库">≡</button>
+      <button title="设置">⚙</button>
+    </nav>
+
+    <aside class="left">
+      <header class="header">
+        <div class="kicker">Universal Data Ops Agent</div>
+        <h1>通用数据标采交付工作台</h1>
+      </header>
+
+      <section class="workspace-card">
+        <div class="workspace-title">
+          <strong>人体 SMPLX 关键点标注</strong>
+          <span class="chip green">执行中</span>
+        </div>
+        <div class="chips">
+          <span class="chip blue">当前连接：自有平台</span>
+          <span class="chip amber">预算单风险</span>
+          <span class="chip red">规则冲突</span>
+        </div>
+      </section>
+
+      <section class="chat">
+        <article class="message">
+          <div class="avatar">运</div>
+          <div class="bubble">
+            <p>打开平台看一下这个项目在哪个节点。这个工具以后也要能接 Appen、Label Studio、CVAT 这类平台。</p>
+          </div>
+        </article>
+
+        <article class="message">
+          <div class="avatar agent">AI</div>
+          <div class="bubble agent">
+            <p>已通过右侧工具视图打开当前数据平台。这个工作台的设计不是嵌入某个平台，而是通过连接器控制不同数据标采平台。</p>
+            <div class="agent-grid">
+              <div class="fact"><b>当前平台</b><span>自有数据平台</span></div>
+              <div class="fact"><b>可扩展</b><span>Appen / Label Studio / CVAT / 自定义 API</span></div>
+              <div class="fact"><b>当前任务量</b><span>6996 张</span></div>
+              <div class="fact"><b>当前阶段</b><span>供应商执行</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="message">
+          <div class="avatar agent">AI</div>
+          <div class="bubble agent">
+            <p>我会把平台差异收敛成统一动作：</p>
+            <p>读取任务、创建批次、同步规则、查询进度、记录质量事件、生成返修说明、复核结算。</p>
+          </div>
+        </article>
+
+        <article class="message">
+          <div class="avatar">运</div>
+          <div class="bubble">
+            <p>生成客户确认话术和供应商执行说明，再准备写回平台下一步动作。</p>
+          </div>
+        </article>
+      </section>
+
+      <footer class="composer">
+        <textarea aria-label="输入消息">把这个任务的下一步动作写成运营可确认的变更...</textarea>
+        <button class="send" title="发送">›</button>
+      </footer>
+    </aside>
+
+    <main class="right">
+      <header class="topbar">
+        <div class="top-title">
+          <strong>工具视图：数据平台浏览器</strong>
+          <span>Agent 调用平台页面、API 或 RPA 结果，并在右侧解析。</span>
+        </div>
+        <div class="toolbar">
+          <button class="tool-btn">切换连接器</button>
+          <button class="tool-btn">读取任务</button>
+          <button class="tool-btn">生成说明</button>
+          <button class="tool-btn dark">写回动作</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <section class="browser">
+          <div class="browser-bar">
+            <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="address">connector://internal-platform/annotation/overview?project=PRJ-002</div>
+          </div>
+
+          <div class="platform">
+            <nav class="platform-nav">
+              <div class="nav-item active">首页</div>
+              <div class="nav-item">我的预算</div>
+              <div class="nav-item">我的标注</div>
+              <div class="nav-item">我的采集</div>
+              <div class="nav-item">培训中心</div>
+              <div class="nav-item">通知</div>
+              <div class="nav-item">API token</div>
+            </nav>
+            <div class="platform-main">
+              <div class="platform-head">
+                <h2>标注工作概览</h2>
+                <button class="tool-btn">新建任务</button>
+              </div>
+              <div class="stats">
+                <div class="stat active"><b>89</b><span>标注中</span></div>
+                <div class="stat"><b>20</b><span>试标注中</span></div>
+                <div class="stat"><b>1</b><span>交付验收</span></div>
+                <div class="stat"><b>2</b><span>返工确认</span></div>
+                <div class="stat"><b>1</b><span>重新编辑</span></div>
+                <div class="stat"><b>95</b><span>预算审批</span></div>
+                <div class="stat"><b>33</b><span>近期完成</span></div>
+              </div>
+              <div class="task-grid">
+                <article class="task-card">
+                  <div class="blur-line"></div>
+                  <div class="task-tags">
+                    <span class="platform-tag">任务ID: 82196</span>
+                    <span class="platform-tag">2 个标注步骤</span>
+                    <span class="platform-tag">6996 张</span>
+                  </div>
+                  <p>步骤1（标注 - 关键点） 已经开始</p>
+                  <div class="bar"><span style="width:72%"></span></div>
+                </article>
+                <article class="task-card">
+                  <div class="blur-line"></div>
+                  <div class="task-tags">
+                    <span class="platform-tag">供应商 2</span>
+                    <span class="platform-tag">2000 张</span>
+                    <span class="platform-tag">质量通过</span>
+                  </div>
+                  <p>主执行方，先跑 2000 张</p>
+                  <div class="bar"><span style="width:56%"></span></div>
+                </article>
+                <article class="task-card">
+                  <div class="blur-line"></div>
+                  <div class="task-tags">
+                    <span class="platform-tag">供应商 1</span>
+                    <span class="platform-tag">小批量复测</span>
+                    <span class="platform-tag">待质检</span>
+                  </div>
+                  <p>有产能但需先过质量门槛</p>
+                  <div class="bar"><span style="width:14%"></span></div>
+                </article>
+                <article class="task-card">
+                  <div class="blur-line"></div>
+                  <div class="task-tags">
+                    <span class="platform-tag">预算单</span>
+                    <span class="platform-tag">节点 6</span>
+                    <span class="platform-tag">待推进</span>
+                  </div>
+                  <p>正式执行和结算仍有流程风险</p>
+                  <div class="bar"><span style="width:34%"></span></div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="side">
+          <section class="panel">
+            <h3>平台连接器</h3>
+            <div class="panel-body connector-list">
+              <div class="connector"><div><strong>自有数据平台</strong><br><span>任务、预算、进度、结算</span></div><span class="chip green">已连接</span></div>
+              <div class="connector"><div><strong>Appen / 澳鹏</strong><br><span>供应商任务与质量回传</span></div><span class="chip">可配置</span></div>
+              <div class="connector"><div><strong>Label Studio</strong><br><span>开源标注项目与结果</span></div><span class="chip">可配置</span></div>
+              <div class="connector"><div><strong>CVAT</strong><br><span>视觉标注任务与质检</span></div><span class="chip">可配置</span></div>
+              <div class="connector"><div><strong>Custom API</strong><br><span>企业私有化部署</span></div><span class="chip blue">推荐</span></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3>Agent 解析</h3>
+            <div class="panel-body">
+              <div class="kv"><span>当前阶段</span><b>供应商执行</b></div>
+              <div class="kv"><span>执行范围</span><b>6996 张</b></div>
+              <div class="kv"><span>优先依据</span><b>平台任务量 > 模板字段</b></div>
+              <div class="kv"><span>风险等级</span><b>中</b></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3>统一动作层</h3>
+            <div class="panel-body">
+              <table>
+                <tr><th>动作</th><th>适配平台</th></tr>
+                <tr><td>读取任务</td><td>API / 页面 / 表格</td></tr>
+                <tr><td>创建批次</td><td>平台任务系统</td></tr>
+                <tr><td>同步规则</td><td>文档 / 工具配置</td></tr>
+                <tr><td>记录质量事件</td><td>平台 / 飞书 / 外部系统</td></tr>
+                <tr><td>结算复核</td><td>平台 / ERP / 表格</td></tr>
+              </table>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <footer class="log">
+        <span>tool: open_connector(internal-platform)</span>
+        <span>tool: read_tasks(PRJ-002)</span>
+        <span>tool: normalize_platform_state()</span>
+        <span>next: write_next_action()</span>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

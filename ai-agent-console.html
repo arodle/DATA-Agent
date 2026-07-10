@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI-AGENT / 标采 - Agent 控制台</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#F3F4F6;color:#111827;font-size:13px;line-height:1.5;}
+.font-mono{font-family:'JetBrains Mono','Cascadia Code',monospace;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:#94A3B8;}
+
+/* SIDEBAR */
+.sidebar{background:linear-gradient(180deg,#4C1D95 0%,#5B21B6 100%);width:200px;min-height:100vh;position:fixed;left:0;top:0;z-index:50;display:flex;flex-direction:column;}
+.sb-brand{padding:16px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:10px;}
+.sb-bi{width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;}
+.sb-bt{color:#fff;font-weight:600;font-size:14px;}.sb-bs{color:rgba(255,255,255,0.5);font-size:11px;}
+.sb-nav{flex:1;overflow-y:auto;padding:8px 0;}
+.sb-sec{padding:12px 16px 6px;color:rgba(255,255,255,0.35);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 16px;color:rgba(255,255,255,0.85);font-size:13px;cursor:pointer;border-left:3px solid transparent;transition:all .12s;text-decoration:none;}
+.ni i{width:16px;text-align:center;}
+.ni:hover{background:rgba(255,255,255,0.06);border-left-color:rgba(234,179,8,0.5);}
+.ni.active{background:rgba(255,255,255,0.1);border-left-color:#EAB308;color:#fff;font-weight:500;}
+.sb-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:10px;}
+.sb-av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;flex-shrink:0;}
+.sb-un{color:#fff;font-size:12px;font-weight:500;}.sb-ur{color:rgba(255,255,255,0.45);font-size:11px;}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(90deg,#5B21B6 0%,#7C3AED 100%);height:48px;position:fixed;top:0;left:200px;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:0 16px;}
+.tp{display:flex;align-items:center;gap:16px;}.tp-p{display:flex;align-items:center;gap:6px;}
+.tp-l{color:rgba(255,255,255,0.5);font-size:10px;}.tp-v{color:#fff;font-size:12px;font-weight:500;}
+.tp-d{width:1px;height:16px;background:rgba(255,255,255,0.2);}
+
+/* MAIN */
+.main{margin-left:200px;margin-top:48px;min-height:calc(100vh - 88px);padding:16px 20px;padding-bottom:56px;}
+
+/* PANEL */
+.panel{background:#fff;border:1px solid #E5E7EB;border-radius:6px;overflow:hidden;}
+.ph{padding:10px 14px;border-bottom:1px solid #F3F4F6;font-weight:600;font-size:12px;display:flex;align-items:center;gap:8px;color:#374151;background:#FAFAFA;}
+.pb{padding:14px;}.pbs{padding:10px 14px;}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:4px;font-size:12px;font-weight:500;border:none;cursor:pointer;transition:all .12s;white-space:nowrap;}
+.btn-p{background:#2563EB;color:#fff;}.btn-p:hover{background:#1D4ED8;}
+.btn-s{background:#059669;color:#fff;}.btn-s:hover{background:#047857;}
+.btn-w{background:#EAB308;color:#1F2937;}.btn-w:hover{background:#CA8A04;}
+.btn-d{background:#DC2626;color:#fff;}.btn-d:hover{background:#B91C1C;}
+.btn-g{background:transparent;border:1px solid #D1D5DB;color:#374151;}.btn-g:hover{background:#F9FAFB;}
+.btn-gw{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;}.btn-gw:hover{background:rgba(255,255,255,0.2);}
+.btn-sm{padding:4px 10px;font-size:11px;}.btn-xs{padding:3px 8px;font-size:11px;}
+.btn:disabled{opacity:0.45;cursor:not-allowed;}
+
+/* TAG */
+.tag{display:inline-flex;align-items:center;font-size:10px;padding:2px 7px;border-radius:3px;font-weight:500;white-space:nowrap;}
+.t-b{background:#DBEAFE;color:#1E40AF;}.t-g{background:#D1FAE5;color:#065F46;}
+.t-r{background:#FEE2E2;color:#991B1B;}.t-y{background:#FEF3C7;color:#92400E;}
+.t-o{background:#FFEDD5;color:#C2410C;}.t-p{background:#F3E8FF;color:#6B21A8;}.t-gr{background:#F3F4F6;color:#4B5563;}
+
+/* PROGRESS */
+.pbar{height:6px;background:#E5E7EB;border-radius:3px;overflow:hidden;}
+.pfill{height:100%;background:linear-gradient(90deg,#2563EB,#3B82F6);border-radius:3px;}
+
+/* TERMINAL — all roles share this style */
+.term{background:#1A1B26;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.55;}
+.term-top{background:#2A2B3D;padding:7px 12px;border-radius:6px 6px 0 0;display:flex;align-items:center;gap:7px;}
+.term-dot{width:9px;height:9px;border-radius:50%;}
+.term-body{padding:14px 16px;color:#CDD6F4;max-height:360px;overflow-y:auto;}
+.tline{margin-bottom:4px;}
+.tsys{color:#89B4FA;}.tagt{color:#F9E2AF;}.tusr{color:#FAB387;}
+.tact{background:#A6E3A1;color:#1A1B26;padding:2px 5px;border-radius:3px;font-weight:500;}
+.tprompt{color:#A6E3A1;}.twarn{color:#F38BA8;}.tsugg{color:#CBA6F7;}
+.tout{color:#94E2D5;}
+
+/* INPUT */
+.inp{border:1px solid #D1D5DB;border-radius:4px;padding:7px 10px;font-size:12px;outline:none;width:100%;transition:border-color .12s;}
+.inp:focus{border-color:#2563EB;box-shadow:0 0 0 2px rgba(37,99,235,0.08);}
+.inp-mono{font-family:'JetBrains Mono',monospace;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{background:#F9FAFB;padding:9px 12px;text-align:left;font-weight:600;color:#4B5563;border-bottom:1px solid #E5E7EB;font-size:11px;}
+.tbl td{padding:9px 12px;border-bottom:1px solid #F3F4F6;vertical-align:middle;}
+.tbl tbody tr:hover td{background:#F9FAFB;}
+
+/* METRIC */
+.mcard{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:4px;padding:10px 14px;text-align:center;}
+.mval{font-size:22px;font-weight:700;line-height:1.2;}
+.mlbl{font-size:10px;color:#6B7280;margin-top:2px;}
+
+/* TIMELINE */
+.tl{padding:8px 0 8px 18px;border-left:2px solid #E5E7EB;position:relative;font-size:12px;}
+.tl::before{content:'';position:absolute;left:-5px;top:10px;width:8px;height:8px;border-radius:50%;background:#9CA3AF;}
+.tl:last-child{border-left-color:transparent;}.tl-ts{font-size:11px;color:#9CA3AF;margin-bottom:2px;}
+.tl-body{color:#374151;}.tl-meta{font-size:11px;color:#6B7280;margin-top:1px;}
+
+/* ACARD */
+.acard{border:1px solid #E5E7EB;border-radius:4px;padding:10px 12px;transition:.12s;}
+.acard:hover{border-color:#2563EB;background:#F8FAFE;}
+
+/* AC */
+.ac-row{padding:7px 10px;background:#FAFAFA;border-radius:4px;border-left:3px solid #EAB308;font-size:12px;margin-bottom:5px;}
+.ac-code{font-weight:600;color:#2563EB;margin-right:6px;font-family:'JetBrains Mono',monospace;font-size:11px;}
+
+/* ROLE BAR */
+.role-bar{position:fixed;bottom:0;left:200px;right:0;height:40px;background:#1F2937;z-index:100;display:flex;align-items:center;justify-content:center;gap:4px;padding:0 16px;}
+.role-bar-label{color:rgba(255,255,255,0.5);font-size:11px;margin-right:12px;}
+.role-tab{padding:6px 20px;border-radius:4px 4px 0 0;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,0.55);transition:all .15s;display:flex;align-items:center;gap:6px;}
+.role-tab:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.05);}
+.role-tab.active{background:#F3F4F6;color:#111827;font-weight:600;}
+
+.rv{display:none;}.rv.active{display:block;}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12px;}
+.kv-l{color:#6B7280;flex-shrink:0;}.kv-v{color:#111827;text-align:right;font-weight:500;}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.pulse{animation:pulse 2s infinite;}
+
+/* Agent chip for each role */
+.agent-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);padding:3px 10px;border-radius:12px;font-size:11px;font-weight:400;}
+</style>
+</head>
+<body>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar">
+  <div class="sb-brand"><div class="sb-bi"><i class="fas fa-robot text-sm"></i></div><div><div class="sb-bt">AI-AGENT</div><div class="sb-bs">标采平台</div></div></div>
+  <nav class="sb-nav">
+    <div class="sb-sec">项目</div>
+    <a class="ni active"><i class="fas fa-tachometer-alt"></i><span>项目总览</span></a>
+    <a class="ni"><i class="fas fa-list"></i><span>项目列表</span></a>
+    <a class="ni"><i class="fas fa-database"></i><span>数据资产</span></a>
+    <div class="sb-sec">Agent</div>
+    <a class="ni"><i class="fas fa-robot"></i><span>代理助手</span></a>
+    <a class="ni"><i class="fas fa-file-pdf"></i><span>需求文档</span></a>
+    <a class="ni"><i class="fas fa-tools"></i><span>工具配置</span></a>
+    <div class="sb-sec">质量</div>
+    <a class="ni"><i class="fas fa-shield-alt"></i><span>质量事件</span></a>
+    <a class="ni"><i class="fas fa-brain"></i><span>模型训练</span></a>
+    <div class="sb-sec">运营</div>
+    <a class="ni"><i class="fas fa-truck"></i><span>供应商</span></a>
+    <a class="ni"><i class="fas fa-history"></i><span>操作日志</span></a>
+  </nav>
+  <div class="sb-footer"><div class="sb-av" id="sbA">张</div><div><div class="sb-un" id="sbN">张三</div><div class="sb-ur" id="sbR">项目成员</div></div></div>
+</aside>
+
+<!-- ==================== TOPBAR ==================== -->
+<header class="topbar">
+  <div class="tp">
+    <div class="tp-p"><span class="tp-l">编号</span><span class="tp-v font-mono">PRJ-2024-0892</span></div><div class="tp-d"></div>
+    <div class="tp-p"><span class="tp-l">项目</span><span class="tp-v">自动驾驶场景标注 · 第3期</span></div><div class="tp-d"></div>
+    <div class="tp-p"><span class="tp-l">模型</span><span class="tp-v font-mono">YOLO-v8x-AD-032</span></div><div class="tp-d"></div>
+    <div class="tp-p"><span class="tp-l">阶段</span><span class="tag t-y">预标注执行中</span></div>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-gw btn-sm"><i class="fas fa-sync-alt fa-xs"></i>刷新</button>
+    <button class="btn btn-w btn-sm"><i class="fas fa-plus fa-xs"></i>新建任务</button>
+  </div>
+</header>
+
+<!-- ==================== MAIN ==================== -->
+<div class="main">
+
+<!-- ================================================================ -->
+<!--  角色一: 项目成员 — Agent: 标注辅助                                 -->
+<!-- ================================================================ -->
+<div class="rv active" id="v-user">
+
+  <!-- Summary -->
+  <div class="panel" style="margin-bottom:14px;">
+    <div class="pb" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;">
+      <div><div style="font-weight:600;font-size:14px;">自动驾驶场景标注 · 第3期</div><div style="font-size:11px;color:#6B7280;">ID: PRJ-2024-0892 | 创建 2024-01-15 | 智能出行事业部 / 数据算法部</div></div>
+      <div style="display:flex;align-items:center;gap:20px;">
+        <div style="text-align:center;"><div class="mval" style="font-size:20px;">94.2%</div><div class="mlbl">准确率</div></div>
+        <div style="text-align:center;"><div class="mval" style="font-size:20px;">87.5%</div><div class="mlbl">通过率</div></div>
+        <div style="text-align:center;"><div class="mval" style="font-size:20px;color:#059669;">A-</div><div class="mlbl">质量得分</div></div>
+        <div style="width:160px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;color:#6B7280;"><span>阶段进度</span><span style="font-weight:600;">68%</span></div><div class="pbar"><div class="pfill" style="width:68%;"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:280px 1fr;gap:14px;">
+    <!-- LEFT: Info -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="panel"><div class="ph"><i class="fas fa-info-circle" style="color:#2563EB;"></i>项目信息</div><div class="pbs">
+        <div class="kv"><span class="kv-l">项目名称</span><span class="kv-v">自动驾驶场景标注-第3期</span></div>
+        <div class="kv"><span class="kv-l">编号</span><span class="kv-v font-mono">PRJ-2024-0892</span></div>
+        <div class="kv"><span class="kv-l">部门</span><span class="kv-v">智能出行 / 数据算法</span></div>
+        <div class="kv"><span class="kv-l">创建人</span><span class="kv-v">李明</span></div><div class="kv"><span class="kv-l">运营</span><span class="kv-v">王运营</span></div>
+        <div class="kv"><span class="kv-l">模型</span><span class="kv-v font-mono">YOLO-v8x-AD-032</span></div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid #F3F4F6;">
+          <div style="font-size:11px;color:#6B7280;margin-bottom:6px;">需求文档</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:4px;"><i class="fas fa-file-pdf" style="color:#DC2626;"></i><div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Spec_V2.1.pdf</div><div style="font-size:10px;color:#9CA3AF;">2.4 MB</div></div><span class="tag t-g">V1.2 最新</span></div>
+        </div>
+      </div></div>
+      <div class="panel"><div class="ph"><i class="fas fa-check-double" style="color:#059669;"></i>验收口径</div><div class="pbs">
+        <div class="ac-row"><span class="ac-code">AC-001</span>车辆检测框IoU ≥ 0.85，分类准确率 ≥ 95%</div>
+        <div class="ac-row"><span class="ac-code">AC-002</span>行人/非机动车漏标率 ≤ 2%</div>
+        <div class="ac-row"><span class="ac-code">AC-003</span>交通标志识别准确率 ≥ 98%</div>
+        <div class="ac-row"><span class="ac-code">AC-004</span>车道线标注偏移像素 ≤ 3px</div>
+        <div class="ac-row"><span class="ac-code">AC-005</span>场景天气/时间标签准确率 100%</div>
+      </div></div>
+    </div>
+
+    <!-- RIGHT: Agent + Actions + Logs -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <!-- ===== 项目成员 Agent: 标注辅助 ===== -->
+      <div class="panel" style="flex:1;display:flex;flex-direction:column;">
+        <div class="ph">
+          <i class="fas fa-robot" style="color:#EAB308;"></i>标注辅助 Agent
+          <span class="agent-chip" style="margin-left:8px;"><span class="term-dot" style="background:#10B981;display:inline-block;animation:pulse 2s infinite;"></span> labeling-agent v2</span>
+          <span style="margin-left:auto;font-size:11px;color:#6B7280;font-weight:400;">服务: 质检脚本生成 · Schema配置 · 预标注 · 数据洞察</span>
+        </div>
+        <div class="pb" style="flex:1;padding:0;">
+          <div class="term" style="border-radius:0;">
+            <div class="term-top"><div class="term-dot" style="background:#F38BA8;"></div><div class="term-dot" style="background:#F9E2AF;"></div><div class="term-dot" style="background:#A6E3A1;"></div><span style="color:#6C7086;font-size:10px;margin-left:6px;">labeling-agent-v2 — 标注辅助</span></div>
+            <div class="term-body">
+              <div class="tline"><span class="tsys">[系统]</span> 已加载 Spec_V2.1.pdf，解析出 5 条验收口径 (AC-001~AC-005)</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 当前模型 YOLO-v8x-AD-032 mAP=94.2%，AC-001 达标。建议关注 AC-002 行人漏标风险。</div>
+              <div class="tline"><span class="tusr">[用户]</span> 帮我生成漏标质检脚本。</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 分析历史缺陷分布：漏标集中在夜间场景（67%）+ 小目标（22%）。</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 建议生成两类脚本：(1) 小目标检测漏标扫描 (2) 夜间场景专项质检。</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 已生成待授权动作 <span class="tact">Generate_Quality_Check_Script</span>（含夜间增强策略）</div>
+              <div class="tline"><span class="tsys">[系统]</span> Agent 不可直接写入生产环境。请提交运营审批。</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 另预标注模型就绪，随时可执行 <span class="tact">Run_Prelabel</span>。</div>
+              <div class="tline" style="margin-top:6px;"><span class="tsugg">[Agent建议]</span> 先执行预标注 → 再跑质检脚本 → 可最大化检出率。</div>
+              <div style="margin-top:6px;"><span class="tprompt">$</span> <span class="tsys pulse">_</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:10px 14px;border-top:1px solid #F3F4F6;background:#FAFAFA;">
+          <div style="display:flex;gap:8px;margin-bottom:6px;">
+            <input class="inp inp-mono" placeholder="输入标注相关指令...">
+            <button class="btn btn-s btn-sm"><i class="fas fa-play fa-xs"></i>执行</button>
+            <button class="btn btn-p btn-sm"><i class="fas fa-eye fa-xs"></i>预览</button>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn btn-g btn-xs">漏标质检脚本</button>
+            <button class="btn btn-g btn-xs">更新Schema配置</button>
+            <button class="btn btn-g btn-xs">执行预标注</button>
+            <button class="btn btn-g btn-xs">数据分布洞察</button>
+            <button class="btn btn-g btn-xs">导出训练集</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions + Logs row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="panel"><div class="ph"><i class="fas fa-tasks" style="color:#7C3AED;"></i>待处理动作<span class="tag t-y" style="margin-left:auto;">4 项</span></div><div class="pbs" style="max-height:240px;overflow-y:auto;">
+          <div class="acard" style="margin-bottom:6px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span style="font-weight:600;font-size:12px;font-family:monospace;">Update_Schema_Config</span><span class="tag t-y">待授权</span></div><div style="font-size:11px;color:#6B7280;margin-bottom:6px;">目标: 标注工具 / Schema定义</div><button class="btn btn-p btn-xs" style="width:100%;" disabled>需运营授权</button></div>
+          <div class="acard" style="margin-bottom:6px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span style="font-weight:600;font-size:12px;font-family:monospace;">Sync_Model_Weights</span><span class="tag t-y">待授权</span></div><div style="font-size:11px;color:#6B7280;margin-bottom:6px;">目标: 模型服务 / 权重文件</div><button class="btn btn-p btn-xs" style="width:100%;" disabled>需运营授权</button></div>
+          <div class="acard" style="margin-bottom:6px;border-color:#2563EB;background:#F8FAFE;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span style="font-weight:600;font-size:12px;font-family:monospace;">Generate_Quality_Check</span><span class="tag t-b">已授权</span></div><div style="font-size:11px;color:#059669;"><i class="fas fa-spinner fa-pulse fa-xs"></i> 执行中 (夜间增强策略)</div></div>
+          <div class="acard"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span style="font-weight:600;font-size:12px;font-family:monospace;">Export_Dataset</span><span class="tag t-y">待授权</span></div><div style="font-size:11px;color:#6B7280;margin-bottom:6px;">目标: 数据资产 / 导出目录</div><button class="btn btn-p btn-xs" style="width:100%;" disabled>需运营授权</button></div>
+        </div></div>
+        <div class="panel"><div class="ph"><i class="fas fa-history" style="color:#6B7280;"></i>操作日志</div><div class="pbs" style="max-height:240px;overflow-y:auto;">
+          <div class="tl"><div class="tl-ts">01-16 14:32</div><div class="tl-body">Agent 建议执行预标注后再跑质检</div><div class="tl-meta" style="color:#D97706;">labeling-agent</div></div>
+          <div class="tl"><div class="tl-ts">01-16 14:28</div><div class="tl-body">Agent 分析漏标高发场景</div><div class="tl-meta" style="color:#D97706;">夜间 67% / 小目标 22%</div></div>
+          <div class="tl"><div class="tl-ts">01-16 14:25</div><div class="tl-body">用户请求生成漏标质检脚本</div><div class="tl-meta" style="color:#059669;">张三</div></div>
+          <div class="tl"><div class="tl-ts">01-16 14:20</div><div class="tl-body">系统加载 Spec_V2.1.pdf 验收口径</div><div class="tl-meta" style="color:#2563EB;">5 条 AC 条款</div></div>
+          <div class="tl"><div class="tl-ts">01-16 14:15</div><div class="tl-body">运营批准 Generate_Quality_Check</div><div class="tl-meta" style="color:#7C3AED;">王运营</div></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!--  角色二: 运营 — Agent: 运营决策辅助                                 -->
+<!-- ================================================================ -->
+<div class="rv" id="v-ops">
+
+  <!-- Summary -->
+  <div class="panel" style="margin-bottom:14px;">
+    <div class="pb" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;">
+      <div><div style="font-weight:600;font-size:14px;">运营控制台 · 自动驾驶场景标注-第3期</div><div style="font-size:11px;color:#6B7280;">执行中 | 总数据: 128,492 张 | 待审核批次: 3 | 供应商: 3 个</div></div>
+      <div style="display:flex;gap:16px;">
+        <div class="mcard"><div class="mval" style="font-size:18px;color:#2563EB;">4</div><div class="mlbl">待审批动作</div></div>
+        <div class="mcard"><div class="mval" style="font-size:18px;color:#D97706;">3</div><div class="mlbl">待审核批次</div></div>
+        <div class="mcard"><div class="mval" style="font-size:18px;color:#DC2626;">23</div><div class="mlbl">待处理缺陷</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two columns -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+
+    <!-- LEFT: Agent + Authorization -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+
+      <!-- ===== 运营 Agent: 决策辅助 ===== -->
+      <div class="panel" style="display:flex;flex-direction:column;">
+        <div class="ph">
+          <i class="fas fa-robot" style="color:#7C3AED;"></i>运营决策 Agent
+          <span class="agent-chip" style="margin-left:8px;"><span class="term-dot" style="background:#7C3AED;display:inline-block;animation:pulse 2s infinite;"></span> ops-agent v1</span>
+          <span style="margin-left:auto;font-size:11px;color:#6B7280;font-weight:400;">服务: 授权风险评估 · 供应商分析 · 质量趋势 · 资源调度</span>
+        </div>
+        <div class="pb" style="padding:0;">
+          <div class="term" style="border-radius:0;">
+            <div class="term-top"><div class="term-dot" style="background:#F38BA8;"></div><div class="term-dot" style="background:#F9E2AF;"></div><div class="term-dot" style="background:#A6E3A1;"></div><span style="color:#6C7086;font-size:10px;margin-left:6px;">ops-agent-v1 — 运营决策</span></div>
+            <div class="term-body">
+              <div class="tline"><span class="tsys">[系统]</span> 待审批队列: 4 项 | 高风险: 1 | 中风险: 1 | 低风险: 2</div>
+              <div class="tline"><span class="tagt">[Agent]</span> <span class="twarn">Export_Dataset</span> 风险等级 <span style="color:#F38BA8;">高</span> — 该操作将暴露 128,492 张数据，建议确认导出范围及脱敏策略。</div>
+              <div class="tline"><span class="tagt">[Agent]</span> <span style="color:#F9E2AF;">Sync_Model_Weights</span> 目标版本 YOLO-v8x-AD-033，与当前生产版本相差 +1 minor。</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 供应商质量周报: 标注科技-A组 通过率 96.8% ↑2.1%；数据工坊-B组 通过率 91.3% ↓3.7%。<span style="color:#F38BA8;">B组退化需关注。</span></div>
+              <div class="tline"><span class="tusr">[运营]</span> B组什么原因退化？</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 分析显示 B组近两周人员流动 30%，新标注员在 AC-002（行人漏标）上表现不佳，漏标率从 1.5% 升至 4.8%。</div>
+              <div class="tline"><span class="tsugg">[Agent建议]</span> (1) 向 B组追加 AC-002 专项培训 (2) 暂不增加 B组任务量 (3) 提升 B组质检抽检比例至 20%</div>
+              <div style="margin-top:6px;"><span class="tprompt">$</span> <span class="tsys pulse">_</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:10px 14px;border-top:1px solid #F3F4F6;background:#FAFAFA;">
+          <div style="display:flex;gap:8px;margin-bottom:6px;">
+            <input class="inp inp-mono" placeholder="输入运营决策指令...">
+            <button class="btn btn-s btn-sm"><i class="fas fa-play fa-xs"></i>执行</button>
+            <button class="btn btn-p btn-sm"><i class="fas fa-robot fa-xs"></i>咨询Agent</button>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn btn-g btn-xs">风险评估</button>
+            <button class="btn btn-g btn-xs">供应商分析</button>
+            <button class="btn btn-g btn-xs">质量趋势</button>
+            <button class="btn btn-g btn-xs">资源调度优化</button>
+            <button class="btn btn-g btn-xs">批量审批建议</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Authorization table -->
+      <div class="panel"><div class="ph"><i class="fas fa-shield-haltered" style="color:#2563EB;"></i>动作授权审批<span style="margin-left:auto;font-size:11px;color:#6B7280;font-weight:400;">本周已处理 12 项</span></div><div class="pbs" style="padding:0;">
+        <table class="tbl"><thead><tr><th>动作名</th><th>申请人</th><th>Agent风险</th><th>状态</th><th>操作</th></tr></thead><tbody>
+          <tr><td class="font-mono" style="font-size:11px;">Export_Dataset</td><td>张三</td><td><span class="tag t-r">高</span><span style="font-size:10px;color:#DC2626;margin-left:4px;">⚠ 数据暴露</span></td><td><span class="tag t-y">待审批</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-s btn-xs">批准</button><button class="btn btn-d btn-xs">拒绝</button></div></td></tr>
+          <tr><td class="font-mono" style="font-size:11px;">Sync_Model_Weights</td><td>张三</td><td><span class="tag t-y">中</span></td><td><span class="tag t-y">待审批</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-s btn-xs">批准</button><button class="btn btn-d btn-xs">拒绝</button></div></td></tr>
+          <tr><td class="font-mono" style="font-size:11px;">Update_Schema_Config</td><td>张三</td><td><span class="tag t-g">低</span></td><td><span class="tag t-y">待审批</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-s btn-xs">批准</button><button class="btn btn-d btn-xs">拒绝</button></div></td></tr>
+          <tr><td class="font-mono" style="font-size:11px;">Generate_Quality_Script</td><td>张三</td><td><span class="tag t-g">低</span></td><td><span class="tag t-b">已批准</span></td><td><span style="font-size:11px;color:#059669;"><i class="fas fa-check fa-xs"></i> 执行中</span></td></tr>
+        </table>
+      </div></div>
+
+    </div>
+
+    <!-- RIGHT: Supplier + QC + Logs -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="panel"><div class="ph"><i class="fas fa-truck" style="color:#7C3AED;"></i>供应商管理<span style="margin-left:auto;"><button class="btn btn-p btn-xs"><i class="fas fa-plus fa-xs"></i>分配</button></span></div><div class="pbs" style="padding:0;">
+        <table class="tbl"><thead><tr><th>供应商</th><th>任务</th><th>进度</th><th>通过率</th><th>趋势</th><th>状态</th><th></th></tr></thead><tbody>
+          <tr><td style="font-weight:600;">标注科技-A组</td><td>车辆检测框</td><td><div style="width:70px;"><div class="pbar"><div class="pfill" style="width:72%;"></div></div></div><span style="font-size:10px;margin-left:4px;">72%</span></td><td style="color:#059669;font-weight:600;">96.8%</td><td style="color:#059669;">↑2.1%</td><td><span class="tag t-b">执行中</span></td><td><button class="btn btn-g btn-xs">调整</button></td></tr>
+          <tr><td style="font-weight:600;">数据工坊-B组</td><td>行人/非机动车</td><td><div style="width:70px;"><div class="pbar"><div class="pfill" style="width:15%;"></div></div></div><span style="font-size:10px;margin-left:4px;">15%</span></td><td style="color:#DC2626;font-weight:600;">91.3%</td><td style="color:#DC2626;">↓3.7%</td><td><span class="tag t-r">需关注</span></td><td><button class="btn btn-g btn-xs">详情</button></td></tr>
+          <tr><td style="font-weight:600;">智标科技-C组</td><td>交通标志/车道线</td><td><div style="width:70px;"><div class="pbar"><div class="pfill" style="width:0%;"></div></div></div><span style="font-size:10px;margin-left:4px;">0%</span></td><td style="color:#6B7280;">—</td><td>—</td><td><span class="tag t-gr">未启动</span></td><td><button class="btn btn-p btn-xs">分配</button></td></tr>
+        </table>
+      </div></div>
+
+      <div class="panel"><div class="ph"><i class="fas fa-clipboard-check" style="color:#059669;"></i>批次审核<span class="tag t-y" style="margin-left:auto;">3 批次待审</span></div><div class="pbs">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;">
+          <div class="mcard"><div class="mval" style="font-size:16px;color:#059669;">A-</div><div class="mlbl">质量得分</div></div>
+          <div class="mcard"><div class="mval" style="font-size:16px;color:#2563EB;">87.5%</div><div class="mlbl">通过率</div></div>
+          <div class="mcard"><div class="mval" style="font-size:16px;color:#DC2626;">23</div><div class="mlbl">缺陷</div></div>
+          <div class="mcard"><div class="mval" style="font-size:16px;color:#D97706;">2</div><div class="mlbl">供应商待整改</div></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-d" style="flex:1;">全部拒绝</button>
+          <button class="btn btn-s" style="flex:1;">批准并执行</button>
+        </div>
+      </div></div>
+
+      <div class="panel"><div class="ph"><i class="fas fa-history" style="color:#6B7280;"></i>操作日志</div><div class="pbs" style="max-height:180px;overflow-y:auto;">
+        <div class="tl"><div class="tl-ts">01-16 14:15</div><div class="tl-body">Agent 标记 Export_Dataset 高风险</div><div class="tl-meta" style="color:#7C3AED;">ops-agent</div></div>
+        <div class="tl"><div class="tl-ts">01-16 11:30</div><div class="tl-body"><strong>分配</strong>智标科技-C组 ← 交通标志标注</div><div class="tl-meta" style="color:#7C3AED;">王运营 · 45,492 张</div></div>
+        <div class="tl"><div class="tl-ts">01-15 16:40</div><div class="tl-body"><strong>Agent预警</strong> B组通过率连续下降</div><div class="tl-meta" style="color:#7C3AED;">ops-agent · 建议专项培训</div></div>
+        <div class="tl"><div class="tl-ts">01-15 10:05</div><div class="tl-body"><strong>批准</strong> Generate_Quality_Check</div><div class="tl-meta" style="color:#059669;">王运营</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!--  角色三: 供应商 — Agent: 标注执行辅助                               -->
+<!-- ================================================================ -->
+<div class="rv" id="v-supplier">
+
+  <!-- Summary -->
+  <div class="panel" style="margin-bottom:14px;">
+    <div class="pb" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;">
+      <div><div style="font-weight:600;font-size:14px;">标注科技-A组 · 车辆检测框标注任务</div><div style="font-size:11px;color:#6B7280;">任务号: TSK-2024-0892-A | 分配人: 王运营 | 交付截止: 2024-01-25</div></div>
+      <div style="display:flex;align-items:center;gap:24px;">
+        <div class="mcard"><div class="mval" style="font-size:18px;color:#2563EB;">45,000</div><div class="mlbl">总数据量</div></div>
+        <div class="mcard"><div class="mval" style="font-size:18px;color:#059669;">33,582</div><div class="mlbl">已完成</div></div>
+        <div class="mcard"><div class="mval" style="font-size:18px;color:#D97706;">11,418</div><div class="mlbl">剩余</div></div>
+        <div style="width:160px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;color:#6B7280;"><span>进度</span><span style="font-weight:600;">74.6%</span></div><div class="pbar"><div class="pfill" style="width:74.6%;background:linear-gradient(90deg,#059669,#10B981);"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:14px;">
+    <!-- LEFT: Agent + QC Feedback + Submit -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+
+      <!-- ===== 供应商 Agent: 标注执行辅助 ===== -->
+      <div class="panel" style="display:flex;flex-direction:column;">
+        <div class="ph">
+          <i class="fas fa-robot" style="color:#059669;"></i>标注执行 Agent
+          <span class="agent-chip" style="margin-left:8px;"><span class="term-dot" style="background:#059669;display:inline-block;animation:pulse 2s infinite;"></span> annotator-agent v3</span>
+          <span style="margin-left:auto;font-size:11px;color:#6B7280;font-weight:400;">服务: 规范问答 · 自检脚本 · 缺陷修复 · 提交前检查</span>
+        </div>
+        <div class="pb" style="padding:0;">
+          <div class="term" style="border-radius:0;">
+            <div class="term-top"><div class="term-dot" style="background:#F38BA8;"></div><div class="term-dot" style="background:#F9E2AF;"></div><div class="term-dot" style="background:#A6E3A1;"></div><span style="color:#6C7086;font-size:10px;margin-left:6px;">annotator-agent-v3 — 标注执行</span></div>
+            <div class="term-body">
+              <div class="tline"><span class="tsys">[系统]</span> 任务 TSK-0892-A | 类型: 车辆检测框 | 验收: AC-001 IoU≥0.85</div>
+              <div class="tline"><span class="tsys">[系统]</span> 质检反馈 5 条待整改: 漏标×3 / 错标×1 / 框偏移×1</div>
+              <div class="tline"><span class="tusr">[标注员]</span> IMG-89421 这个远处行人是需要标吗？</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 根据 Spec_V2.1.pdf §3.2：行人高度 ≥ 20px 且可见部分 ≥ 30% 需标注。IMG-89421 行人 18px，<span style="color:#A6E3A1;">不需标注</span>。该条反馈可申请驳回，附依据。</div>
+              <div class="tline"><span class="tusr">[标注员]</span> 帮我跑一下自检脚本。</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 运行自检中... 扫描 B-0042 批次 5,000 张。</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 发现 12 个可能漏标 (置信度>80%)，3 个框IoU偏低 (最差 0.72)。已生成自检报告。</div>
+              <div class="tline"><span class="tagt">[Agent]</span> 需修复项: <span class="twarn">12</span> | 建议提交前全部修复。</div>
+              <div class="tline"><span class="tsugg">[Agent建议]</span> 修复后运行: submit_precheck 进行提交前最终校验。</div>
+              <div style="margin-top:6px;"><span class="tprompt">$</span> <span class="tsys pulse">_</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:10px 14px;border-top:1px solid #F3F4F6;background:#FAFAFA;">
+          <div style="display:flex;gap:8px;margin-bottom:6px;">
+            <input class="inp inp-mono" placeholder="输入标注相关指令...">
+            <button class="btn btn-s btn-sm"><i class="fas fa-play fa-xs"></i>执行</button>
+            <button class="btn btn-w btn-sm"><i class="fas fa-check-double fa-xs"></i>自检</button>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn btn-g btn-xs">规范问答</button>
+            <button class="btn btn-g btn-xs">运行自检脚本</button>
+            <button class="btn btn-g btn-xs">修复建议</button>
+            <button class="btn btn-g btn-xs">提交前检查</button>
+            <button class="btn btn-g btn-xs">驳回申请</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- QC Feedback -->
+      <div class="panel"><div class="ph"><i class="fas fa-exclamation-triangle" style="color:#D97706;"></i>质检反馈<span class="tag t-y" style="margin-left:auto;">5 条待整改</span></div><div class="pbs" style="padding:0;">
+        <table class="tbl"><thead><tr><th>ID</th><th>问题类型</th><th>图片ID</th><th>说明</th><th>Agent建议</th><th>状态</th><th></th></tr></thead><tbody>
+          <tr><td class="font-mono" style="font-size:11px;">QCF-001</td><td><span class="tag t-r">漏标</span></td><td class="font-mono" style="font-size:11px;">IMG-89421</td><td>远处行人未标注</td><td style="font-size:11px;color:#059669;">✓ 行人18px &lt;20px，可申请驳回</td><td><span class="tag t-r">待整改</span></td><td><div style="display:flex;gap:3px;"><button class="btn btn-p btn-xs">修复</button><button class="btn btn-w btn-xs">驳回</button></div></td></tr>
+          <tr><td class="font-mono" style="font-size:11px;">QCF-002</td><td><span class="tag t-o">错标</span></td><td class="font-mono" style="font-size:11px;">IMG-89503</td><td>货车误标为客车</td><td style="font-size:11px;color:#DC2626;">⚠ 需确认车辆类型定义</td><td><span class="tag t-r">待整改</span></td><td><button class="btn btn-p btn-xs">修复</button></td></tr>
+          <tr><td class="font-mono" style="font-size:11px;">QCF-003</td><td><span class="tag t-o">框偏移</span></td><td class="font-mono" style="font-size:11px;">IMG-90122</td><td>偏移 5px, IoU=0.81</td><td style="font-size:11px;color:#059669;">✓ 已修复</td><td><span class="tag t-b">已整改</span></td><td><button class="btn btn-g btn-xs">查看</button></td></tr>
+          <tr><td class="font-mono" style="font-size:11px;">QCF-004</td><td><span class="tag t-r">漏标</span></td><td class="font-mono" style="font-size:11px;">IMG-90567</td><td>夜间电动车未标注</td><td style="font-size:11px;color:#DC2626;">⚠ 需标注 - 可见部分充足</td><td><span class="tag t-r">待整改</span></td><td><button class="btn btn-p btn-xs">修复</button></td></tr>
+          <tr><td class="font-mono" style="font-size:11px;">QCF-005</td><td><span class="tag t-r">漏标</span></td><td class="font-mono" style="font-size:11px;">IMG-91034</td><td>摩托骑行者未标注</td><td style="font-size:11px;color:#DC2626;">⚠ 需标注 - 车辆检测框</td><td><span class="tag t-r">待整改</span></td><td><button class="btn btn-p btn-xs">修复</button></td></tr>
+        </table>
+      </div></div>
+
+      <!-- Submit batch -->
+      <div class="panel"><div class="ph"><i class="fas fa-upload" style="color:#059669;"></i>批次提交</div><div class="pbs">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;">
+          <div class="mcard"><div style="font-size:13px;font-weight:600;color:#059669;">B-0042</div><div class="mlbl">最新批次</div></div>
+          <div class="mcard"><div class="mval" style="font-size:18px;">5,000</div><div class="mlbl">本批数量</div></div>
+          <div class="mcard"><div class="mval" style="font-size:18px;color:#D97706;">12</div><div class="mlbl">Agent检出问题</div></div>
+          <div class="mcard"><div style="font-size:13px;font-weight:600;color:#D97706;">未就绪</div><div class="mlbl">提交前检查</div></div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-g" style="flex:1;" disabled>提交前请先运行自检脚本</button>
+          <button class="btn btn-w"><i class="fas fa-tasks fa-xs"></i>提交历史</button>
+        </div>
+      </div></div>
+
+    </div>
+
+    <!-- RIGHT: Guidelines + Stats + History -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="panel"><div class="ph"><i class="fas fa-book" style="color:#7C3AED;"></i>标注规范摘要</div><div class="pbs">
+        <div class="ac-row" style="border-left-color:#2563EB;"><span style="color:#2563EB;font-weight:600;margin-right:6px;">●</span>车辆: 2D矩形框，遮挡>50%不标</div>
+        <div class="ac-row" style="border-left-color:#2563EB;"><span style="color:#2563EB;font-weight:600;margin-right:6px;">●</span>分类: Car/Truck/Bus/Motorcycle/Bicycle</div>
+        <div class="ac-row" style="border-left-color:#2563EB;"><span style="color:#2563EB;font-weight:600;margin-right:6px;">●</span>框边界贴合，边距≤2px</div>
+        <div class="ac-row" style="border-left-color:#059669;"><span style="color:#059669;font-weight:600;margin-right:6px;">●</span>质检: IoU≥0.85 | 漏标≤2%</div>
+        <div class="ac-row" style="border-left-color:#D97706;"><span style="color:#D97706;font-weight:600;margin-right:6px;">●</span>参考: Spec_V2.1 §3.2</div>
+      </div></div>
+
+      <div class="panel"><div class="ph"><i class="fas fa-chart-line" style="color:#2563EB;"></i>质量统计</div><div class="pbs">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="mcard"><div class="mval" style="font-size:16px;color:#059669;">96.8%</div><div class="mlbl">累计通过率</div></div>
+          <div class="mcard"><div class="mval" style="font-size:16px;color:#DC2626;">5</div><div class="mlbl">待整改缺陷</div></div>
+          <div class="mcard"><div class="mval" style="font-size:16px;color:#2563EB;">98.2%</div><div class="mlbl">Agent自检通过</div></div>
+          <div class="mcard"><div class="mval" style="font-size:16px;color:#059669;">↑2.1%</div><div class="mlbl">通过率趋势</div></div>
+        </div>
+      </div></div>
+
+      <div class="panel"><div class="ph"><i class="fas fa-history" style="color:#6B7280;"></i>提交历史</div><div class="pbs" style="max-height:180px;overflow-y:auto;">
+        <div class="tl"><div class="tl-ts">01-16 14:05</div><div class="tl-body">Agent 自检 B-0042 发现 12 个问题</div><div class="tl-meta" style="color:#059669;">annotator-agent • 待修复</div></div>
+        <div class="tl"><div class="tl-ts">01-15 16:00</div><div class="tl-body">提交 B-0041 通过 | 通过率 97.5%</div><div class="tl-meta" style="color:#059669;">5,000 张</div></div>
+        <div class="tl"><div class="tl-ts">01-15 10:30</div><div class="tl-body">Agent 辅助修复 QCF-003</div><div class="tl-meta" style="color:#059669;">框偏移已修复</div></div>
+        <div class="tl"><div class="tl-ts">01-14 15:45</div><div class="tl-body">提交 B-0040 退回 | 漏标率 5.2%</div><div class="tl-meta" style="color:#DC2626;">需整改</div></div>
+        <div class="tl"><div class="tl-ts">01-14 09:00</div><div class="tl-body">接收任务 | 车辆检测框标注</div><div class="tl-meta" style="color:#7C3AED;">45,000 张</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- ==================== ROLE BAR ==================== -->
+<div class="role-bar">
+  <span class="role-bar-label">切换角色视图</span>
+  <button class="role-tab active" data-role="user" onclick="switchRole('user',this)"><i class="fas fa-user fa-xs"></i>项目成员</button>
+  <button class="role-tab" data-role="ops" onclick="switchRole('ops',this)"><i class="fas fa-user-cog fa-xs"></i>运营人员</button>
+  <button class="role-tab" data-role="supplier" onclick="switchRole('supplier',this)"><i class="fas fa-truck fa-xs"></i>供应商</button>
+</div>
+
+<script>
+const roles={
+  user:{name:'张三',role:'项目成员',avatar:'张',view:'v-user'},
+  ops:{name:'王运营',role:'运营人员',avatar:'王',view:'v-ops'},
+  supplier:{name:'标注科技-A组',role:'供应商',avatar:'标',view:'v-supplier'}
+};
+function switchRole(key,el){
+  document.querySelectorAll('.rv').forEach(v=>v.classList.remove('active'));
+  document.getElementById(roles[key].view).classList.add('active');
+  document.querySelectorAll('.role-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sbA').textContent=roles[key].avatar;
+  document.getElementById('sbN').textContent=roles[key].name;
+  document.getElementById('sbR').textContent=roles[key].role;
+}
+</script>
+</body>
+</html>

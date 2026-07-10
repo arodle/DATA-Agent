@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 数据标采交付 Agent 工作台原型</title>
+  <style>
+    :root {
+      --bg: #eef2f5;
+      --surface: #ffffff;
+      --surface-2: #f7f9fb;
+      --ink: #182331;
+      --muted: #627083;
+      --line: #d7dee7;
+      --line-strong: #bac6d3;
+      --teal: #197c75;
+      --blue: #2767a8;
+      --green: #2e7d55;
+      --amber: #a56218;
+      --red: #b94745;
+      --violet: #6652a1;
+      --soft-teal: #e4f3f1;
+      --soft-blue: #e6f0fb;
+      --soft-green: #e6f3ec;
+      --soft-amber: #fff0d9;
+      --soft-red: #fae8e7;
+      --soft-violet: #eeeaf8;
+      --shadow: 0 18px 48px rgba(24, 35, 49, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 72px 284px minmax(520px, 1fr) 388px;
+      height: 100vh;
+    }
+
+    .rail {
+      background: #152231;
+      color: #d9e4ef;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px 10px;
+      gap: 14px;
+    }
+
+    .brand {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.24);
+      background: rgba(255,255,255,.08);
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .rail-button {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.16);
+      background: transparent;
+      color: #d9e4ef;
+      font-size: 20px;
+    }
+
+    .rail-button.active {
+      background: #ffffff;
+      color: #152231;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .sidebar-header,
+    .context-header {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    h2 {
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    h3 {
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    p,
+    li,
+    td,
+    th,
+    label {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .search {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .search input {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--line);
+      padding: 0 12px;
+      background: var(--surface-2);
+      color: var(--ink);
+    }
+
+    .section-label {
+      padding: 14px 18px 8px;
+      color: #7b8794;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .project-list {
+      overflow: auto;
+      padding: 0 10px 18px;
+    }
+
+    .project-item {
+      border: 1px solid transparent;
+      padding: 12px;
+      margin: 6px 0;
+      background: transparent;
+    }
+
+    .project-item.active {
+      border-color: var(--line);
+      background: var(--surface-2);
+    }
+
+    .project-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+
+    .project-title strong {
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 2px 7px;
+      border: 1px solid currentColor;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge.teal { color: var(--teal); background: var(--soft-teal); }
+    .badge.blue { color: var(--blue); background: var(--soft-blue); }
+    .badge.green { color: var(--green); background: var(--soft-green); }
+    .badge.amber { color: var(--amber); background: var(--soft-amber); }
+    .badge.red { color: var(--red); background: var(--soft-red); }
+    .badge.violet { color: var(--violet); background: var(--soft-violet); }
+
+    .project-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: #f8fafc;
+    }
+
+    .topbar {
+      height: 70px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      gap: 18px;
+    }
+
+    .title-block {
+      min-width: 0;
+    }
+
+    .title-block h1 {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .title-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-button {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      background: var(--surface);
+    }
+
+    .primary {
+      height: 38px;
+      padding: 0 14px;
+      border-color: var(--teal);
+      background: var(--teal);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(420px, 1fr) 330px;
+      gap: 16px;
+      padding: 16px;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .conversation,
+    .plan-panel,
+    .context {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: 0 1px 0 rgba(24, 35, 49, .04);
+      min-width: 0;
+    }
+
+    .conversation {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .panel-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: var(--surface-2);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tab.active {
+      color: var(--teal);
+      border-color: rgba(25, 124, 117, .45);
+      background: var(--soft-teal);
+    }
+
+    .messages {
+      padding: 18px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .message {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .avatar.agent {
+      background: var(--soft-teal);
+      color: var(--teal);
+      border-color: rgba(25, 124, 117, .28);
+    }
+
+    .bubble {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 13px 14px;
+      max-width: 100%;
+    }
+
+    .bubble.agent {
+      border-color: rgba(25, 124, 117, .24);
+      background: linear-gradient(0deg, rgba(228,243,241,.56), rgba(255,255,255,.92));
+    }
+
+    .bubble h3 {
+      margin-bottom: 8px;
+    }
+
+    .bubble p {
+      margin: 4px 0;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .fact {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      padding: 9px;
+    }
+
+    .fact b {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+
+    .fact span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .composer {
+      border-top: 1px solid var(--line);
+      padding: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: end;
+      background: var(--surface);
+    }
+
+    .composer textarea {
+      min-height: 44px;
+      max-height: 104px;
+      resize: vertical;
+      flex: 1;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      color: var(--ink);
+      background: var(--surface-2);
+    }
+
+    .send {
+      width: 42px;
+      height: 42px;
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .plan-panel {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .plan-body {
+      overflow: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      padding: 12px;
+      background: #fff;
+    }
+
+    .step-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 7px;
+    }
+
+    .step strong {
+      font-size: 14px;
+    }
+
+    .step p {
+      font-size: 12px;
+    }
+
+    .context {
+      border-left: 1px solid var(--line);
+      border-right: 0;
+      border-top: 0;
+      border-bottom: 0;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      box-shadow: none;
+    }
+
+    .context-body {
+      overflow: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .context-card {
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .context-card h3 {
+      padding: 12px 12px 0;
+    }
+
+    .context-card .body {
+      padding: 10px 12px 12px;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      padding: 7px 0;
+      border-bottom: 1px solid #edf1f5;
+    }
+
+    .kv:last-child {
+      border-bottom: 0;
+    }
+
+    .kv span {
+      font-size: 12px;
+      color: #7a8794;
+    }
+
+    .kv b {
+      font-size: 13px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 9px;
+    }
+
+    .event {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--teal);
+      margin-top: 5px;
+      background: #fff;
+    }
+
+    .event strong {
+      font-size: 13px;
+    }
+
+    .event p {
+      font-size: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 12px;
+    }
+
+    th {
+      color: #4a596a;
+      background: var(--surface-2);
+      font-weight: 800;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .bottom-strip {
+      height: 44px;
+      border-top: 1px solid var(--line);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 16px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .log-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      white-space: nowrap;
+    }
+
+    .mobile-notice {
+      display: none;
+    }
+
+    @media (max-width: 1180px) {
+      body { overflow: auto; }
+      .app {
+        grid-template-columns: 64px 260px minmax(520px, 1fr);
+      }
+      .context {
+        display: none;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        display: block;
+        height: auto;
+      }
+      .rail,
+      .sidebar,
+      .context,
+      .bottom-strip {
+        display: none;
+      }
+      .main {
+        min-height: 100vh;
+      }
+      .topbar {
+        height: auto;
+        padding: 14px;
+        align-items: start;
+      }
+      .toolbar {
+        display: none;
+      }
+      .workspace {
+        display: block;
+        padding: 12px;
+      }
+      .conversation {
+        min-height: calc(100vh - 100px);
+      }
+      .plan-panel {
+        margin-top: 12px;
+      }
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+      .mobile-notice {
+        display: block;
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--amber);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <nav class="rail" aria-label="主导航">
+      <div class="brand" title="AI Data Ops">DO</div>
+      <button class="rail-button active" title="项目空间">⌘</button>
+      <button class="rail-button" title="需求">□</button>
+      <button class="rail-button" title="质量">◇</button>
+      <button class="rail-button" title="规则">≡</button>
+      <button class="rail-button" title="设置">⚙</button>
+    </nav>
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="eyebrow">Workspace</div>
+        <h1>数据交付项目空间</h1>
+      </div>
+      <div class="search">
+        <input aria-label="搜索项目" value="SMPLX 关键点">
+      </div>
+      <div class="section-label">进行中的交付</div>
+      <div class="project-list">
+        <article class="project-item active">
+          <div class="project-title">
+            <strong>人体 SMPLX 关键点标注</strong>
+            <span class="badge teal">执行中</span>
+          </div>
+          <div class="project-meta">
+            <span>PRJ-002</span>
+            <span>6996 张</span>
+            <span>周三期望</span>
+            <span>2 家供应商</span>
+          </div>
+        </article>
+        <article class="project-item">
+          <div class="project-title">
+            <strong>车道线 2D 标注复检</strong>
+            <span class="badge amber">质检</span>
+          </div>
+          <div class="project-meta">
+            <span>PRJ-006</span>
+            <span>12 批次</span>
+            <span>P1 事件</span>
+            <span>待返修</span>
+          </div>
+        </article>
+        <article class="project-item">
+          <div class="project-title">
+            <strong>客服录音转写清洗</strong>
+            <span class="badge blue">评估中</span>
+          </div>
+          <div class="project-meta">
+            <span>REQ-011</span>
+            <span>80 小时</span>
+            <span>规则缺失</span>
+            <span>待确认</span>
+          </div>
+        </article>
+      </div>
+      <div class="section-label">知识库</div>
+      <div class="project-list">
+        <article class="project-item">
+          <div class="project-title">
+            <strong>平台操作 FAQ</strong>
+            <span class="badge green">12 条</span>
+          </div>
+        </article>
+        <article class="project-item">
+          <div class="project-title">
+            <strong>规则表 V1.1</strong>
+            <span class="badge violet">启用</span>
+          </div>
+        </article>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="title-block">
+          <h1>人体 SMPLX 关键点标注 · 供应商执行工作区</h1>
+          <div class="title-meta">
+            <span>当前阶段：供应商执行</span>
+            <span>执行量：6996 张</span>
+            <span>规则冲突：手部点位版本</span>
+            <span>风险：预算单未闭环</span>
+          </div>
+          <div class="mobile-notice">移动端展示对话和执行计划；完整上下文建议在桌面端查看。</div>
+        </div>
+        <div class="toolbar">
+          <button class="icon-button" title="同步飞书">↻</button>
+          <button class="icon-button" title="导出文档">⇩</button>
+          <button class="icon-button" title="创建任务">＋</button>
+          <button class="primary">运行下一步</button>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <section class="conversation" aria-label="Agent 对话区">
+          <div class="panel-head">
+            <h2>Agent 对话</h2>
+            <div class="tabs">
+              <button class="tab active">运营视角</button>
+              <button class="tab">客户回复</button>
+              <button class="tab">供应商说明</button>
+            </div>
+          </div>
+          <div class="messages">
+            <article class="message">
+              <div class="avatar">运</div>
+              <div class="bubble">
+                <p>这是需求方的文档和飞书对接记录，目前已经进入供应商执行阶段。帮我判断现在该推进什么。</p>
+              </div>
+            </article>
+
+            <article class="message">
+              <div class="avatar agent">AI</div>
+              <div class="bubble agent">
+                <h3>判断结果：当前处于供应商执行阶段</h3>
+                <p>平台实际上传量为 6996 张，优先级高于需求模板里的“2h”。当前不应再按模板规模判断，而应确认这 6996 张是否全部需要完成。</p>
+                <div class="mini-grid">
+                  <div class="fact"><b>执行量</b><span>6996 张图片</span></div>
+                  <div class="fact"><b>点位版本</b><span>0-23 共 24 点待最终确认</span></div>
+                  <div class="fact"><b>供应商策略</b><span>供应商 2 先接 2000 张</span></div>
+                  <div class="fact"><b>放量策略</b><span>供应商 1 小批量复测后再放量</span></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="message">
+              <div class="avatar agent">AI</div>
+              <div class="bubble agent">
+                <h3>我建议先生成三份可执行材料</h3>
+                <p>1. 发给需求方的确认话术：确认 6996 张是否全部完成，以及 22/23 是否为左右掌心点。</p>
+                <p>2. 发给供应商的统一规则说明：左右、遮挡、pelvis、head、ankle、掌心点。</p>
+                <p>3. 内部执行计划：预算单催办、供应商 2 执行 2000 张、供应商 1 小批量质检门槛。</p>
+              </div>
+            </article>
+
+            <article class="message">
+              <div class="avatar">运</div>
+              <div class="bubble">
+                <p>生成供应商说明，并把风险写进项目下一步动作。</p>
+              </div>
+            </article>
+          </div>
+          <div class="composer">
+            <textarea aria-label="给 Agent 输入消息">帮我生成供应商执行说明，并更新项目下一步动作...</textarea>
+            <button class="send" title="发送">›</button>
+          </div>
+        </section>
+
+        <aside class="plan-panel" aria-label="执行计划">
+          <div class="panel-head">
+            <h2>执行计划</h2>
+            <span class="badge amber">待确认</span>
+          </div>
+          <div class="plan-body">
+            <article class="step">
+              <div class="step-head">
+                <strong>1. 确认最终执行口径</strong>
+                <span class="badge red">阻塞</span>
+              </div>
+              <p>确认 6996 张是否全部完成；确认 0-23 共 24 点是否为正式版本。</p>
+            </article>
+            <article class="step">
+              <div class="step-head">
+                <strong>2. 同步供应商规则</strong>
+                <span class="badge amber">待生成</span>
+              </div>
+              <p>生成统一说明，覆盖左右、遮挡、pelvis、head、ankle、掌心点。</p>
+            </article>
+            <article class="step">
+              <div class="step-head">
+                <strong>3. 分配执行批次</strong>
+                <span class="badge blue">进行中</span>
+              </div>
+              <p>供应商 2 承接 2000 张；供应商 1 先做小批量复测。</p>
+            </article>
+            <article class="step">
+              <div class="step-head">
+                <strong>4. 设置质量门槛</strong>
+                <span class="badge teal">建议</span>
+              </div>
+              <p>先抽检 50-100 张，通过后再放量，避免大批量返修。</p>
+            </article>
+            <article class="step">
+              <div class="step-head">
+                <strong>5. 推进预算单</strong>
+                <span class="badge red">风险</span>
+              </div>
+              <p>预算单未闭环会影响正式执行、平台节点和结算。</p>
+            </article>
+          </div>
+        </aside>
+      </section>
+
+      <div class="bottom-strip">
+        <span class="log-pill">已读取：需求文档</span>
+        <span class="log-pill">已读取：飞书对接记录</span>
+        <span class="log-pill">已匹配：规则表 / FAQ</span>
+        <span class="log-pill">待写入：项目下一步动作</span>
+      </div>
+    </main>
+
+    <aside class="context" aria-label="项目上下文">
+      <div class="context-header">
+        <div class="eyebrow">Context</div>
+        <h1>项目上下文</h1>
+      </div>
+      <div class="context-body">
+        <section class="context-card">
+          <h3>项目卡片</h3>
+          <div class="body">
+            <div class="kv"><span>项目ID</span><b>PRJ-002</b></div>
+            <div class="kv"><span>需求ID</span><b>REQ-002</b></div>
+            <div class="kv"><span>任务类型</span><b>人体关键点标注</b></div>
+            <div class="kv"><span>数据模态</span><b>视频抽帧图片</b></div>
+            <div class="kv"><span>交付格式</span><b>JSON</b></div>
+            <div class="kv"><span>当前阶段</span><b>供应商执行</b></div>
+          </div>
+        </section>
+
+        <section class="context-card">
+          <h3>关键规则</h3>
+          <div class="body">
+            <div class="kv"><span>左右口径</span><b>以人体自身左右为准</b></div>
+            <div class="kv"><span>遮挡点</span><b>不可见不标，不脑补</b></div>
+            <div class="kv"><span>pelvis</span><b>左右髋连线偏上，小腹偏下</b></div>
+            <div class="kv"><span>head</span><b>头部中央</b></div>
+            <div class="kv"><span>22/23</span><b>左右掌心，需最终确认</b></div>
+          </div>
+        </section>
+
+        <section class="context-card">
+          <h3>供应商执行</h3>
+          <div class="body">
+            <table>
+              <tr><th>供应商</th><th>判断</th><th>动作</th></tr>
+              <tr><td>供应商 2</td><td>质量和价格较合适</td><td>先接 2000 张</td></tr>
+              <tr><td>供应商 1</td><td>有产能但质量弱</td><td>小批量复测</td></tr>
+              <tr><td>供应商 3/4</td><td>效果好但人力不足</td><td>候补</td></tr>
+            </table>
+          </div>
+        </section>
+
+        <section class="context-card">
+          <h3>流程时间线</h3>
+          <div class="body timeline">
+            <div class="event">
+              <span class="dot"></span>
+              <div><strong>需求提出</strong><p>视频数据，希望标注 SMPLX 人体关键点。</p></div>
+            </div>
+            <div class="event">
+              <span class="dot"></span>
+              <div><strong>试标确认</strong><p>多家供应商试标，客户反馈 2/3/4 效果较好。</p></div>
+            </div>
+            <div class="event">
+              <span class="dot"></span>
+              <div><strong>执行分配</strong><p>供应商 2 先接 2000 张，供应商 1 复测。</p></div>
+            </div>
+            <div class="event">
+              <span class="dot"></span>
+              <div><strong>待推进</strong><p>预算单、最终点位版本、质检门槛。</p></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 数据交付 Agent 独立工作台原型</title>
+  <style>
+    :root {
+      --bg: #edf1f5;
+      --ink: #15202b;
+      --muted: #627083;
+      --panel: #ffffff;
+      --panel-2: #f7f9fc;
+      --line: #d8e0ea;
+      --nav: #172332;
+      --teal: #197c75;
+      --blue: #4f63f6;
+      --green: #2e7d55;
+      --amber: #a76519;
+      --red: #b94745;
+      --soft-teal: #e4f3f1;
+      --soft-blue: #eef1ff;
+      --soft-green: #e6f3ec;
+      --soft-amber: #fff0d9;
+      --soft-red: #fae8e7;
+      --shadow: 0 16px 42px rgba(22, 34, 49, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+    }
+
+    body { overflow: hidden; }
+    button, textarea { font: inherit; }
+    button { border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+
+    .app {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 64px 420px minmax(620px, 1fr);
+      background: var(--bg);
+    }
+
+    .rail {
+      background: var(--nav);
+      color: #e6edf5;
+      padding: 12px 9px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.2);
+      background: rgba(255,255,255,.08);
+      font-size: 13px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .rail-btn {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.14);
+      background: transparent;
+      color: #d9e4ef;
+      font-size: 18px;
+    }
+
+    .rail-btn.active { background: #fff; color: var(--nav); }
+
+    .agent {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      min-width: 0;
+    }
+
+    .agent-head {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 20px; line-height: 1.25; }
+    h2 { font-size: 17px; line-height: 1.25; }
+    h3 { font-size: 14px; line-height: 1.25; }
+    p, li, td, th { font-size: 13px; line-height: 1.45; color: var(--muted); }
+
+    .project-switcher {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+
+    .project-card {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      padding: 12px;
+    }
+
+    .project-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .project-row strong { font-size: 14px; line-height: 1.3; }
+    .meta { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 2px 7px;
+      border: 1px solid currentColor;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .badge.teal { color: var(--teal); background: var(--soft-teal); }
+    .badge.blue { color: var(--blue); background: var(--soft-blue); }
+    .badge.green { color: var(--green); background: var(--soft-green); }
+    .badge.amber { color: var(--amber); background: var(--soft-amber); }
+    .badge.red { color: var(--red); background: var(--soft-red); }
+
+    .messages {
+      overflow: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .msg {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .avatar.ai {
+      color: var(--teal);
+      background: var(--soft-teal);
+      border-color: rgba(25,124,117,.28);
+    }
+
+    .bubble {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 11px 12px;
+    }
+
+    .bubble.ai {
+      border-color: rgba(25,124,117,.26);
+      background: linear-gradient(0deg, rgba(228,243,241,.58), #fff);
+    }
+
+    .bubble p + p { margin-top: 7px; }
+
+    .facts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .fact {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      padding: 8px;
+    }
+
+    .fact b { display: block; font-size: 12px; margin-bottom: 3px; }
+    .fact span { font-size: 12px; color: var(--muted); }
+
+    .plan { margin-top: 10px; display: grid; gap: 8px; }
+
+    .step {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 9px;
+    }
+
+    .step-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .step strong { font-size: 12px; }
+    .step p { font-size: 12px; }
+
+    .composer {
+      border-top: 1px solid var(--line);
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .composer textarea {
+      flex: 1;
+      min-height: 42px;
+      max-height: 112px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      padding: 10px;
+      color: var(--ink);
+    }
+
+    .send {
+      width: 42px;
+      height: 42px;
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .tool-area {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: 64px 1fr 44px;
+      background: #f8fafc;
+    }
+
+    .topbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      gap: 16px;
+    }
+
+    .top-title { min-width: 0; }
+    .top-title h1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .top-title p { font-size: 12px; margin-top: 4px; }
+
+    .toolbar { display: flex; align-items: center; gap: 8px; }
+
+    .tool-btn {
+      height: 34px;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--panel);
+    }
+
+    .tool-btn.primary {
+      border-color: var(--teal);
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .viewport {
+      min-height: 0;
+      padding: 16px;
+      overflow: auto;
+      display: grid;
+      grid-template-columns: minmax(520px, 1fr) 300px;
+      gap: 16px;
+    }
+
+    .platform {
+      min-width: 0;
+      border: 1px solid var(--line);
+      background: #eef1ff;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 122px 1fr;
+      min-height: 720px;
+    }
+
+    .platform-nav {
+      background: #6268f4;
+      color: #fff;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .platform-nav-item {
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,.88);
+    }
+
+    .platform-nav-item.active { background: rgba(255,255,255,.26); color: #fff; }
+
+    .platform-main {
+      min-width: 0;
+      padding: 20px;
+      background: #f1f4ff;
+    }
+
+    .platform-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .platform-head h2 { font-size: 18px; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(70px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      height: 58px;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(88, 94, 230, .08);
+    }
+
+    .stat.active { background: #6268f4; color: #fff; }
+    .stat b { font-size: 20px; }
+    .stat span { font-size: 11px; color: inherit; opacity: .78; }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .task-card {
+      background: #fff;
+      border: 1px solid rgba(88, 94, 230, .08);
+      padding: 14px;
+      min-height: 96px;
+    }
+
+    .blur-line {
+      height: 12px;
+      background: linear-gradient(90deg, #d5d9df, #b9c0c8, #dfe3e8);
+      margin-bottom: 9px;
+      opacity: .85;
+    }
+
+    .task-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+
+    .platform-tag {
+      background: #edf0ff;
+      color: #4f63f6;
+      font-size: 10px;
+      padding: 3px 6px;
+    }
+
+    .bar {
+      height: 5px;
+      background: #edf0f5;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar span { display: block; height: 100%; background: #6268f4; }
+
+    .inspect { display: flex; flex-direction: column; gap: 14px; }
+
+    .inspect-card {
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .inspect-card h3 { padding: 12px 12px 0; }
+    .inspect-card .body { padding: 10px 12px 12px; }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      padding: 7px 0;
+      border-bottom: 1px solid #edf1f5;
+    }
+
+    .kv:last-child { border-bottom: 0; }
+    .kv span { color: #7a8794; font-size: 12px; }
+    .kv b { color: var(--ink); font-size: 12px; }
+
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    th { background: var(--panel-2); color: #465568; font-weight: 900; }
+    tr:last-child td { border-bottom: 0; }
+
+    .tool-log {
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow: hidden;
+    }
+
+    .log-pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1180px) {
+      body { overflow: auto; }
+      .app { height: auto; min-height: 100vh; grid-template-columns: 58px minmax(340px, 420px) minmax(560px, 1fr); }
+      .viewport { grid-template-columns: 1fr; }
+      .inspect { display: grid; grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 860px) {
+      .app { display: block; }
+      .rail { display: none; }
+      .agent { min-height: 60vh; }
+      .tool-area { min-height: 100vh; }
+      .platform { grid-template-columns: 1fr; }
+      .platform-nav { display: none; }
+      .stats, .task-grid, .inspect { grid-template-columns: 1fr; }
+      .toolbar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <nav class="rail" aria-label="Agent 软件主导航">
+      <div class="brand">DD</div>
+      <button class="rail-btn active" title="Agent">⌘</button>
+      <button class="rail-btn" title="项目">□</button>
+      <button class="rail-btn" title="平台工具">▣</button>
+      <button class="rail-btn" title="知识库">≡</button>
+      <button class="rail-btn" title="设置">⚙</button>
+    </nav>
+
+    <aside class="agent" aria-label="Agent 协作区">
+      <header class="agent-head">
+        <div class="eyebrow">Agent Workbench</div>
+        <h1>数据交付 Agent</h1>
+        <p>独立软件工作台，通过工具调用展示数据平台。</p>
+      </header>
+
+      <section class="project-switcher">
+        <div class="project-card">
+          <div class="project-row">
+            <strong>人体 SMPLX 关键点标注</strong>
+            <span class="badge teal">供应商执行</span>
+          </div>
+          <div class="meta">
+            <span class="badge blue">6996 张</span>
+            <span class="badge amber">预算单风险</span>
+            <span class="badge red">规则冲突</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="messages">
+        <article class="msg">
+          <div class="avatar">运</div>
+          <div class="bubble">
+            <p>帮我打开平台看一下这个项目现在在哪个节点，顺便判断供应商怎么分配。</p>
+          </div>
+        </article>
+
+        <article class="msg">
+          <div class="avatar ai">AI</div>
+          <div class="bubble ai">
+            <p>我已打开右侧数据平台视图，并定位到标注工作概览。当前项目处于供应商执行阶段，平台任务量为 6996 张。</p>
+            <div class="facts">
+              <div class="fact"><b>平台执行量</b><span>6996 张图片</span></div>
+              <div class="fact"><b>任务状态</b><span>标注中 / 节点推进中</span></div>
+              <div class="fact"><b>规则风险</b><span>22/23 掌心点需确认</span></div>
+              <div class="fact"><b>预算风险</b><span>正式预算单需催办</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="msg">
+          <div class="avatar ai">AI</div>
+          <div class="bubble ai">
+            <p>建议执行策略：</p>
+            <div class="plan">
+              <div class="step">
+                <div class="step-head"><strong>供应商 2</strong><span class="badge green">先执行</span></div>
+                <p>质量和价格较合适，先承接 2000 张。</p>
+              </div>
+              <div class="step">
+                <div class="step-head"><strong>供应商 1</strong><span class="badge amber">小批量复测</span></div>
+                <p>有产能但试标质量弱，先抽 50-100 张复查。</p>
+              </div>
+              <div class="step">
+                <div class="step-head"><strong>需求方</strong><span class="badge red">待确认</span></div>
+                <p>确认 6996 张是否全部完成，确认 0-23 共 24 点最终版本。</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="msg">
+          <div class="avatar">运</div>
+          <div class="bubble">
+            <p>把确认口径写成客户回复，再把供应商说明生成出来。</p>
+          </div>
+        </article>
+      </section>
+
+      <footer class="composer">
+        <textarea aria-label="给 Agent 输入消息">生成客户确认话术和供应商执行说明...</textarea>
+        <button class="send" title="发送">›</button>
+      </footer>
+    </aside>
+
+    <main class="tool-area" aria-label="工具调用与平台展示区">
+      <header class="topbar">
+        <div class="top-title">
+          <h1>数据平台 · 标注工作概览</h1>
+          <p>由 Agent 调用展示。右侧不是聊天插件，而是平台页面/工具结果。</p>
+        </div>
+        <div class="toolbar">
+          <button class="tool-btn">刷新平台</button>
+          <button class="tool-btn">定位任务</button>
+          <button class="tool-btn">生成说明</button>
+          <button class="tool-btn primary">写入下一步动作</button>
+        </div>
+      </header>
+
+      <section class="viewport">
+        <section class="platform" aria-label="数据平台页面模拟视图">
+          <nav class="platform-nav">
+            <div class="platform-nav-item active">首页</div>
+            <div class="platform-nav-item">我的预算</div>
+            <div class="platform-nav-item">我的标注</div>
+            <div class="platform-nav-item">我的采集</div>
+            <div class="platform-nav-item">培训中心</div>
+            <div class="platform-nav-item">通知</div>
+            <div class="platform-nav-item">API token</div>
+          </nav>
+          <div class="platform-main">
+            <div class="platform-head">
+              <h2>标注工作概览</h2>
+              <button class="tool-btn">新建任务</button>
+            </div>
+            <div class="stats">
+              <div class="stat active"><b>89</b><span>标注中</span></div>
+              <div class="stat"><b>20</b><span>试标注中</span></div>
+              <div class="stat"><b>1</b><span>交付验收</span></div>
+              <div class="stat"><b>2</b><span>返工确认</span></div>
+              <div class="stat"><b>1</b><span>重新编辑</span></div>
+              <div class="stat"><b>95</b><span>预算审批</span></div>
+              <div class="stat"><b>33</b><span>近期完成</span></div>
+            </div>
+            <div class="task-grid">
+              <article class="task-card">
+                <div class="blur-line"></div>
+                <div class="task-tags">
+                  <span class="platform-tag">任务ID: 82196</span>
+                  <span class="platform-tag">2 个标注步骤</span>
+                  <span class="platform-tag">期望完成: 周三</span>
+                </div>
+                <p>步骤1（标注 - 关键点） 已经开始</p>
+                <div class="bar"><span style="width: 72%"></span></div>
+              </article>
+              <article class="task-card">
+                <div class="blur-line"></div>
+                <div class="task-tags">
+                  <span class="platform-tag">任务ID: 73793</span>
+                  <span class="platform-tag">供应商 2</span>
+                  <span class="platform-tag">2000 张</span>
+                </div>
+                <p>步骤1（标注 - 关键点） 已经开始</p>
+                <div class="bar"><span style="width: 56%"></span></div>
+              </article>
+              <article class="task-card">
+                <div class="blur-line"></div>
+                <div class="task-tags">
+                  <span class="platform-tag">任务ID: 70578</span>
+                  <span class="platform-tag">供应商 1</span>
+                  <span class="platform-tag">小批量复测</span>
+                </div>
+                <p>步骤1（标注 - 关键点） 待质量门槛确认</p>
+                <div class="bar"><span style="width: 12%"></span></div>
+              </article>
+              <article class="task-card">
+                <div class="blur-line"></div>
+                <div class="task-tags">
+                  <span class="platform-tag">节点 6</span>
+                  <span class="platform-tag">预算单</span>
+                  <span class="platform-tag">待推进</span>
+                </div>
+                <p>正式执行节点仍需继续推进</p>
+                <div class="bar"><span style="width: 34%"></span></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <aside class="inspect" aria-label="Agent 对平台的解析结果">
+          <section class="inspect-card">
+            <h3>Agent 解析</h3>
+            <div class="body">
+              <div class="kv"><span>当前阶段</span><b>供应商执行</b></div>
+              <div class="kv"><span>执行范围</span><b>6996 张</b></div>
+              <div class="kv"><span>优先依据</span><b>平台任务量 > 模板字段</b></div>
+              <div class="kv"><span>风险等级</span><b>中</b></div>
+            </div>
+          </section>
+
+          <section class="inspect-card">
+            <h3>需要写回平台</h3>
+            <div class="body">
+              <div class="kv"><span>下一步</span><b>确认 24 点最终版本</b></div>
+              <div class="kv"><span>下一步</span><b>供应商 1 小批量质检</b></div>
+              <div class="kv"><span>下一步</span><b>催办正式预算单</b></div>
+            </div>
+          </section>
+
+          <section class="inspect-card">
+            <h3>供应商分配</h3>
+            <div class="body">
+              <table>
+                <tr><th>供应商</th><th>动作</th></tr>
+                <tr><td>供应商 2</td><td>先接 2000 张</td></tr>
+                <tr><td>供应商 1</td><td>复测后放量</td></tr>
+                <tr><td>供应商 3/4</td><td>候补产能</td></tr>
+              </table>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <footer class="tool-log">
+        <span class="log-pill">Tool: 打开数据平台</span>
+        <span class="log-pill">Tool: 查询任务状态</span>
+        <span class="log-pill">Tool: 解析供应商执行</span>
+        <span class="log-pill">Next: 写入项目下一步动作</span>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
