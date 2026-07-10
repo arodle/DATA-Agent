@@ -143,6 +143,204 @@ export default function UserSettings() {
 
         {activeTab === "agent" && (
           <div className="settingsPanel">
+            <div className="agentModuleGrid">
+              <div className="agentModuleCard">
+                <div className="agentModuleHead">
+                  <span className="agentModuleIcon">🎯</span>
+                  <div>
+                    <strong>Skill 管理</strong>
+                    <p>配置 Agent 可调用的能力技能</p>
+                  </div>
+                </div>
+                <div className="agentModuleBody">
+                  <div className="moduleRow">
+                    <span>已启用技能</span>
+                    <strong>12 个</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>技能分类</span>
+                    <strong>5 类</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>技能调用频率</span>
+                    <strong>高</strong>
+                  </div>
+                </div>
+                <div className="agentModuleFooter">
+                  <button className="ghostBtn">查看技能</button>
+                  <button className="primaryBtn">配置</button>
+                </div>
+              </div>
+
+              <div className="agentModuleCard">
+                <div className="agentModuleHead">
+                  <span className="agentModuleIcon">🔗</span>
+                  <div>
+                    <strong>任务编排</strong>
+                    <p>编排 Agent 任务执行流程</p>
+                  </div>
+                </div>
+                <div className="agentModuleBody">
+                  <div className="moduleRow">
+                    <span>编排模板</span>
+                    <strong>8 个</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>运行中流程</span>
+                    <strong>3 个</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>节点类型</span>
+                    <strong>12 种</strong>
+                  </div>
+                </div>
+                <div className="agentModuleFooter">
+                  <button className="ghostBtn">查看编排</button>
+                  <button className="primaryBtn">新建</button>
+                </div>
+              </div>
+
+              <div className="agentModuleCard">
+                <div className="agentModuleHead">
+                  <span className="agentModuleIcon">📚</span>
+                  <div>
+                    <strong>知识库</strong>
+                    <p>管理 Agent 私有知识库</p>
+                  </div>
+                </div>
+                <div className="agentModuleBody">
+                  <div className="moduleRow">
+                    <span>文档总数</span>
+                    <strong>256</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>向量索引</span>
+                    <strong>已建立</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>更新时间</span>
+                    <strong>2026-07-10</strong>
+                  </div>
+                </div>
+                <div className="agentModuleFooter">
+                  <button className="ghostBtn">浏览文档</button>
+                  <button className="primaryBtn">上传</button>
+                </div>
+              </div>
+
+              <div className="agentModuleCard">
+                <div className="agentModuleHead">
+                  <span className="agentModuleIcon">🛠️</span>
+                  <div>
+                    <strong>工具调用</strong>
+                    <p>管理 Agent 可调用的外部工具</p>
+                  </div>
+                </div>
+                <div className="agentModuleBody">
+                  <div className="moduleRow">
+                    <span>已接入工具</span>
+                    <strong>6 个</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>今日调用</span>
+                    <strong>42 次</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>成功率</span>
+                    <strong className="success">98.5%</strong>
+                  </div>
+                </div>
+                <div className="agentModuleFooter">
+                  <button className="ghostBtn">调用记录</button>
+                  <button className="primaryBtn">添加工具</button>
+                </div>
+              </div>
+
+              <div className="agentModuleCard">
+                <div className="agentModuleHead">
+                  <span className="agentModuleIcon">🌱</span>
+                  <div>
+                    <strong>经验学习</strong>
+                    <p>沉淀 Agent 经验教训与最佳实践</p>
+                  </div>
+                </div>
+                <div className="agentModuleBody">
+                  <div className="moduleRow">
+                    <span>经验案例</span>
+                    <strong>38 条</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>本周新增</span>
+                    <strong>5 条</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>应用率</span>
+                    <strong>76%</strong>
+                  </div>
+                </div>
+                <div className="agentModuleFooter">
+                  <button className="ghostBtn">查看案例</button>
+                  <button className="primaryBtn">添加</button>
+                </div>
+              </div>
+
+              <div className="agentModuleCard">
+                <div className="agentModuleHead">
+                  <span className="agentModuleIcon">📋</span>
+                  <div>
+                    <strong>执行记录</strong>
+                    <p>查看 Agent 任务执行历史</p>
+                  </div>
+                </div>
+                <div className="agentModuleBody">
+                  <div className="moduleRow">
+                    <span>累计执行</span>
+                    <strong>1,286 次</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>成功率</span>
+                    <strong className="success">99.1%</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>平均耗时</span>
+                    <strong>3.2 秒</strong>
+                  </div>
+                </div>
+                <div className="agentModuleFooter">
+                  <button className="ghostBtn">查看全部</button>
+                  <button className="primaryBtn">筛选</button>
+                </div>
+              </div>
+
+              <div className="agentModuleCard">
+                <div className="agentModuleHead">
+                  <span className="agentModuleIcon">📈</span>
+                  <div>
+                    <strong>能力成长</strong>
+                    <p>追踪 Agent 能力成长轨迹</p>
+                  </div>
+                </div>
+                <div className="agentModuleBody">
+                  <div className="moduleRow">
+                    <span>能力维度</span>
+                    <strong>6 个</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>本月提升</span>
+                    <strong className="success">+8.5%</strong>
+                  </div>
+                  <div className="moduleRow">
+                    <span>综合得分</span>
+                    <strong>87.3</strong>
+                  </div>
+                </div>
+                <div className="agentModuleFooter">
+                  <button className="ghostBtn">能力雷达</button>
+                  <button className="primaryBtn">详情</button>
+                </div>
+              </div>
+            </div>
+
             <div className="settingsSection">
               <h3 className="sectionTitle">Agent 行为设置</h3>
               <div className="toggleList">
@@ -166,6 +364,13 @@ export default function UserSettings() {
                     <p>根据需求自动生成标注工具配置</p>
                   </div>
                   <div className="toggleSwitch off" />
+                </div>
+                <div className="toggleItem">
+                  <div>
+                    <strong>经验自动沉淀</strong>
+                    <p>任务执行后自动提取经验到知识库</p>
+                  </div>
+                  <div className="toggleSwitch on" />
                 </div>
               </div>
             </div>
