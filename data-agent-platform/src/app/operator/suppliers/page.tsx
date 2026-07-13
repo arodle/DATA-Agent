@@ -9,6 +9,9 @@ interface SupplierTeam {
   name: string;
   leader: string;
   memberCount: number;
+  activeMemberCount: number;
+  onlineToday: number;
+  projectCount: number;
   status: "active" | "inactive";
 }
 
@@ -50,9 +53,9 @@ const mockSuppliers: Supplier[] = [
     manager: "王五",
     createdAt: "2026-01-15",
     teams: [
-      { id: "T001", name: "图像标注一组", leader: "赵六", memberCount: 25, status: "active" },
-      { id: "T002", name: "语音转写组", leader: "钱七", memberCount: 18, status: "active" },
-      { id: "T003", name: "质检组", leader: "孙八", memberCount: 8, status: "active" },
+      { id: "T001", name: "图像标注一组", leader: "赵六", memberCount: 25, activeMemberCount: 22, onlineToday: 18, projectCount: 3, status: "active" },
+      { id: "T002", name: "语音转写组", leader: "钱七", memberCount: 18, activeMemberCount: 15, onlineToday: 12, projectCount: 2, status: "active" },
+      { id: "T003", name: "质检组", leader: "孙八", memberCount: 8, activeMemberCount: 7, onlineToday: 5, projectCount: 1, status: "active" },
     ],
     members: [
       { id: "M001", name: "赵六", role: "组长", team: "图像标注一组", permissions: ["标注", "审核", "提交"] },
@@ -73,8 +76,8 @@ const mockSuppliers: Supplier[] = [
     manager: "吴十一",
     createdAt: "2026-02-20",
     teams: [
-      { id: "T004", name: "NLP标注组", leader: "郑十二", memberCount: 20, status: "active" },
-      { id: "T005", name: "视频标注组", leader: "王十三", memberCount: 15, status: "active" },
+      { id: "T004", name: "NLP标注组", leader: "郑十二", memberCount: 20, activeMemberCount: 18, onlineToday: 16, projectCount: 2, status: "active" },
+      { id: "T005", name: "视频标注组", leader: "王十三", memberCount: 15, activeMemberCount: 12, onlineToday: 10, projectCount: 1, status: "active" },
     ],
     members: [
       { id: "M004", name: "郑十二", role: "组长", team: "NLP标注组", permissions: ["标注", "审核", "提交"] },
@@ -94,8 +97,8 @@ const mockSuppliers: Supplier[] = [
     manager: "何十六",
     createdAt: "2026-03-10",
     teams: [
-      { id: "T006", name: "采集组", leader: "冯十七", memberCount: 30, status: "active" },
-      { id: "T007", name: "清洗组", leader: "褚十八", memberCount: 12, status: "inactive" },
+      { id: "T006", name: "采集组", leader: "冯十七", memberCount: 30, activeMemberCount: 28, onlineToday: 24, projectCount: 4, status: "active" },
+      { id: "T007", name: "清洗组", leader: "褚十八", memberCount: 12, activeMemberCount: 0, onlineToday: 0, projectCount: 0, status: "inactive" },
     ],
     members: [
       { id: "M006", name: "冯十七", role: "组长", team: "采集组", permissions: ["采集", "上传", "审核"] },
@@ -115,7 +118,7 @@ const mockSuppliers: Supplier[] = [
     manager: "沈二十一",
     createdAt: "2026-06-05",
     teams: [
-      { id: "T008", name: "AI预标注组", leader: "韩二十二", memberCount: 10, status: "active" },
+      { id: "T008", name: "AI预标注组", leader: "韩二十二", memberCount: 10, activeMemberCount: 8, onlineToday: 6, projectCount: 1, status: "active" },
     ],
     members: [
       { id: "M008", name: "韩二十二", role: "组长", team: "AI预标注组", permissions: ["预标注", "审核", "提交"] },
@@ -331,6 +334,15 @@ export default function SupplierManagePage() {
                           </div>
                           <div className="teamInfo">
                             <span>成员数量：{team.memberCount} 人</span>
+                          </div>
+                          <div className="teamInfo">
+                            <span>活跃人数：{team.activeMemberCount} 人</span>
+                          </div>
+                          <div className="teamInfo">
+                            <span>今日在线：{team.onlineToday} 人</span>
+                          </div>
+                          <div className="teamInfo">
+                            <span>承接项目：{team.projectCount} 个</span>
                           </div>
                         </div>
                         <div className="teamCardFooter">
