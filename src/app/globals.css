@@ -6077,6 +6077,234 @@ li {
   }
 }
 
+/* Supplier detail page */
+.supplierDetailLayout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 20px;
+}
+
+.detailSection {
+  background: #fafbfc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.detailSectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0d2137;
+  margin: 0 0 12px 0;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.detailItem {
+  display: grid;
+  gap: 4px;
+}
+
+.detailLabel {
+  font-size: 12px;
+  color: #697889;
+}
+
+.detailValue {
+  font-size: 13px;
+  color: #0d2137;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tinyTag {
+  padding: 2px 8px;
+  background: #eef5f1;
+  color: #0aa866;
+  font-size: 11px;
+  border-radius: 4px;
+}
+
+.teamList {
+  display: grid;
+  gap: 10px;
+}
+
+.teamCard {
+  background: #fff;
+  border: 1px solid #edf1f5;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.teamCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #fafbfc;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.teamCardHeader strong {
+  font-size: 13px;
+  color: #0d2137;
+}
+
+.teamCardBody {
+  padding: 10px 12px;
+}
+
+.teamInfo {
+  font-size: 12px;
+  color: #697889;
+  margin-bottom: 4px;
+}
+
+.teamInfo:last-child {
+  margin-bottom: 0;
+}
+
+.teamCardFooter {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  border-top: 1px solid #edf1f5;
+  background: #fafbfc;
+}
+
+.teamCardFooter button {
+  flex: 1;
+  height: 28px;
+  font-size: 12px;
+}
+
+.memberList {
+  display: grid;
+  gap: 10px;
+}
+
+.memberCard {
+  background: #fff;
+  border: 1px solid #edf1f5;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.memberCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #fafbfc;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.memberCardHeader strong {
+  font-size: 13px;
+  color: #0d2137;
+}
+
+.memberRole {
+  font-size: 11px;
+  color: #356df3;
+  background: #e8f0fe;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.memberCardBody {
+  padding: 10px 12px;
+}
+
+.memberInfo {
+  font-size: 12px;
+  color: #697889;
+  margin-bottom: 6px;
+}
+
+.memberPermissions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.permissionLabel {
+  font-size: 12px;
+  color: #697889;
+}
+
+.permissionTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.permissionTag {
+  padding: 2px 6px;
+  background: #f0f4f8;
+  color: #356df3;
+  font-size: 11px;
+  border-radius: 3px;
+}
+
+.memberCardFooter {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  border-top: 1px solid #edf1f5;
+  background: #fafbfc;
+}
+
+.memberCardFooter button {
+  flex: 1;
+  height: 28px;
+  font-size: 12px;
+}
+
+.permissionConfig {
+  display: grid;
+  gap: 14px;
+}
+
+.permissionSection {
+  background: #fff;
+  border: 1px solid #edf1f5;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.permissionSection strong {
+  display: block;
+  font-size: 13px;
+  color: #0d2137;
+  margin-bottom: 8px;
+}
+
+.statusBadge.green {
+  background: #0aa86620;
+  color: #0aa866;
+}
+
+.statusBadge.gray {
+  background: #9aa7b520;
+  color: #9aa7b5;
+}
+
+@media (max-width: 1200px) {
+  .supplierDetailLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
   .opMainRow {
