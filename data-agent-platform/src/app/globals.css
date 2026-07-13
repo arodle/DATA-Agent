@@ -6323,3 +6323,421 @@ li {
     grid-template-columns: 1fr;
   }
 }
+
+/* Assets page styles */
+.assetsPanel {
+  padding: 0;
+}
+
+.versionTimeline {
+  display: grid;
+  gap: 20px;
+}
+
+.versionGroup {
+  border: 1px solid #edf1f5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.versionGroupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #fafbfc;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.versionGroupHeader strong {
+  font-size: 14px;
+  color: #0d2137;
+}
+
+.versionList {
+  padding: 8px 0;
+}
+
+.versionItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f0f4f8;
+}
+
+.versionItem:last-child {
+  border-bottom: none;
+}
+
+.versionDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.versionInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.versionInfo strong {
+  font-size: 13px;
+  color: #0d2137;
+}
+
+.versionMeta {
+  font-size: 12px;
+  color: #697889;
+}
+
+.versionActions {
+  margin-left: auto;
+}
+
+.ruleList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ruleCard {
+  border: 1px solid #edf1f5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ruleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #fafbfc;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.ruleHeader strong {
+  font-size: 14px;
+  color: #0d2137;
+}
+
+.ruleBody {
+  padding: 14px 16px;
+}
+
+.ruleMeta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #697889;
+  margin-bottom: 10px;
+}
+
+.ruleTargets {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  color: #697889;
+  margin-bottom: 12px;
+}
+
+.ruleMetrics {
+  display: flex;
+  gap: 24px;
+}
+
+.ruleMetrics div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ruleMetrics span {
+  font-size: 12px;
+  color: #697889;
+}
+
+.ruleMetrics strong {
+  font-size: 16px;
+  color: #0d2137;
+}
+
+.ruleFooter {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid #edf1f5;
+  background: #fafbfc;
+}
+
+.lineageContainer {
+  padding: 20px;
+  background: #fafbfc;
+  border-radius: 8px;
+}
+
+.lineageFlow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.lineageNode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 24px;
+  border-radius: 8px;
+  min-width: 100px;
+}
+
+.lineageNode.source {
+  background: #e8f0fe;
+  border: 1px solid #356df3;
+}
+
+.lineageNode.process {
+  background: #f0f4f8;
+  border: 1px solid #9aa7b5;
+}
+
+.lineageNode.sink {
+  background: #eef5f1;
+  border: 1px solid #0aa866;
+}
+
+.nodeIcon {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.lineageNode span:not(.nodeIcon) {
+  font-size: 12px;
+  color: #0d2137;
+}
+
+.lineageNode span.nodeCount {
+  font-size: 11px;
+  color: #697889;
+  margin-top: 4px;
+}
+
+.lineageArrow {
+  font-size: 20px;
+  color: #9aa7b5;
+}
+
+.lineageLegend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.lineageLegend div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #697889;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.legendDot.source {
+  background: #356df3;
+}
+
+.legendDot.process {
+  background: #9aa7b5;
+}
+
+.legendDot.sink {
+  background: #0aa866;
+}
+
+.qualityGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.qualityCard {
+  background: #fafbfc;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.qualityHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.qualityIcon {
+  font-size: 20px;
+}
+
+.qualityHeader strong {
+  font-size: 13px;
+  color: #697889;
+}
+
+.qualityValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0d2137;
+  margin-bottom: 4px;
+}
+
+.qualityTrend {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.qualityTrend.up {
+  background: #0aa86620;
+  color: #0aa866;
+}
+
+.qualityTrend.down {
+  background: #ff475720;
+  color: #ff4757;
+}
+
+.storageList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.storageCard {
+  border: 1px solid #edf1f5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.storageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #fafbfc;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.storageHeader strong {
+  font-size: 14px;
+  color: #0d2137;
+}
+
+.storageBody {
+  padding: 14px 16px;
+}
+
+.storageMeta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #697889;
+  margin-bottom: 12px;
+}
+
+.storageUsage {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.usageBar {
+  height: 6px;
+  background: #e8edf2;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.usageFill {
+  height: 100%;
+  background: linear-gradient(90deg, #0aa866, #10c479);
+  border-radius: 3px;
+}
+
+.usageText {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #697889;
+}
+
+.storageFooter {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid #edf1f5;
+  background: #fafbfc;
+}
+
+.severityBadge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.severityBadge.high {
+  background: #ff475720;
+  color: #ff4757;
+}
+
+.severityBadge.medium {
+  background: #ffb54720;
+  color: #9b6400;
+}
+
+.severityBadge.low {
+  background: #0aa86620;
+  color: #0aa866;
+}
+
+@media (max-width: 1200px) {
+  .ruleList {
+    grid-template-columns: 1fr;
+  }
+
+  .qualityGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .storageList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .qualityGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .lineageFlow {
+    flex-direction: column;
+  }
+
+  .lineageArrow {
+    transform: rotate(90deg);
+  }
+}
