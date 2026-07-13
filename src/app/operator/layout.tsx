@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import OperatorAgent from "./OperatorAgent";
 
 const navConfig = [
   { label: "运营工作台", href: "/operator", icon: "🏠" },
@@ -90,7 +89,6 @@ export default function OperatorLayout({
       <section className="roleWorkspace">
         {children}
       </section>
-      <OperatorAgent />
     </main>
   );
 }
