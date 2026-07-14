@@ -4138,29 +4138,31 @@ li {
   margin-top: 2px;
 }
 
+/* ===== AI Workspace – Refined Dark ===== */
 .aiWorkspace {
   display: grid;
-  grid-template-columns: 240px 1fr 300px;
+  grid-template-columns: 220px 1fr 280px;
   height: calc(100vh - 60px);
   background: #0d1117;
 }
 
 .aiWorkspace.dark {
-  --ws-bg: #0d1117;
-  --ws-surface: #161b22;
-  --ws-surface2: #21262d;
-  --ws-border: #30363d;
-  --ws-text: #c9d1d9;
-  --ws-muted: #8b949e;
-  --ws-accent: #58a6ff;
-  --ws-accent-dim: rgba(88, 166, 255, 0.12);
-  --ws-green: #3fb950;
-  --ws-green-dim: rgba(63, 185, 80, 0.12);
-  --ws-warn: #d29922;
-  --ws-warn-dim: rgba(210, 153, 34, 0.12);
-  --ws-danger: #f85149;
+  --ws-bg: #09090b;
+  --ws-surface: #0f1117;
+  --ws-surface2: #18191e;
+  --ws-border: #27272d;
+  --ws-text: #e4e4e7;
+  --ws-muted: #71717a;
+  --ws-accent: #60a5fa;
+  --ws-accent-dim: rgba(96, 165, 250, 0.08);
+  --ws-green: #34d399;
+  --ws-green-dim: rgba(52, 211, 153, 0.08);
+  --ws-warn: #d4a853;
+  --ws-warn-dim: rgba(212, 168, 83, 0.08);
+  --ws-danger: #f87171;
 }
 
+/* Left sidebar */
 .wsLeft {
   border-right: 1px solid var(--ws-border);
   background: var(--ws-surface);
@@ -4170,27 +4172,34 @@ li {
 }
 
 .wsLeftTop {
-  padding: 14px;
+  padding: 16px 14px 12px;
   border-bottom: 1px solid var(--ws-border);
 }
 
 .wsLeftTitle {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ws-text);
-  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ws-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.wsLeftSearch {
+  position: relative;
 }
 
 .wsLeftSearch input {
   width: 100%;
   height: 30px;
-  padding: 0 10px;
+  padding: 0 10px 0 30px;
   border: 1px solid var(--ws-border);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 12px;
   outline: none;
   background: var(--ws-bg);
   color: var(--ws-text);
+  transition: border-color 0.2s;
 }
 
 .wsLeftSearch input:focus {
@@ -4198,38 +4207,44 @@ li {
 }
 
 .wsLeftSearch input::placeholder {
-  color: var(--ws-muted);
+  color: #52525b;
+}
+
+.wsSearchIcon {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .wsProjectList {
   flex: 1;
-  padding: 8px;
-  display: grid;
-  gap: 6px;
-  align-content: start;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   overflow-y: auto;
 }
 
 .wsProjectItem {
   text-align: left;
-  padding: 10px 12px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: var(--ws-surface);
+  padding: 9px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
   cursor: pointer;
   display: grid;
-  gap: 4px;
-  transition: all 0.15s;
+  gap: 3px;
+  transition: background 0.15s;
 }
 
 .wsProjectItem:hover {
   background: var(--ws-surface2);
-  border-color: var(--ws-border);
 }
 
 .wsProjectItem.active {
-  background: var(--ws-accent-dim);
-  border-color: var(--ws-accent);
+  background: rgba(96, 165, 250, 0.06);
 }
 
 .wsProjectItemHead {
@@ -4241,16 +4256,28 @@ li {
 .wsProjectCode {
   font-size: 11px;
   color: var(--ws-muted);
-  font-family: ui-monospace, "SF Mono", monospace;
+  font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .wsProjectStatus {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.wsStatusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 .wsProjectName {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--ws-text);
   font-weight: 500;
   overflow: hidden;
@@ -4261,41 +4288,26 @@ li {
 .wsProjectMeta {
   display: flex;
   gap: 10px;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--ws-muted);
-}
-
-.wsEmpty {
-  padding: 20px;
-  text-align: center;
-  color: var(--ws-muted);
-  font-size: 12px;
 }
 
 .wsLeftResources {
   border-top: 1px solid var(--ws-border);
-  padding: 12px 8px;
-  display: grid;
-  gap: 2px;
-}
-
-.wsLeftResTitle {
-  font-size: 11px;
-  color: var(--ws-muted);
-  padding: 0 12px 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .wsLeftResItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  font-size: 12px;
+  display: block;
+  padding: 7px 12px;
+  font-size: 11px;
   color: var(--ws-muted);
-  border-radius: 4px;
+  border-radius: 6px;
   text-decoration: none;
+  transition: all 0.12s;
 }
 
 .wsLeftResItem:hover {
@@ -4303,6 +4315,7 @@ li {
   color: var(--ws-text);
 }
 
+/* Center – Chat */
 .wsCenter {
   display: flex;
   flex-direction: column;
@@ -4314,54 +4327,76 @@ li {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: 14px 24px;
   background: var(--ws-surface);
   border-bottom: 1px solid var(--ws-border);
+  flex-shrink: 0;
 }
 
 .wsCenterCrumb {
   font-size: 11px;
   color: var(--ws-muted);
+  font-family: "SF Mono", "Fira Code", monospace;
 }
 
 .wsCenterTitle {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--ws-text);
-  margin-top: 4px;
+  margin-top: 2px;
+  letter-spacing: -0.01em;
+}
+
+.wsModeTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: var(--ws-surface2);
+  color: var(--ws-muted);
+}
+
+.wsModeTagDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
 }
 
 .wsCenterActions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .wsChatModeToggle {
   display: flex;
   background: var(--ws-surface2);
-  border-radius: 8px;
-  padding: 3px;
-  gap: 2px;
+  border-radius: 10px;
+  padding: 2px;
+  gap: 1px;
 }
 
 .wsModeBtn {
-  padding: 6px 14px;
+  padding: 6px 16px;
   border: none;
   background: transparent;
   color: var(--ws-muted);
   font-size: 12px;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s;
   display: flex;
   align-items: center;
   gap: 6px;
   white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 
 .wsModeBtn:hover {
@@ -4374,27 +4409,52 @@ li {
 }
 
 .wsModeCount {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.18);
   color: #fff;
   font-size: 10px;
-  padding: 1px 6px;
-  border-radius: 10px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 5px;
+  border-radius: 8px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.wsDetailLink {
+  font-size: 12px;
+  color: var(--ws-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+  font-weight: 500;
+}
+
+.wsDetailLink:hover {
+  color: var(--ws-text);
 }
 
 .wsChat {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 24px;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  scroll-behavior: smooth;
 }
 
 .wsMsg {
   display: flex;
-  gap: 10px;
-  max-width: 85%;
+  gap: 12px;
+  max-width: 78%;
+  animation: msgIn 0.2s ease-out;
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .wsMsg_user {
@@ -4406,101 +4466,47 @@ li {
   align-self: flex-start;
 }
 
-.wsMsgAvatar {
+.wsAvatar {
+  flex-shrink: 0;
   width: 32px;
   height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  flex-shrink: 0;
-}
-
-.wsAvatarText {
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.wsAvatarAgent {
-  font-size: 16px;
-}
-
-.wsAvatarDot {
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.wsAvatarSupplier {
-  font-size: 14px;
-}
-
-.wsMsg_user .wsMsgAvatar {
-  background: #21262d;
-  color: #fff;
-  border: 1px solid var(--ws-border);
-}
-
-.wsMsg_user .wsAvatarText {
-  color: #58a6ff;
-}
-
-.wsMsg_agent .wsMsgAvatar {
-  background: var(--ws-accent-dim);
-  color: var(--ws-accent);
-}
-
-.wsMsg_agent .wsMsgAvatar .wsAvatarAgent {
-  font-size: 16px;
-}
-
-.wsMsg_system .wsMsgAvatar {
-  background: var(--ws-surface2);
-  color: var(--ws-muted);
-}
-
-.wsMsg_supplier .wsMsgAvatar {
-  background: var(--ws-warn-dim);
-  color: var(--ws-warn);
-  border: 1px solid rgba(210, 153, 34, 0.3);
 }
 
 .wsMsgBody {
-  display: grid;
-  gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
 .wsMsgMeta {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 2px;
+  padding: 0 2px 2px;
 }
 
 .wsMsgRole {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  color: var(--ws-accent);
-}
-
-.wsMsgRole[data-supplier] {
   color: var(--ws-warn);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .wsMsgName {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--ws-muted);
 }
 
 .wsMsgContent {
   padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 13px;
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
+  letter-spacing: 0.005em;
 }
 
 .wsMsg_user .wsMsgContent {
@@ -4516,86 +4522,114 @@ li {
   border-bottom-left-radius: 4px;
 }
 
+.wsMsg_system .wsMsgContent {
+  background: var(--ws-surface2);
+  color: var(--ws-muted);
+  border-bottom-left-radius: 4px;
+  font-size: 12px;
+}
+
 .wsMsg_supplier .wsMsgContent {
   background: var(--ws-surface);
   color: var(--ws-text);
-  border: 1px solid rgba(210, 153, 34, 0.25);
+  border: 1px solid rgba(212, 168, 83, 0.18);
   border-bottom-left-radius: 4px;
 }
 
 .wsMsgTime {
   font-size: 10px;
   color: var(--ws-muted);
-  padding: 0 4px;
+  padding: 2px 4px 0;
+  font-family: "SF Mono", "Fira Code", monospace;
 }
 
+/* Agent plan cards */
 .wsPlan {
   background: var(--ws-surface);
   border: 1px solid var(--ws-border);
-  border-radius: 8px;
-  padding: 12px;
-  display: grid;
-  gap: 8px;
-  min-width: 380px;
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 340px;
 }
 
 .wsPlanItem {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  padding: 8px 10px;
-  border-radius: 4px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.12s;
+}
+
+.wsPlanItem:hover {
   background: var(--ws-surface2);
 }
 
-.wsPlan_done {
-  background: var(--ws-green-dim);
-}
-
-.wsPlan_running {
-  background: var(--ws-warn-dim);
+.wsPlanLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
 .wsPlanDot {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: var(--ws-surface);
   border: 2px solid var(--ws-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
   flex-shrink: 0;
-  font-weight: 700;
+  position: relative;
 }
 
-.wsPlan_done .wsPlanDot {
-  background: var(--ws-green);
+.wsPlanDot[data-status="done"] {
+  background: #34d39933;
   border-color: var(--ws-green);
-  color: #fff;
 }
 
-.wsPlan_running .wsPlanDot {
-  background: var(--ws-warn);
+.wsPlanDot[data-status="done"]::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--ws-green);
+}
+
+.wsPlanDot[data-status="running"] {
+  background: rgba(212, 168, 83, 0.15);
   border-color: var(--ws-warn);
-  color: #fff;
 }
 
-.wsPlanText {
-  flex: 1;
-  min-width: 0;
+.wsPlanDot[data-status="running"]::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--ws-warn);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 .wsPlanText strong {
   display: block;
   font-size: 12px;
   color: var(--ws-text);
+  font-weight: 500;
 }
 
 .wsPlanText span {
   font-size: 11px;
   color: var(--ws-muted);
+  display: block;
+  margin-top: 1px;
 }
 
 .wsPlanAuth {
@@ -4603,80 +4637,78 @@ li {
   background: var(--ws-accent);
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 11px;
+  font-weight: 500;
   cursor: pointer;
   flex-shrink: 0;
+  transition: opacity 0.12s;
 }
 
 .wsPlanAuth:hover {
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
 .wsPlanRunning {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--ws-warn);
   flex-shrink: 0;
+  font-weight: 500;
 }
 
+/* Suggestions */
 .wsSuggestions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 0 24px 12px;
+  gap: 6px;
+  padding: 0 24px 16px;
 }
 
 .wsSuggestionChip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  padding: 6px 14px;
   background: var(--ws-surface);
   border: 1px solid var(--ws-border);
-  border-radius: 14px;
+  border-radius: 16px;
   font-size: 12px;
   color: var(--ws-muted);
   cursor: pointer;
   transition: all 0.15s;
+  font-weight: 500;
 }
 
 .wsSuggestionChip:hover {
   border-color: var(--ws-accent);
   color: var(--ws-accent);
-  background: var(--ws-accent-dim);
+  background: rgba(96, 165, 250, 0.04);
 }
 
+/* Input bar */
 .wsInputBar {
   border-top: 1px solid var(--ws-border);
   background: var(--ws-surface);
-  padding: 14px 20px 12px;
+  padding: 12px 24px 14px;
+  flex-shrink: 0;
 }
 
 .wsInputInner {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-end;
+  gap: 10px;
   border: 1px solid var(--ws-border);
-  border-radius: 8px;
-  padding: 4px 8px 4px 14px;
+  border-radius: 12px;
+  padding: 6px 6px 6px 16px;
   background: var(--ws-bg);
-  transition: border-color 0.15s;
+  transition: border-color 0.2s, background 0.2s;
 }
 
 .wsInputInner:focus-within {
-  border-color: var(--ws-accent);
-  background: var(--ws-surface);
-}
-
-.wsInputAt {
-  color: var(--ws-accent);
-  font-size: 14px;
-  font-weight: 600;
+  border-color: rgba(96, 165, 250, 0.3);
+  background: #0c0d12;
 }
 
 .wsInputInner input {
   flex: 1;
-  height: 36px;
+  height: 32px;
   border: none;
   outline: none;
   background: transparent;
@@ -4685,7 +4717,7 @@ li {
 }
 
 .wsInputInner input::placeholder {
-  color: var(--ws-muted);
+  color: #52525b;
 }
 
 .wsSupplierTextarea {
@@ -4697,47 +4729,48 @@ li {
   color: var(--ws-text);
   resize: none;
   font-family: inherit;
-  line-height: 1.5;
+  line-height: 1.6;
   padding: 4px 0;
 }
 
 .wsSupplierTextarea::placeholder {
-  color: var(--ws-muted);
+  color: #52525b;
 }
 
 .wsSupplierTextarea:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .wsInputSend {
-  height: 32px;
-  padding: 0 14px;
+  width: 34px;
+  height: 34px;
   background: var(--ws-accent);
   color: #fff;
   border: none;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.1s;
 }
 
 .wsInputSend:hover:not(:disabled) {
-  opacity: 0.85;
+  opacity: 0.82;
+  transform: scale(1.04);
 }
 
 .wsInputSend:disabled {
-  opacity: 0.5;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
-.wsInputHint {
-  margin-top: 8px;
-  font-size: 11px;
-  color: var(--ws-muted);
-  text-align: center;
+.wsInputSend:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
+/* Supplier empty state */
 .wsSupplierEmpty {
   display: flex;
   flex-direction: column;
@@ -4749,46 +4782,43 @@ li {
   gap: 8px;
 }
 
-.wsSupplierEmptyIcon {
-  font-size: 48px;
-  margin-bottom: 8px;
-}
-
 .wsSupplierEmpty strong {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--ws-text);
+  font-weight: 600;
 }
 
 .wsSupplierEmpty p {
-  font-size: 13px;
-  max-width: 300px;
+  font-size: 12px;
+  max-width: 260px;
+  line-height: 1.5;
 }
 
 .wsSupplierEmptyHint {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--ws-muted);
-  margin-top: 4px;
   font-style: italic;
 }
 
+/* Right panel */
 .wsRight {
   border-left: 1px solid var(--ws-border);
   background: var(--ws-surface);
   overflow-y: auto;
-  padding: 12px;
-  display: grid;
-  gap: 12px;
-  align-content: start;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .wsRightPanel {
   border: 1px solid var(--ws-border);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .wsRightPanelHead {
-  padding: 10px 12px;
+  padding: 9px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -4796,143 +4826,68 @@ li {
   border-bottom: 1px solid var(--ws-border);
 }
 
-.wsRightPanelHead strong {
-  font-size: 13px;
-  color: var(--ws-text);
+.wsRightPanelLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ws-muted);
 }
 
-.wsRightPanelHead span {
-  font-size: 11px;
+.wsRightPanelCode {
+  font-size: 10px;
   color: var(--ws-muted);
+  font-family: "SF Mono", "Fira Code", monospace;
 }
 
 .wsRightPanelBody {
-  padding: 10px 12px;
-  display: grid;
-  gap: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
-.wsStatusRow {
+.wsMetricRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.wsStatusRow span {
-  font-size: 11px;
-  color: var(--ws-muted);
-}
-
-.wsStatusRow strong {
-  font-size: 12px;
-  color: var(--ws-text);
-}
-
-.wsMetricItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 0;
-}
-
-.wsMetricItem span {
-  font-size: 11px;
-  color: var(--ws-muted);
-}
-
-.wsMetricItem strong {
-  font-size: 14px;
-  color: var(--ws-text);
-  font-family: ui-monospace, "SF Mono", monospace;
-}
-
-.wsTaskItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--ws-border);
-}
-
-.wsTaskItem:last-child {
-  border-bottom: none;
-}
-
-.wsTaskDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-top: 5px;
-  flex-shrink: 0;
-}
-
-.wsTaskDot.running {
-  background: var(--ws-warn);
-  box-shadow: 0 0 0 3px var(--ws-warn-dim);
-}
-
-.wsTaskDot.pending {
-  background: var(--ws-muted);
-}
-
-.wsTaskDot.done {
-  background: var(--ws-green);
-}
-
-.wsTaskItem strong {
-  display: block;
-  font-size: 12px;
-  color: var(--ws-text);
-}
-
-.wsTaskItem span {
-  font-size: 11px;
-  color: var(--ws-muted);
-}
-
-.wsConfirmItem {
-  padding: 6px 0;
-  border-bottom: 1px solid var(--ws-border);
-}
-
-.wsConfirmItem:last-child {
-  border-bottom: none;
-}
-
-.wsConfirmItem strong {
-  display: block;
-  font-size: 12px;
-  color: var(--ws-text);
-  margin-bottom: 2px;
-}
-
-.wsConfirmItem span {
-  font-size: 11px;
-  color: var(--ws-warn);
-}
-
-.wsServiceItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 0;
   font-size: 12px;
 }
 
-.wsServiceItem span {
+.wsMetricRow > span {
   color: var(--ws-muted);
 }
 
-.wsRightBadge {
-  background: var(--ws-accent);
-  color: #fff;
+.wsMetricRow > strong {
+  color: var(--ws-text);
+  font-weight: 600;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 12px;
+}
+
+.wsRunningLabel {
   font-size: 10px;
-  padding: 1px 6px;
+  color: var(--ws-warn);
+  font-weight: 500;
+}
+
+.wsPendingLabel {
+  font-size: 10px;
+  color: var(--ws-muted);
+}
+
+.wsPill {
+  font-size: 10px;
+  padding: 1px 7px;
   border-radius: 8px;
   font-weight: 600;
+  color: #fff;
+  line-height: 1.6;
 }
 
-.wsRightBadge.warn {
+.wsPillBlue {
+  background: var(--ws-accent);
+}
+
+.wsPillWarn {
   background: var(--ws-warn);
 }
 

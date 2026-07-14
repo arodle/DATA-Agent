@@ -47,7 +47,7 @@ const statusLabel: Record<string, string> = {
   PENDING_REVIEW: "待确认",
   SELF_RUNNING: "自执行中",
   TOOL_RUNNING: "工具执行中",
-  AGENT_RUNNING: "Agent执行中",
+  AGENT_RUNNING: "Agent 执行中",
   SUPPLIER_RUNNING: "供应商执行中",
   ACCEPTANCE: "验收中",
   COMPLETED: "已完成",
@@ -56,44 +56,99 @@ const statusLabel: Record<string, string> = {
 };
 
 const statusColor: Record<string, string> = {
-  DRAFT: "#8b949e",
-  PENDING_REVIEW: "#d29922",
-  SELF_RUNNING: "#58a6ff",
-  TOOL_RUNNING: "#58a6ff",
-  AGENT_RUNNING: "#58a6ff",
-  SUPPLIER_RUNNING: "#58a6ff",
-  ACCEPTANCE: "#d29922",
-  COMPLETED: "#3fb950",
-  PAUSED: "#8b949e",
-  CANCELLED: "#f85149",
+  DRAFT: "#71717a",
+  PENDING_REVIEW: "#d4a853",
+  SELF_RUNNING: "#60a5fa",
+  TOOL_RUNNING: "#60a5fa",
+  AGENT_RUNNING: "#60a5fa",
+  SUPPLIER_RUNNING: "#60a5fa",
+  ACCEPTANCE: "#d4a853",
+  COMPLETED: "#34d399",
+  PAUSED: "#71717a",
+  CANCELLED: "#f87171",
 };
 
 const initialMessages: MessageItem[] = [
   {
     id: "m1",
     role: "agent",
-    content: "你好，林同学。我是你的项目 Agent。\n\n当前你正参与「城市道路车辆 2D 框标注」项目（执行中）。你可以说出想完成的目标，我会结合项目上下文帮你规划。",
+    content: "你好，林同学。我是你的项目 Agent。\n\n当前参与「城市道路车辆 2D 框标注」项目（执行中），说出目标，我会结合项目上下文帮你规划。",
     time: "10:21",
   },
 ];
 
 const suggestionPrompts = [
-  { icon: "📈", text: "提升模型准确率" },
-  { icon: "🔍", text: "分析当前效果问题" },
-  { icon: "📝", text: "生成数据标注方案" },
-  { icon: "📊", text: "看看数据量够不够" },
-  { icon: "⚙️", text: "发起一次微调训练" },
+  "提升模型准确率",
+  "分析当前效果问题",
+  "生成数据标注方案",
+  "看看数据量够不够",
+  "发起一次微调训练",
 ];
 
 const supplierRoleLabel: Record<string, string> = {
-  USER: "需求方",
+  USER: "你",
   SUPPLIER_LEADER: "供应商负责人",
-  SUPPLIER_MEMBER: "供应商执行员",
+  SUPPLIER_MEMBER: "执行员",
 };
 
 function formatTime(iso: string) {
   const d = new Date(iso);
-  return `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+function Avatar({ role, senderRole }: { role?: string; senderRole?: string }) {
+  const actualRole = senderRole || role;
+
+  if (actualRole === "user" || actualRole === "USER") {
+    return (
+      <div className="wsAvatar wsAvatarUser">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="10" fill="#1e293b" />
+          <rect width="32" height="32" rx="10" stroke="#334155" strokeWidth="1" />
+          <text x="16" y="21" textAnchor="middle" fill="#94a3b8" fontSize="13" fontWeight="600" fontFamily="inherit">林</text>
+        </svg>
+      </div>
+    );
+  }
+
+  if (actualRole === "agent") {
+    return (
+      <div className="wsAvatar wsAvatarAgent">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="10" fill="rgba(96,165,250,0.08)" />
+          <rect width="32" height="32" rx="10" stroke="rgba(96,165,250,0.2)" strokeWidth="1" />
+          <circle cx="12" cy="15" r="2.5" fill="#60a5fa" />
+          <circle cx="20" cy="15" r="2.5" fill="#60a5fa" />
+          <path d="M10 22 Q16 26 22 22" stroke="#60a5fa" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        </svg>
+      </div>
+    );
+  }
+
+  if (actualRole === "system") {
+    return (
+      <div className="wsAvatar wsAvatarSystem">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="10" fill="#18181b" />
+          <rect width="32" height="32" rx="10" stroke="#27272a" strokeWidth="1" />
+          <circle cx="16" cy="16" r="2" fill="#52525b" />
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <div className="wsAvatar wsAvatarSupplier">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="10" fill="rgba(212,168,83,0.08)" />
+        <rect width="32" height="32" rx="10" stroke="rgba(212,168,83,0.2)" strokeWidth="1" />
+        <rect x="10" y="6" width="12" height="18" rx="3" stroke="#d4a853" strokeWidth="1.5" fill="none" />
+        <line x1="13" y1="10" x2="19" y2="10" stroke="#d4a853" strokeWidth="1" />
+        <line x1="13" y1="14" x2="19" y2="14" stroke="#d4a853" strokeWidth="1" />
+        <line x1="13" y1="18" x2="17" y2="18" stroke="#d4a853" strokeWidth="1" />
+      </svg>
+    </div>
+  );
 }
 
 export default function WorkspaceClient({ projects, initialSupplierChats }: Props) {
@@ -117,7 +172,7 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
     const content = (text ?? input).trim();
     if (!content) return;
     const now = new Date();
-    const time = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
+    const time = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
     const userMsg: MessageItem = { id: `u${Date.now()}`, role: "user", content, time };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
@@ -126,18 +181,18 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
       const agentMsg: MessageItem = {
         id: `a${Date.now()}`,
         role: "agent",
-        content: `我已结合「${activeProject?.name ?? "当前项目"}」的上下文进行解析。已生成结构化任务规划，请确认后我将继续执行。`,
+        content: `已结合「${activeProject?.name ?? "当前项目"}」上下文进行解析，生成以下结构化规划：`,
         time,
         plan: [
-          { id: "p1", title: "分析当前项目数据质量", desc: "检查 2.4K 帧图片的标注完整率与漏标率", status: "done" },
-          { id: "p2", title: "评估当前模型效果", desc: "拉取 v2.3 模型在测试集上的 mAP、Recall 指标", status: "running" },
-          { id: "p3", title: "生成优化建议", desc: "基于错误样本分析，输出数据补充 / 训练参数调整建议", status: "pending", action: "GENERATE_QUALITY_SCRIPT" },
-          { id: "p4", title: "等待用户授权", desc: "需要调用算力 2x A100 进行微调训练", status: "pending", action: "REQUEST_GPU" },
+          { id: "p1", title: "分析数据质量", desc: "检查标注完整率与漏标率", status: "done" },
+          { id: "p2", title: "评估模型效果", desc: "拉取 v2.3 mAP、Recall 指标", status: "running" },
+          { id: "p3", title: "生成优化建议", desc: "基于错误样本，输出数据补充方案", status: "pending", action: "GENERATE_QUALITY_SCRIPT" },
+          { id: "p4", title: "等待授权", desc: "微调训练需 2×A100", status: "pending", action: "REQUEST_GPU" },
         ],
       };
       setActivePlan(agentMsg.plan ?? null);
       setMessages((prev) => [...prev, agentMsg]);
-    }, 600);
+    }, 800);
   };
 
   const handleAuth = (action: string) => {
@@ -179,19 +234,16 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
     setSending(false);
   };
 
-  const handleSupplierKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSupplierSend();
-    }
-  };
-
   return (
     <div className="aiWorkspace dark">
       <aside className="wsLeft">
         <div className="wsLeftTop">
-          <div className="wsLeftTitle">我的项目空间</div>
+          <div className="wsLeftTitle">项目空间</div>
           <div className="wsLeftSearch">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="wsSearchIcon">
+              <circle cx="6" cy="6" r="4.5" stroke="#52525b" strokeWidth="1.5" />
+              <path d="M9.5 9.5L13 13" stroke="#52525b" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
             <input placeholder="搜索项目..." />
           </div>
         </div>
@@ -204,55 +256,37 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
             >
               <div className="wsProjectItemHead">
                 <span className="wsProjectCode">{p.code}</span>
-                <span
-                  className="wsProjectStatus"
-                  style={{ color: statusColor[p.executionStatus] ?? "#8b949e" }}
-                >
+                <span className="wsProjectStatus" style={{ color: statusColor[p.executionStatus] ?? "#71717a" }}>
+                  <span className="wsStatusDot" style={{ background: statusColor[p.executionStatus] ?? "#71717a" }} />
                   {statusLabel[p.executionStatus] ?? p.executionStatus}
                 </span>
               </div>
               <div className="wsProjectName">{p.name}</div>
               <div className="wsProjectMeta">
-                <span>📊 {p.dataCount.toLocaleString()}</span>
+                <span>{p.dataCount.toLocaleString()} 条</span>
                 <span>{p.stage}</span>
               </div>
             </button>
           ))}
-          {projects.length === 0 && (
-            <div className="wsEmpty">暂无项目</div>
-          )}
         </div>
         <div className="wsLeftResources">
-          <div className="wsLeftResTitle">项目资源</div>
-          <Link href="/user/data" className="wsLeftResItem">
-            <span>📁</span>数据资产
-          </Link>
-          <Link href="/user/models" className="wsLeftResItem">
-            <span>🧠</span>模型中心
-          </Link>
-          <Link href="/user/compute" className="wsLeftResItem">
-            <span>⚡</span>算力资源
-          </Link>
-          <Link href="/user/agent" className="wsLeftResItem">
-            <span>🤖</span>Agent 控制台
-          </Link>
+          <Link href="/user/data" className="wsLeftResItem">数据资产</Link>
+          <Link href="/user/models" className="wsLeftResItem">模型中心</Link>
+          <Link href="/user/compute" className="wsLeftResItem">算力资源</Link>
+          <Link href="/user/agent" className="wsLeftResItem">Agent 控制台</Link>
         </div>
       </aside>
 
       <main className="wsCenter">
         <div className="wsCenterTop">
           <div>
-            <div className="wsCenterCrumb">用户工作台 / {activeProject?.code ?? "未选择"}</div>
+            <div className="wsCenterCrumb">{activeProject?.code ?? ""}</div>
             <div className="wsCenterTitle">
-              {activeProject?.name ?? "请选择项目"}
-              {activeProject && (
-                <span
-                  className="wsProjectStatus"
-                  style={{ color: statusColor[activeProject.executionStatus] ?? "#8b949e" }}
-                >
-                  {statusLabel[activeProject.executionStatus] ?? activeProject.executionStatus}
-                </span>
-              )}
+              {activeProject?.name ?? "选择项目"}
+              <span className="wsModeTag">
+                <span className="wsModeTagDot" style={{ background: statusColor[activeProject?.executionStatus ?? ""] ?? "#71717a" }} />
+                {statusLabel[activeProject?.executionStatus ?? ""] ?? "-"}
+              </span>
             </div>
           </div>
           <div className="wsCenterActions">
@@ -261,20 +295,20 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
                 className={`wsModeBtn ${chatMode === "agent" ? "active" : ""}`}
                 onClick={() => setChatMode("agent")}
               >
-                🤖 Agent
+                Agent
               </button>
               <button
                 className={`wsModeBtn ${chatMode === "supplier" ? "active" : ""}`}
                 onClick={() => setChatMode("supplier")}
               >
-                💬 供应商
+                供应商
                 {supplierChats.length > 0 && (
                   <span className="wsModeCount">{supplierChats.length}</span>
                 )}
               </button>
             </div>
-            <Link href={`/user/projects/${activeProject?.code ?? ""}`} className="outlineBtn">
-              打开项目详情
+            <Link href={`/user/projects/${activeProject?.code ?? ""}`} className="wsDetailLink">
+              详情 →
             </Link>
           </div>
         </div>
@@ -284,35 +318,25 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
             <div className="wsChat">
               {messages.map((m) => (
                 <div key={m.id} className={`wsMsg wsMsg_${m.role}`}>
-                  <div className="wsMsgAvatar">
-                    {m.role === "user" ? (
-                      <span className="wsAvatarText">林</span>
-                    ) : m.role === "agent" ? (
-                      <span className="wsAvatarAgent">🤖</span>
-                    ) : (
-                      <span className="wsAvatarDot">·</span>
-                    )}
-                  </div>
+                  <Avatar role={m.role} />
                   <div className="wsMsgBody">
                     <div className="wsMsgContent">{m.content}</div>
                     {m.plan && (
                       <div className="wsPlan">
                         {m.plan.map((p) => (
                           <div key={p.id} className={`wsPlanItem wsPlan_${p.status}`}>
-                            <div className="wsPlanDot">
-                              {p.status === "done" ? "✓" : p.status === "running" ? "⟳" : "·"}
-                            </div>
-                            <div className="wsPlanText">
-                              <strong>{p.title}</strong>
-                              <span>{p.desc}</span>
+                            <div className="wsPlanLeft">
+                              <div className="wsPlanDot" data-status={p.status} />
+                              <div className="wsPlanText">
+                                <strong>{p.title}</strong>
+                                <span>{p.desc}</span>
+                              </div>
                             </div>
                             {p.action && p.status === "pending" && (
-                              <button className="wsPlanAuth" onClick={() => handleAuth(p.action!)}>
-                                授权执行
-                              </button>
+                              <button className="wsPlanAuth" onClick={() => handleAuth(p.action!)}>授权</button>
                             )}
                             {p.action && p.status === "running" && (
-                              <span className="wsPlanRunning">执行中...</span>
+                              <span className="wsPlanRunning">运行中</span>
                             )}
                           </div>
                         ))}
@@ -328,9 +352,8 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
             {messages.length <= 1 && (
               <div className="wsSuggestions">
                 {suggestionPrompts.map((s, i) => (
-                  <button key={i} className="wsSuggestionChip" onClick={() => handleSend(s.text)}>
-                    <span>{s.icon}</span>
-                    {s.text}
+                  <button key={i} className="wsSuggestionChip" onClick={() => handleSend(s)}>
+                    {s}
                   </button>
                 ))}
               </div>
@@ -338,19 +361,18 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
 
             <div className="wsInputBar">
               <div className="wsInputInner">
-                <span className="wsInputAt">@</span>
                 <input
-                  placeholder="告诉 Agent 你想做什么，比如：帮我看看现在模型效果为什么不理想"
+                  placeholder="告诉 Agent 你想做什么…"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 />
                 <button className="wsInputSend" onClick={() => handleSend()}>
-                  发送 ↵
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 8L14 2L8 14L6 10L2 8Z" fill="currentColor" />
+                    <path d="M6 10L8 14L14 2" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                  </svg>
                 </button>
-              </div>
-              <div className="wsInputHint">
-                按 Enter 发送 · Shift+Enter 换行 · Agent 将自动结合项目上下文生成结构化任务
               </div>
             </div>
           </>
@@ -359,39 +381,30 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
             <div className="wsChat">
               {supplierChats.length === 0 && (
                 <div className="wsSupplierEmpty">
-                  <div className="wsSupplierEmptyIcon">💬</div>
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect width="48" height="48" rx="14" fill="rgba(212,168,83,0.06)" />
+                    <rect width="48" height="48" rx="14" stroke="rgba(212,168,83,0.12)" strokeWidth="1" />
+                    <path d="M16 20h16M16 26h12" stroke="#d4a853" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
+                  </svg>
                   <strong>开始与供应商对话</strong>
                   <p>讨论需求细节、质量标准、进度同步、异常处理等</p>
-                  <p className="wsSupplierEmptyHint">对话记录将回流至Agent进行学习优化</p>
+                  <p className="wsSupplierEmptyHint">对话将回流至 Agent 用于训练优化</p>
                 </div>
               )}
 
               {supplierChats.map((chat) => (
                 <div
                   key={chat.id}
-                  className={`wsMsg ${
-                    chat.senderRole === "USER" ? "wsMsg_user" : "wsMsg_supplier"
-                  }`}
+                  className={`wsMsg ${chat.senderRole === "USER" ? "wsMsg_user" : "wsMsg_supplier"}`}
                 >
-                  <div className="wsMsgAvatar">
-                    {chat.senderRole === "USER" ? (
-                      <span className="wsAvatarText">林</span>
-                    ) : (
-                      <span className="wsAvatarSupplier">
-                        {chat.senderRole === "SUPPLIER_LEADER" ? "🏭" : "👤"}
-                      </span>
-                    )}
-                  </div>
+                  <Avatar senderRole={chat.senderRole} />
                   <div className="wsMsgBody">
-                    <div className="wsMsgMeta">
-                      <span
-                        className="wsMsgRole"
-                        data-supplier={chat.senderRole !== "USER" ? "true" : undefined}
-                      >
-                        {supplierRoleLabel[chat.senderRole] || chat.senderRole}
-                      </span>
-                      <span className="wsMsgName">{chat.senderName}</span>
-                    </div>
+                    {chat.senderRole !== "USER" && (
+                      <div className="wsMsgMeta">
+                        <span className="wsMsgRole">{supplierRoleLabel[chat.senderRole] || chat.senderRole}</span>
+                        <span className="wsMsgName">{chat.senderName}</span>
+                      </div>
+                    )}
                     <div className="wsMsgContent">{chat.content}</div>
                     <div className="wsMsgTime">{formatTime(chat.createdAt)}</div>
                   </div>
@@ -406,21 +419,17 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
                   className="wsSupplierTextarea"
                   value={supplierInput}
                   onChange={(e) => setSupplierInput(e.target.value)}
-                  onKeyDown={handleSupplierKeyDown}
-                  placeholder="输入消息，与供应商沟通..."
+                  onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSupplierSend(); } }}
+                  placeholder="输入消息，与供应商沟通…"
                   rows={2}
                   disabled={sending}
                 />
-                <button
-                  className="wsInputSend"
-                  onClick={handleSupplierSend}
-                  disabled={sending || !supplierInput.trim()}
-                >
-                  {sending ? "..." : "发送"}
+                <button className="wsInputSend" onClick={handleSupplierSend} disabled={sending || !supplierInput.trim()}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 8L14 2L8 14L6 10L2 8Z" fill="currentColor" />
+                    <path d="M6 10L8 14L14 2" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                  </svg>
                 </button>
-              </div>
-              <div className="wsInputHint">
-                按 Enter 发送 · Shift+Enter 换行 · 对话将自动回流至Agent学习训练数据
               </div>
             </div>
           </>
@@ -430,21 +439,21 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
       <aside className="wsRight">
         <div className="wsRightPanel">
           <div className="wsRightPanelHead">
-            <strong>项目实时状态</strong>
-            <span>{activeProject?.code ?? "-"}</span>
+            <span className="wsRightPanelLabel">项目状态</span>
+            <span className="wsRightPanelCode">{activeProject?.code ?? "-"}</span>
           </div>
           <div className="wsRightPanelBody">
-            <div className="wsStatusRow">
+            <div className="wsMetricRow">
               <span>当前阶段</span>
               <strong>{activeProject?.stage ?? "-"}</strong>
             </div>
-            <div className="wsStatusRow">
+            <div className="wsMetricRow">
               <span>数据量</span>
-              <strong>{activeProject ? activeProject.dataCount.toLocaleString() : 0} 条</strong>
+              <strong>{activeProject ? activeProject.dataCount.toLocaleString() : "0"}</strong>
             </div>
-            <div className="wsStatusRow">
-              <span>项目状态</span>
-              <strong style={{ color: statusColor[activeProject?.executionStatus ?? ""] ?? "#c9d1d9" }}>
+            <div className="wsMetricRow">
+              <span>状态</span>
+              <strong style={{ color: statusColor[activeProject?.executionStatus ?? ""] ?? "#a1a1aa" }}>
                 {statusLabel[activeProject?.executionStatus ?? ""] ?? "-"}
               </strong>
             </div>
@@ -453,18 +462,18 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
 
         <div className="wsRightPanel">
           <div className="wsRightPanelHead">
-            <strong>模型效果</strong>
+            <span className="wsRightPanelLabel">模型效果</span>
           </div>
           <div className="wsRightPanelBody">
-            <div className="wsMetricItem">
+            <div className="wsMetricRow">
               <span>mAP@0.5</span>
               <strong>0.924</strong>
             </div>
-            <div className="wsMetricItem">
+            <div className="wsMetricRow">
               <span>Recall</span>
               <strong>0.891</strong>
             </div>
-            <div className="wsMetricItem">
+            <div className="wsMetricRow">
               <span>FPS</span>
               <strong>45.2</strong>
             </div>
@@ -473,67 +482,58 @@ export default function WorkspaceClient({ projects, initialSupplierChats }: Prop
 
         <div className="wsRightPanel">
           <div className="wsRightPanelHead">
-            <strong>Agent 任务</strong>
-            <span className="wsRightBadge">3</span>
+            <span className="wsRightPanelLabel">Agent 任务</span>
+            <span className="wsPill wsPillBlue">3</span>
           </div>
           <div className="wsRightPanelBody">
-            <div className="wsTaskItem">
-              <span className="wsTaskDot running" />
-              <div>
-                <strong>数据质量分析</strong>
-                <span>执行中 · 已用 2 分钟</span>
-              </div>
+            <div className="wsMetricRow">
+              <span>数据质量分析</span>
+              <span className="wsRunningLabel">执行中</span>
             </div>
-            <div className="wsTaskItem">
-              <span className="wsTaskDot pending" />
-              <div>
-                <strong>生成标注方案</strong>
-                <span>等待授权</span>
-              </div>
+            <div className="wsMetricRow">
+              <span>生成标注方案</span>
+              <span className="wsPendingLabel">等待授权</span>
             </div>
-            <div className="wsTaskItem">
-              <span className="wsTaskDot pending" />
-              <div>
-                <strong>微调训练</strong>
-                <span>等待授权</span>
-              </div>
+            <div className="wsMetricRow">
+              <span>微调训练</span>
+              <span className="wsPendingLabel">等待授权</span>
             </div>
           </div>
         </div>
 
         <div className="wsRightPanel">
           <div className="wsRightPanelHead">
-            <strong>待我确认</strong>
-            <span className="wsRightBadge warn">2</span>
+            <span className="wsRightPanelLabel">待确认</span>
+            <span className="wsPill wsPillWarn">2</span>
           </div>
           <div className="wsRightPanelBody">
-            <div className="wsConfirmItem">
-              <strong>新一批 500 张采集图片</strong>
-              <span>已上传至 OSS · 待确认验收</span>
+            <div className="wsMetricRow">
+              <span>采集图片验收</span>
+              <span className="wsPendingLabel">500 张</span>
             </div>
-            <div className="wsConfirmItem">
-              <strong>训练结果 v2.4</strong>
-              <span>mAP 提升 2.3% · 待确认</span>
+            <div className="wsMetricRow">
+              <span>训练结果 v2.4</span>
+              <span style={{ color: "#34d399", fontSize: "11px" }}>+2.3%</span>
             </div>
           </div>
         </div>
 
         <div className="wsRightPanel">
           <div className="wsRightPanelHead">
-            <strong>服务调用</strong>
+            <span className="wsRightPanelLabel">服务</span>
           </div>
           <div className="wsRightPanelBody">
-            <div className="wsServiceItem">
-              <span>🔌 AutoDL 算力</span>
-              <strong style={{ color: "#3fb950" }}>已连接</strong>
+            <div className="wsMetricRow">
+              <span>算力</span>
+              <span style={{ color: "#34d399", fontSize: "11px" }}>已连接</span>
             </div>
-            <div className="wsServiceItem">
-              <span>📦 阿里云 OSS</span>
-              <strong style={{ color: "#3fb950" }}>已连接</strong>
+            <div className="wsMetricRow">
+              <span>存储</span>
+              <span style={{ color: "#34d399", fontSize: "11px" }}>已连接</span>
             </div>
-            <div className="wsServiceItem">
-              <span>🤖 Agent 推理</span>
-              <strong style={{ color: "#3fb950" }}>在线</strong>
+            <div className="wsMetricRow">
+              <span>推理</span>
+              <span style={{ color: "#34d399", fontSize: "11px" }}>在线</span>
             </div>
           </div>
         </div>
