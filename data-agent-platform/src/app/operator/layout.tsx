@@ -16,6 +16,7 @@ const navConfig = [
     ],
   },
   { label: "供应商管理", href: "/operator/suppliers", icon: "🏭" },
+  { label: "对话标注", href: "/operator/chat/annotation", icon: "🏷️" },
   { label: "数据资产管理", href: "/operator/assets", icon: "📊" },
   { label: "Agent 助手", href: "/operator/agent", icon: "🤖" },
   { label: "财务结算", href: "/operator/finance", icon: "�" },

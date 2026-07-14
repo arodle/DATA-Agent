@@ -107,6 +107,7 @@ model Project {
   agentSessions  AgentSession[]
   operationLogs  OperationLog[]
   retrospectives ProjectRetrospective[]
+  supplierChats  SupplierChat[]
 }
 
 model ProjectMember {
@@ -181,6 +182,7 @@ model ProjectTask {
   supplier      Supplier?      @relation(fields: [supplierId], references: [id])
   datasets      Dataset[]
   qualityEvents QualityEvent[]
+  chats         SupplierChat[]
 }
 
 model Dataset {
@@ -472,11 +474,50 @@ model AgentTrainingExample {
   id             String   @id @default(cuid())
   sourceType     String
   sourceId       String?
+  category       String?
   input          String
   expectedOutput String
+  context        String?
+  qualityScore   Float?
   tags           Json?
   approved       Boolean  @default(false)
   createdAt      DateTime @default(now())
+}
+
+model SupplierChat {
+  id            String   @id @default(cuid())
+  projectId     String
+  taskId        String?
+  senderRole    String
+  senderId      String
+  senderName    String
+  content       String
+  contentType   String   @default("TEXT")
+  attachmentUrl String?
+  createdAt     DateTime @default(now())
+
+  project     Project          @relation(fields: [projectId], references: [id])
+  task        ProjectTask?     @relation(fields: [taskId], references: [id])
+  annotation  ChatAnnotation?
+
+  @@index([projectId, createdAt])
+}
+
+model ChatAnnotation {
+  id             String   @id @default(cuid())
+  chatId         String   @unique
+  isValuable     Boolean  @default(false)
+  category       String?
+  correctedReply String?
+  note           String?
+  annotatedBy    String
+  annotatedAt    DateTime @default(now())
+  reviewStatus   String   @default("PENDING_ANNOTATION")
+  reviewedBy     String?
+  reviewedAt     DateTime?
+  trainingId     String?
+
+  chat             SupplierChat          @relation(fields: [chatId], references: [id])
 }
 
 model Skill {

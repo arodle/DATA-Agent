@@ -558,7 +558,110 @@ async function main() {
     },
   });
 
-  console.log("Seed completed: demo projects, assets, agent actions, logs, model results.");
+  const chats = [
+    {
+      projectId: "project-vehicle-2d",
+      senderRole: "USER",
+      senderId: "user-lin",
+      senderName: "林同学",
+      content: "你好，我们项目的标注标准需要更新一下：车辆被遮挡超过50%的情况，应该标记为'truncated'而不是'occluded'，麻烦跟标注团队同步一下。",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-vehicle-2d",
+      senderRole: "SUPPLIER_LEADER",
+      senderId: "supplier-a-leader",
+      senderName: "张经理",
+      content: "收到，林同学。这个标准变更影响比较大，目前已经有2000张按旧标准标注了。需要返工吗？",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-vehicle-2d",
+      senderRole: "USER",
+      senderId: "user-lin",
+      senderName: "林同学",
+      content: "已标注的2000张不需要返工，从今天新分配的批次开始执行新标准就行。另外，夜间场景的标注，如果车灯亮着但是车身看不清，也归到truncated类别。",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-vehicle-2d",
+      senderRole: "SUPPLIER_LEADER",
+      senderId: "supplier-a-leader",
+      senderName: "张经理",
+      content: "好的，我马上更新标注规范文档，下午发给你确认。另外昨晚的质检报告显示，有一批数据框的贴合度偏低，主要是小目标（远距离车辆）偏差较大，建议把小目标的框放大10%作为容差？",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-vehicle-2d",
+      senderRole: "USER",
+      senderId: "user-lin",
+      senderName: "林同学",
+      content: "容差放大10%可以接受，但需要在新版工具配置里加一个校验规则：放大后的框不能和相邻目标框重叠超过20%。你先把规则加上，我审核通过后再发布。",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-vehicle-2d",
+      senderRole: "SUPPLIER_MEMBER",
+      senderId: "member-001",
+      senderName: "标注员小王",
+      content: "@林同学 你好，请问交通标志牌上的文字是否需要单独标注？比如限速牌上的数字。",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-vehicle-2d",
+      senderRole: "USER",
+      senderId: "user-lin",
+      senderName: "林同学",
+      content: "不需要单独标文字。交通标志牌作为一个整体框就行，文字信息不纳入本次标注范围。",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-vehicle-2d",
+      senderRole: "SUPPLIER_MEMBER",
+      senderId: "member-001",
+      senderName: "标注员小王",
+      content: "好的谢谢",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-coco-format",
+      senderRole: "USER",
+      senderId: "user-lin",
+      senderName: "林同学",
+      content: "COCO格式转换的工具配置已经生成了，你们那边能接入吗？我们计划下周开始第一批转换。",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-coco-format",
+      senderRole: "SUPPLIER_LEADER",
+      senderId: "supplier-a-leader",
+      senderName: "张经理",
+      content: "可以接入。我们内部用LabelStudio做标注，导出就是COCO格式。你们需要的是COCO 2017格式对吧？标注类别清单发我一下。",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-coco-format",
+      senderRole: "USER",
+      senderId: "user-lin",
+      senderName: "林同学",
+      content: "对，COCO 2017。类别清单在项目文档里有，总共80类。另外转换时需要保留原始图像的EXIF信息，这个能做到吗？",
+      contentType: "TEXT",
+    },
+    {
+      projectId: "project-coco-format",
+      senderRole: "SUPPLIER_LEADER",
+      senderId: "supplier-a-leader",
+      senderName: "张经理",
+      content: "EXIF保留没问题，我们转COCO的时候默认就带。不过有个问题：你们原始数据里有些是PNG格式，COCO标准要求JPEG，需要我们先批量转换吗？",
+      contentType: "TEXT",
+    },
+  ];
+
+  for (const chat of chats) {
+    await prisma.supplierChat.create({ data: chat });
+  }
+
+  console.log("Seed completed: demo projects, assets, agent actions, logs, model results, supplier chats.");
 }
 
 main()

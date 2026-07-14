@@ -20,6 +20,7 @@ const navConfig: NavItem[] = [
   { label: "质量反馈", href: "/supplier/quality", icon: "💬", roles: ["worker"] },
   { label: "团队管理", href: "/supplier/team", icon: "👥", roles: ["manager"] },
   { label: "数据交付", href: "/supplier/delivery", icon: "📦", roles: ["manager", "worker"] },
+  { label: "需求方对话", href: "/supplier/chat/project-vehicle-2d", icon: "💬", roles: ["manager", "worker"] },
   { label: "结算记录", href: "/supplier/settlement", icon: "💰", roles: ["manager"] },
 ];
 
