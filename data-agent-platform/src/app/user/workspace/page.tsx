@@ -31,5 +31,20 @@ export default async function WorkspacePage() {
     };
   });
 
-  return <WorkspaceClient projects={serialized} />;
+  const allChats = await prisma.supplierChat.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
+
+  const supplierChats = allChats.map((c) => ({
+    ...c,
+    createdAt: c.createdAt.toISOString(),
+  }));
+
+  return (
+    <WorkspaceClient
+      projects={serialized}
+      initialSupplierChats={supplierChats as any}
+    />
+  );
 }

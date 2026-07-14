@@ -29,7 +29,6 @@ const tabs = [
   { key: "docs", label: "需求文档" },
   { key: "execution", label: "执行记录" },
   { key: "acceptance", label: "验收" },
-  { key: "chat", label: "供应商对话" },
 ];
 
 type RequirementDocumentVersion = {
@@ -209,21 +208,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       </div>
 
       <div className="detailTabs">
-        {tabs.map((tab, index) =>
-          tab.key === "chat" ? (
-            <Link
-              key={tab.key}
-              href={`/user/projects/${project.code}/chat`}
-              className="detailTab"
-            >
-              💬 {tab.label}
-            </Link>
-          ) : (
-            <button key={tab.key} className={index === 0 ? "detailTab active" : "detailTab"}>
-              {tab.label}
-            </button>
-          )
-        )}
+        {tabs.map((tab, index) => (
+          <button key={tab.key} className={index === 0 ? "detailTab active" : "detailTab"}>
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       <div className="detailContent">
