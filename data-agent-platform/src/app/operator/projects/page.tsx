@@ -34,15 +34,20 @@ function formatDate(date?: Date | null) {
 }
 
 export default async function OperatorProjectsPage() {
-  const projects = await prisma.project.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      creator: true,
-      operator: true,
-      datasets: { orderBy: { createdAt: "asc" } },
-      stages: { orderBy: { sortOrder: "asc" } },
-    },
-  });
+  let projects: any[] = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        creator: true,
+        operator: true,
+        datasets: { orderBy: { createdAt: "asc" } },
+        stages: { orderBy: { sortOrder: "asc" } },
+      },
+    });
+  } catch (e) {
+    console.error("Database error:", e);
+  }
 
   return (
     <div className="opWorkbench">

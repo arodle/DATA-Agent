@@ -35,13 +35,18 @@ const severityLabel: Record<string, string> = {
 };
 
 export default async function QualityMonitorPage() {
-  const projects = await prisma.project.findMany({
-    orderBy: { code: "asc" },
-    include: {
-      datasets: { orderBy: { createdAt: "asc" } },
-      operationLogs: { orderBy: { createdAt: "desc" }, take: 5 },
-    },
-  });
+  let projects: any[] = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { code: "asc" },
+      include: {
+        datasets: { orderBy: { createdAt: "asc" } },
+        operationLogs: { orderBy: { createdAt: "desc" }, take: 5 },
+      },
+    });
+  } catch (e) {
+    console.error("Database error:", e);
+  }
 
   const totalDatasets = projects.reduce(
     (sum, p) => sum + p.datasets.reduce((s, d) => s + (d.itemCount ?? 0), 0),

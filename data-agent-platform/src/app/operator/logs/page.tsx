@@ -9,11 +9,16 @@ function formatTime(date: Date) {
 }
 
 export default async function OperationLogsPage() {
-  const projects = await prisma.project.findMany({
-    include: {
-      operationLogs: true,
-    },
-  });
+  let projects: any[] = [];
+  try {
+    projects = await prisma.project.findMany({
+      include: {
+        operationLogs: true,
+      },
+    });
+  } catch (e) {
+    console.error("Database error:", e);
+  }
 
   const logs = projects
     .flatMap((p) => p.operationLogs.map((log) => ({ log, project: p })))

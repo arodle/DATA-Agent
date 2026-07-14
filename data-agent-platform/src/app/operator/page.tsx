@@ -32,22 +32,27 @@ function formatDate(date?: Date | null) {
 }
 
 export default async function OperatorWorkbench() {
-  const projects = await prisma.project.findMany({
-    orderBy: { code: "asc" },
-    include: {
-      creator: true,
-      operator: true,
-      stages: { orderBy: { sortOrder: "asc" } },
-      datasets: { orderBy: { createdAt: "asc" } },
-      toolConfigs: { orderBy: { createdAt: "desc" }, take: 1 },
-      agentSessions: {
-        orderBy: { createdAt: "desc" },
-        take: 1,
-        include: { actions: { orderBy: { createdAt: "asc" } } },
+  let projects: any[] = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { code: "asc" },
+      include: {
+        creator: true,
+        operator: true,
+        stages: { orderBy: { sortOrder: "asc" } },
+        datasets: { orderBy: { createdAt: "asc" } },
+        toolConfigs: { orderBy: { createdAt: "desc" }, take: 1 },
+        agentSessions: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          include: { actions: { orderBy: { createdAt: "asc" } } },
+        },
+        operationLogs: { orderBy: { createdAt: "desc" }, take: 5 },
       },
-      operationLogs: { orderBy: { createdAt: "desc" }, take: 5 },
-    },
-  });
+    });
+  } catch (e) {
+    console.error("Database error:", e);
+  }
 
   const activeProjects = projects.filter(
     (p) => !["COMPLETED", "CANCELLED"].includes(p.executionStatus)

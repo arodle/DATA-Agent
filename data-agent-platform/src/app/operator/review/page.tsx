@@ -15,19 +15,24 @@ type ReviewItem = {
 };
 
 export default async function ReviewCenterPage() {
-  const projects = await prisma.project.findMany({
-    orderBy: { code: "asc" },
-    include: {
-      creator: true,
-      toolConfigs: { orderBy: { createdAt: "desc" }, take: 5 },
-      requirement: true,
-      agentSessions: {
-        orderBy: { createdAt: "desc" },
-        take: 3,
-        include: { actions: { orderBy: { createdAt: "asc" } } },
+  let projects: any[] = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { code: "asc" },
+      include: {
+        creator: true,
+        toolConfigs: { orderBy: { createdAt: "desc" }, take: 5 },
+        requirement: true,
+        agentSessions: {
+          orderBy: { createdAt: "desc" },
+          take: 3,
+          include: { actions: { orderBy: { createdAt: "asc" } } },
+        },
       },
-    },
-  });
+    });
+  } catch (e) {
+    console.error("Database error:", e);
+  }
 
   const realReviewItems: ReviewItem[] = [];
 

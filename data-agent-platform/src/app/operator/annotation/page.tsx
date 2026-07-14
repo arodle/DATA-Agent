@@ -32,10 +32,15 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function OperatorAnnotation() {
-  const projects = await prisma.project.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { creator: true, operator: true, datasets: true, stages: true },
-  });
+  let projects: any[] = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { creator: true, operator: true, datasets: true, stages: true },
+    });
+  } catch (e) {
+    console.error("Database error:", e);
+  }
 
   const annotationProjects = projects.filter((p) =>
     p.mode === "ANNOTATION"
