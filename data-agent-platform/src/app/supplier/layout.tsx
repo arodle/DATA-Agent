@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SupplierRoleProvider, useSupplierRole, SupplierRole } from "./SupplierRoleContext";
-import SupplierAgent from "./SupplierAgent";
+import SupplierAgentFull from "./SupplierAgentFull";
+import SupplierAgentWorker from "./SupplierAgentWorker";
 
 interface NavItem {
   label: string;
@@ -13,14 +14,14 @@ interface NavItem {
 }
 
 const navConfig: NavItem[] = [
-  { label: "任务管理", href: "/supplier", icon: "📋", roles: ["manager", "worker"] },
+  { label: "任务管理", href: "/supplier", icon: "📋", roles: ["manager", "pm", "worker"] },
   { label: "任务拆分", href: "/supplier/split", icon: "🔀", roles: ["manager"] },
-  { label: "标采执行", href: "/supplier/annotation", icon: "✏️", roles: ["manager", "worker"] },
-  { label: "质量分析", href: "/supplier/quality", icon: "📊", roles: ["manager"] },
-  { label: "质量反馈", href: "/supplier/quality", icon: "💬", roles: ["worker"] },
+  { label: "标采执行", href: "/supplier/annotation", icon: "✏️", roles: ["pm", "worker"] },
+  { label: "需求方对话", href: "/supplier/chat/project-vehicle-2d", icon: "💬", roles: ["pm"] },
+  { label: "标注规则", href: "/supplier/rules", icon: "📐", roles: ["pm", "worker"] },
+  { label: "质量分析", href: "/supplier/quality", icon: "📊", roles: ["manager", "pm"] },
   { label: "团队管理", href: "/supplier/team", icon: "👥", roles: ["manager"] },
-  { label: "数据交付", href: "/supplier/delivery", icon: "📦", roles: ["manager", "worker"] },
-  { label: "需求方对话", href: "/supplier/chat/project-vehicle-2d", icon: "💬", roles: ["manager", "worker"] },
+  { label: "数据交付", href: "/supplier/delivery", icon: "📦", roles: ["manager", "pm", "worker"] },
   { label: "结算记录", href: "/supplier/settlement", icon: "💰", roles: ["manager"] },
 ];
 
@@ -35,7 +36,7 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
     href === "/supplier" ? pathname === "/supplier" : pathname.startsWith(href);
 
   return (
-    <main className={`roleShell supplierShell ${role === "manager" ? "hasAgent" : ""} ${isWorkspace ? "workspaceMode" : ""}`}>
+    <main className={`roleShell supplierShell ${isWorkspace ? "workspaceMode" : ""}`}>
       {!isWorkspace && (
         <aside className="roleSidebar">
           <div className="roleBrand">Data Agent / 供应商</div>
@@ -45,13 +46,19 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
               className={`sRoleBtn ${role === "manager" ? "active" : ""}`}
               onClick={() => setRole("manager")}
             >
-              👤 负责人
+              负责人
+            </button>
+            <button
+              className={`sRoleBtn ${role === "pm" ? "active" : ""}`}
+              onClick={() => setRole("pm")}
+            >
+              项目经理
             </button>
             <button
               className={`sRoleBtn ${role === "worker" ? "active" : ""}`}
               onClick={() => setRole("worker")}
             >
-              🧑‍💻 员工
+              标注员
             </button>
           </div>
 
@@ -83,7 +90,8 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
         {children}
       </section>
 
-      {role === "manager" && !isWorkspace && <SupplierAgent />}
+      {(role === "manager" || role === "pm") && !isWorkspace && <SupplierAgentFull role={role} />}
+      {role === "worker" && !isWorkspace && <SupplierAgentWorker />}
     </main>
   );
 }
