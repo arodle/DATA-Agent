@@ -31,6 +31,8 @@ function formatDate(date?: Date | null) {
   return date ? date.toISOString().slice(0, 10) : "-";
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function OperatorWorkbench() {
   let projects: any[] = [];
   try {

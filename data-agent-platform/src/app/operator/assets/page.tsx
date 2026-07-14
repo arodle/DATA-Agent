@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import OperatorAssetsClient from "./OperatorAssetsClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function OperatorAssets() {
   let projects: any[] = [];
   try {

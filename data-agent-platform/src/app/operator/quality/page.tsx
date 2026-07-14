@@ -34,6 +34,8 @@ const severityLabel: Record<string, string> = {
   low: "低",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function QualityMonitorPage() {
   let projects: any[] = [];
   try {

@@ -14,6 +14,8 @@ type ReviewItem = {
   submitter: string;
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ReviewCenterPage() {
   let projects: any[] = [];
   try {

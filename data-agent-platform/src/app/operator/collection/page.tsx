@@ -31,6 +31,8 @@ const statusColor: Record<string, string> = {
   CANCELLED: "#c41e3a",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function OperatorCollection() {
   let projects: any[] = [];
   try {
