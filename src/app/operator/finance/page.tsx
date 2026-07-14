@@ -12,6 +12,8 @@ const mockBills = [
   { id: "BILL-2026-005", project: "PRJ-001", type: "质检费用", amount: 3200, status: "已结算", date: "2026-07-01" },
 ];
 
+export const dynamic = "force-dynamic";
+
 export default async function OperatorFinance() {
   let projects: any[] = [];
   try {

@@ -72,6 +72,8 @@ type PageProps = {
   params: Promise<{ code: string }>;
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function OperatorProjectDetailPage({ params }: PageProps) {
   const { code } = await params;
 

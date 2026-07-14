@@ -8,6 +8,8 @@ function formatTime(date: Date) {
   return date.toISOString().slice(11, 19);
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function OperationLogsPage() {
   let projects: any[] = [];
   try {
