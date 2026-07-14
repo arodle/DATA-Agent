@@ -1,4 +1,6 @@
 {
-  "rootDirectory": "data-agent-platform",
+  "installCommand": "cd data-agent-platform && npm install",
+  "buildCommand": "cd data-agent-platform && npm run build",
+  "outputDirectory": "data-agent-platform/.next",
   "framework": "nextjs"
 }
