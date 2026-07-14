@@ -31,18 +31,23 @@ function formatDate(date?: Date | null) {
 }
 
 export default async function AgentManagementPage() {
-  const projects = await prisma.project.findMany({
-    orderBy: { code: "asc" },
-    include: {
-      agentSessions: {
-        orderBy: { createdAt: "desc" },
-        include: {
-          messages: { orderBy: { createdAt: "asc" } },
-          actions: { orderBy: { createdAt: "asc" } },
+  let projects: any[] = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { code: "asc" },
+      include: {
+        agentSessions: {
+          orderBy: { createdAt: "desc" },
+          include: {
+            messages: { orderBy: { createdAt: "asc" } },
+            actions: { orderBy: { createdAt: "asc" } },
+          },
         },
       },
-    },
-  });
+    });
+  } catch (e) {
+    console.error("Database error:", e);
+  }
 
   const allActions = projects.flatMap((p) =>
     p.agentSessions.flatMap((s) =>

@@ -2,10 +2,15 @@ import { prisma } from "@/lib/prisma";
 import OperatorAssetsClient from "./OperatorAssetsClient";
 
 export default async function OperatorAssets() {
-  const projects = await prisma.project.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { datasets: { include: { versions: true } } },
-  });
+  let projects: any[] = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { datasets: { include: { versions: true } } },
+    });
+  } catch (e) {
+    console.error("Database error:", e);
+  }
 
   const totalDatasets = projects.reduce((sum, p) => sum + p.datasets.length, 0);
   const totalItems = projects.reduce(

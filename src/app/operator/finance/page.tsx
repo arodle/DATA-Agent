@@ -13,10 +13,15 @@ const mockBills = [
 ];
 
 export default async function OperatorFinance() {
-  const projects = await prisma.project.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { datasets: true },
-  });
+  let projects: any[] = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { datasets: true },
+    });
+  } catch (e) {
+    console.error("Database error:", e);
+  }
 
   const totalAmount = mockBills.reduce((sum, b) => sum + b.amount, 0);
   const settledAmount = mockBills.filter((b) => b.status === "已结算").reduce((sum, b) => sum + b.amount, 0);
