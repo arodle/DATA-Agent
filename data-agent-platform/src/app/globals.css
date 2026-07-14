@@ -7014,3 +7014,1052 @@ li {
     bottom: 16px;
   }
 }
+
+/* ===== Supplier Workspace ===== */
+
+.sPage {
+  display: grid;
+  gap: 14px;
+}
+
+.sBanner {
+  margin-bottom: 0;
+}
+
+.sRoleToggle {
+  display: flex;
+  gap: 0;
+  margin: 8px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.sRoleBtn {
+  flex: 1;
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  color: #8ea6bd;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.sRoleBtn.active {
+  background: #18c57a;
+  color: #fff;
+  font-weight: 700;
+}
+
+.supplierShell .roleNavItem.active {
+  border-left-color: #18c57a;
+}
+
+.supplierShell .roleBrand {
+  border-bottom-color: rgba(24, 197, 122, 0.3);
+}
+
+.supplierShell.workspaceMode {
+  grid-template-columns: 1fr !important;
+}
+
+.supplierShell.workspaceMode .roleSidebar {
+  display: none !important;
+}
+
+.supplierShell.hasAgent.workspaceMode {
+  grid-template-columns: 1fr !important;
+}
+
+.roleWorkspace.full {
+  padding: 0;
+  background: #eef2f5;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Progress Bar */
+.sProgressBar {
+  display: inline-block;
+  width: 80px;
+  height: 6px;
+  background: #e8ecf0;
+  border-radius: 3px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.sProgressBar.large {
+  width: 200px;
+  height: 10px;
+}
+
+.sProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #18c57a, #2ee090);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.sProgressText {
+  margin-left: 8px;
+  font-size: 16px;
+  color: #0d2137;
+}
+
+.sProgressOverview {
+  display: flex;
+  gap: 24px;
+}
+
+.sProgressItem {
+  display: grid;
+  gap: 4px;
+}
+
+.sProgressLabel {
+  font-size: 12px;
+  color: #697889;
+}
+
+.sProgressValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0d2137;
+}
+
+/* Task Detail */
+.sTaskDetail {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.sTaskInfo {
+  flex: 1;
+  display: grid;
+  gap: 16px;
+}
+
+.sTaskInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.sTaskInfoItem {
+  display: grid;
+  gap: 4px;
+}
+
+.sTaskLabel {
+  font-size: 12px;
+  color: #697889;
+}
+
+.sTaskInfoItem strong {
+  font-size: 14px;
+  color: #0d2137;
+}
+
+.sTaskProgressSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sTaskActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Split Page */
+.sSplitBanner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+.sSplitBannerInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sSplitBannerInfo strong {
+  font-size: 16px;
+  color: #0d2137;
+}
+
+.sSplitBannerInfo span {
+  color: #697889;
+}
+
+.sSplitBannerMeta {
+  display: flex;
+  gap: 20px;
+}
+
+.sSplitBannerMeta span {
+  font-size: 13px;
+  color: #697889;
+}
+
+.sSplitBannerMeta strong {
+  color: #0d2137;
+}
+
+/* Team Grid */
+.sTeamGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.sTeamCard {
+  background: #fff;
+  border: 1px solid #d8dee6;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sTeamCard:hover {
+  border-color: #18c57a;
+  box-shadow: 0 2px 8px rgba(24, 197, 122, 0.12);
+}
+
+.sTeamCard.selected {
+  border-color: #18c57a;
+  box-shadow: 0 0 0 2px rgba(24, 197, 122, 0.15);
+}
+
+.sTeamCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.sTeamCardHeader strong {
+  font-size: 14px;
+  color: #0d2137;
+}
+
+.sTeamCardBody {
+  padding: 10px 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.sTeamStat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.sTeamStat span {
+  color: #697889;
+}
+
+.sTeamStat strong {
+  color: #0d2137;
+}
+
+.sTeamCardFooter {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid #edf1f5;
+}
+
+.sTeamCardFooter .ghostBtn {
+  font-size: 12px;
+  height: 26px;
+}
+
+/* Empty State */
+.sEmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #d8dee6;
+  border-radius: 6px;
+}
+
+.sEmptyIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.sEmptyState p {
+  color: #0d2137;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+/* Annotation Page */
+.sAnnotationLayout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 14px;
+  align-items: start;
+}
+
+.sAnnotationMain {
+  display: grid;
+  gap: 14px;
+}
+
+.sAnnotationWorkspace {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 16px;
+}
+
+.sAnnotationCanvas {
+  min-height: 360px;
+  background: #f0f2f5;
+  border: 1px solid #d8dee6;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sCanvasPlaceholder {
+  text-align: center;
+}
+
+.sCanvasImage {
+  position: relative;
+  width: 380px;
+  height: 260px;
+  background: linear-gradient(135deg, #3a4a5e 0%, #1d2b3a 100%);
+  border-radius: 4px;
+  margin: 0 auto 8px;
+  overflow: hidden;
+}
+
+.sCanvasCar {
+  position: absolute;
+  bottom: 30px;
+  left: 80px;
+  width: 120px;
+  height: 50px;
+  background: #5a7a9a;
+  border-radius: 8px;
+}
+
+.sCanvasBox {
+  position: absolute;
+  border: 2px solid #ffd93d;
+  background: rgba(255, 217, 61, 0.08);
+}
+
+.sBox1 {
+  top: 60px;
+  left: 50px;
+  width: 160px;
+  height: 120px;
+}
+
+.sBox2 {
+  top: 140px;
+  left: 240px;
+  width: 60px;
+  height: 100px;
+}
+
+.sCanvasLabel {
+  position: absolute;
+  font-size: 10px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 1px 5px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.sLabel1 {
+  top: 55px;
+  left: 50px;
+}
+
+.sLabel2 {
+  top: 135px;
+  left: 240px;
+}
+
+.sCanvasHint {
+  color: #697889;
+  font-size: 12px;
+}
+
+.sAnnotationTools {
+  display: grid;
+  gap: 14px;
+}
+
+.sToolGroup {
+  display: grid;
+  gap: 6px;
+}
+
+.sToolGroup strong {
+  font-size: 12px;
+  color: #697889;
+}
+
+.sToolButtons {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.sToolBtn {
+  padding: 8px 14px !important;
+  border: 1px solid #d8dee6 !important;
+  background: #ffffff !important;
+  font-size: 13px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  color: #0d2137 !important;
+  white-space: nowrap !important;
+}
+
+.sToolBtn.active {
+  border-color: #356df3 !important;
+  background: #eef3ff !important;
+  color: #356df3 !important;
+  font-weight: 600 !important;
+}
+
+.sLabelGrid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.sLabelBtn {
+  padding: 6px 14px !important;
+  border: 1px solid #d8dee6 !important;
+  background: #ffffff !important;
+  font-size: 13px !important;
+  border-radius: 16px !important;
+  cursor: pointer !important;
+  color: #0d2137 !important;
+}
+
+.sLabelBtn.selected {
+  border-color: #356df3 !important;
+  background: #eef3ff !important;
+  color: #356df3 !important;
+  font-weight: 600 !important;
+}
+
+.sAttrRow {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  font-size: 13px !important;
+  margin-bottom: 8px !important;
+}
+
+.sAttrRow span {
+  color: #697889 !important;
+  width: 50px !important;
+}
+
+.sToolActions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.sToolActions .ghostBtn {
+  font-size: 12px;
+  height: 28px;
+}
+
+.sAnnotationSide {
+  display: grid;
+  gap: 12px;
+}
+
+.sQualityTips {
+  display: grid;
+  gap: 8px;
+}
+
+.sQualityTip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 8px 10px;
+  border-radius: 4px;
+}
+
+.sQualityTip.warn {
+  background: #fff8e1;
+  color: #e65100;
+}
+
+.sQualityTip.info {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* Embedded Agent for Worker */
+.sAgentEmbedCard {
+  border: 1px solid #d8dee6;
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.sAgentEmbedHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #18c57a, #2ee090);
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sAgentToggle {
+  font-size: 10px;
+}
+
+.sAgentEmbedBody {
+  display: grid;
+  gap: 0;
+}
+
+.sAgentEmbedMsgs {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px;
+  display: grid;
+  gap: 6px;
+}
+
+.sAgentEmbedMsgs .opAgentMsgBubble {
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+.sAgentEmbedPrompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 8px;
+  border-top: 1px solid #edf1f5;
+}
+
+.sAgentPromptChip {
+  padding: 2px 8px;
+  border: 1px solid #d8dee6;
+  background: #f5f7fa;
+  font-size: 11px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #697889;
+  white-space: nowrap;
+}
+
+.sAgentPromptChip:hover {
+  border-color: #18c57a;
+  color: #18c57a;
+  background: #e8f5e9;
+}
+
+.sAgentEmbedInput {
+  display: flex;
+  border-top: 1px solid #edf1f5;
+}
+
+.sAgentEmbedInput input {
+  flex: 1;
+  border: none;
+  padding: 8px;
+  font-size: 12px;
+  outline: none;
+}
+
+.sAgentEmbedInput button {
+  border: none;
+  background: #18c57a;
+  color: #fff;
+  padding: 0 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Supplier Agent sidebar */
+.supplierShell.hasAgent {
+  grid-template-columns: 180px 1fr 320px;
+}
+
+.sAgentSidebar {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-left: 1px solid #d8dee6;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.sAgentSideHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #18c57a, #2ee090);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.sAgentSideHeader .opAgentAvatar {
+  font-size: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.sAgentSideHeader strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.sAgentSideMessages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sAgentSideMessages .opAgentMsg {
+  max-width: 100%;
+}
+
+.sAgentSideMessages .opAgentMsgBubble {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.sAgentSidePrompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 12px;
+  border-top: 1px solid #edf1f5;
+  border-bottom: 1px solid #edf1f5;
+  flex-shrink: 0;
+}
+
+.sAgentSidePrompts .quickPromptBtn {
+  font-size: 11px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.sAgentSideInput {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  border-top: 1px solid #d8dee6;
+  flex-shrink: 0;
+}
+
+.sAgentSideInput .opAgentInput {
+  flex: 1;
+  height: 32px;
+  resize: none;
+}
+
+.sAgentSideInput .opAgentSendBtn {
+  height: 32px;
+}
+
+/* Claim Cards */
+.sClaimGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.sClaimCard {
+  background: #fff;
+  border: 1px solid #d8dee6;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.15s;
+}
+
+.sClaimCard:hover {
+  border-color: #356df3;
+  box-shadow: 0 2px 10px rgba(53, 109, 243, 0.1);
+}
+
+.sClaimCard.claimable {
+  border-color: #90caf9;
+  background: #f8fbff;
+}
+
+.sClaimCard.claimable:hover {
+  border-color: #356df3;
+  box-shadow: 0 2px 12px rgba(53, 109, 243, 0.18);
+}
+
+.sClaimCardTop {
+  padding: 12px 14px 8px;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.sClaimCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.sClaimCardHeader .mono {
+  font-size: 12px;
+  color: #697889;
+}
+
+.sClaimCardName {
+  display: block;
+  font-size: 14px;
+  color: #0d2137;
+  margin-bottom: 4px;
+}
+
+.sClaimCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #697889;
+}
+
+.sClaimCardBody {
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+}
+
+.sClaimCardStat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.sClaimCardStat span {
+  color: #697889;
+}
+
+.sClaimCardStat strong {
+  color: #0d2137;
+  font-size: 13px;
+}
+
+.sClaimCardProgress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px 10px;
+}
+
+.sClaimCardProgress span {
+  font-size: 12px;
+  color: #697889;
+  white-space: nowrap;
+}
+
+.sClaimCardActions {
+  padding: 0 14px 12px;
+}
+
+/* Exec Page (标采执行) */
+.sExecLayout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 14px;
+  align-items: start;
+}
+
+.sExecLeft {
+  display: grid;
+  gap: 14px;
+}
+
+.sExecRight {
+  display: grid;
+  gap: 14px;
+  position: sticky;
+  top: 14px;
+}
+
+.sModeBlock {
+  background: #fff;
+  border: 1px solid #d8dee6;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sModeBlockHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.sModeBlockIcon {
+  font-size: 18px;
+}
+
+.sModeBlockTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0d2137;
+}
+
+.sModeBlockStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.sModeStat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sModeStat span {
+  font-size: 11px;
+  color: #697889;
+}
+
+.sModeStat strong {
+  font-size: 16px;
+  color: #0d2137;
+}
+
+.sModeBlockProgress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px 10px;
+}
+
+.sModeProgressText {
+  font-size: 12px;
+  color: #697889;
+  white-space: nowrap;
+}
+
+.sModeBlockList {
+  border-top: 1px solid #edf1f5;
+  padding: 6px 0;
+}
+
+.sModeBlockItem {
+  padding: 8px 14px;
+  cursor: pointer;
+  display: grid;
+  gap: 3px;
+}
+
+.sModeBlockItem:hover {
+  background: #f5f8fc;
+}
+
+.sModeBlockItemTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sModeBlockItemMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #697889;
+}
+
+.sModeBlockMore {
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #356df3;
+  cursor: pointer;
+  text-align: center;
+  border-top: 1px solid #edf1f5;
+}
+
+.sModeBlockMore:hover {
+  background: #f5f8fc;
+}
+
+/* Fullscreen Workspace (标注/采集) */
+.sFullWorkspace {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: 100vh !important;
+  background: #eef2f5 !important;
+  position: relative !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.sFullTopbar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 50px !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #d8dee6 !important;
+  padding: 0 20px !important;
+  flex-shrink: 0 !important;
+}
+
+.sFullTopbarLeft {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.sFullTopbarLeft .ghostBtn {
+  font-size: 12px !important;
+  height: 28px !important;
+}
+
+.sFullTitle {
+  font-family: Consolas, "Courier New", monospace !important;
+  font-size: 14px !important;
+  color: #697889 !important;
+}
+
+.sFullTopbarLeft strong {
+  font-size: 14px !important;
+  color: #0d2137 !important;
+  font-weight: 600 !important;
+}
+
+.sFullContent {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 0 !important;
+  min-height: 0 !important;
+  width: 100% !important;
+}
+
+.sFullCanvas {
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px !important;
+  min-width: 0 !important;
+  background: #eef2f5 !important;
+  order: 1 !important;
+}
+
+.sFullCanvas .sCanvasImage {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 500px !important;
+  max-height: calc(100vh - 140px) !important;
+  background: linear-gradient(135deg, #3a4a5e 0%, #1d2b3a 100%) !important;
+  border-radius: 12px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.sFullTools {
+  width: 320px !important;
+  background: #ffffff !important;
+  border-left: 1px solid #d8dee6 !important;
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 24px !important;
+  overflow-y: auto !important;
+  flex-shrink: 0 !important;
+  order: 2 !important;
+}
+
+.sFullTools .sToolGroup strong {
+  display: block;
+  font-size: 11px;
+  color: #697889;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sFullTools .sToolBtn {
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+.sFullTools .sLabelBtn {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.sFullTools .sToolActions {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #edf1f5;
+}
+
+/* Worker Agent FAB inside workspace */
+.wAgentFab {
+  position: fixed;
+  right: 300px;
+  bottom: 24px;
+  z-index: 999;
+}
+
+.wAgentPanel {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 999;
+}
