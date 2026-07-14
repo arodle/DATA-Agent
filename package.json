@@ -6,5 +6,8 @@
     "dev": "cd data-agent-platform && npm run dev",
     "build": "cd data-agent-platform && npm install && npm run build",
     "start": "cd data-agent-platform && npm run start"
+  },
+  "dependencies": {
+    "next": "16.2.10"
   }
 }
