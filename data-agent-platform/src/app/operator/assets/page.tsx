@@ -12,14 +12,14 @@ export default async function OperatorAssets() {
     console.error("Database error:", e);
   }
 
-  const totalDatasets = projects.reduce((sum, p) => sum + p.datasets.length, 0);
+  const totalDatasets = projects.reduce((sum: any, p: any) => sum + p.datasets.length, 0);
   const totalItems = projects.reduce(
-    (sum, p) => sum + p.datasets.reduce((s, d) => s + (d.itemCount ?? 0), 0),
+    (sum: any, p: any) => sum + p.datasets.reduce((s: any, d: any) => s + (d.itemCount ?? 0), 0),
     0
   );
 
-  const datasets = projects.flatMap((p) =>
-    p.datasets.map((d) => ({
+  const datasets = projects.flatMap((p: any) =>
+    p.datasets.map((d: any) => ({
       id: d.id,
       name: d.name,
       type: d.type,

@@ -42,12 +42,12 @@ export default async function OperatorAnnotation() {
     console.error("Database error:", e);
   }
 
-  const annotationProjects = projects.filter((p) =>
+  const annotationProjects = projects.filter((p: any) =>
     p.mode === "ANNOTATION"
   );
 
   const activeCount = annotationProjects.filter(
-    (p) => !["COMPLETED", "CANCELLED"].includes(p.executionStatus)
+    (p: any) => !["COMPLETED", "CANCELLED"].includes(p.executionStatus)
   ).length;
 
   return (
@@ -86,7 +86,7 @@ export default async function OperatorAnnotation() {
           <span className="statIcon">✅</span>
           <div>
             <strong>
-              {annotationProjects.filter((p) => p.executionStatus === "COMPLETED").length}
+              {annotationProjects.filter((p: any) => p.executionStatus === "COMPLETED").length}
             </strong>
             <span>已完成</span>
           </div>
@@ -95,7 +95,7 @@ export default async function OperatorAnnotation() {
           <span className="statIcon">📊</span>
           <div>
             <strong>
-              {annotationProjects.reduce((sum, p) => sum + (p.datasets[0]?.itemCount ?? 0), 0).toLocaleString()}
+              {annotationProjects.reduce((sum: any, p: any) => sum + (p.datasets[0]?.itemCount ?? 0), 0).toLocaleString()}
             </strong>
             <span>已标注条数</span>
           </div>
@@ -133,7 +133,7 @@ export default async function OperatorAnnotation() {
               <div>创建时间</div>
               <div>操作</div>
             </div>
-            {annotationProjects.map((p) => (
+            {annotationProjects.map((p: any) => (
               <div className="tableDataRow" key={p.id}>
                 <div className="projectCode mono">{p.code}</div>
                 <div>

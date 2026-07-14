@@ -101,8 +101,8 @@ export default async function OperatorProjectsPage() {
               <div>创建时间</div>
               <div>操作</div>
             </div>
-            {projects.map((p) => {
-              const dataCount = p.datasets.reduce((s, d) => s + (d.itemCount ?? 0), 0);
+            {projects.map((p: any) => {
+              const dataCount = p.datasets.reduce((s: any, d: any) => s + (d.itemCount ?? 0), 0);
               const color = statusColor[p.executionStatus] ?? "#9aa7b5";
               return (
                 <div className="tableDataRow" key={p.id}>
