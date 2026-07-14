@@ -49,7 +49,7 @@ export default async function QualityMonitorPage() {
   }
 
   const totalDatasets = projects.reduce(
-    (sum, p) => sum + p.datasets.reduce((s, d) => s + (d.itemCount ?? 0), 0),
+    (sum: any, p: any) => sum + p.datasets.reduce((s: any, d: any) => s + (d.itemCount ?? 0), 0),
     0
   );
 

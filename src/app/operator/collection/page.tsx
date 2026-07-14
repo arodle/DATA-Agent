@@ -42,12 +42,12 @@ export default async function OperatorCollection() {
     console.error("Database error:", e);
   }
 
-  const collectionProjects = projects.filter((p) =>
+  const collectionProjects = projects.filter((p: any) =>
     p.mode === "COLLECTION"
   );
 
   const activeCount = collectionProjects.filter(
-    (p) => !["COMPLETED", "CANCELLED"].includes(p.executionStatus)
+    (p: any) => !["COMPLETED", "CANCELLED"].includes(p.executionStatus)
   ).length;
 
   return (
@@ -86,7 +86,7 @@ export default async function OperatorCollection() {
           <span className="statIcon">✅</span>
           <div>
             <strong>
-              {collectionProjects.filter((p) => p.executionStatus === "COMPLETED").length}
+              {collectionProjects.filter((p: any) => p.executionStatus === "COMPLETED").length}
             </strong>
             <span>已完成</span>
           </div>
@@ -95,7 +95,7 @@ export default async function OperatorCollection() {
           <span className="statIcon">📊</span>
           <div>
             <strong>
-              {collectionProjects.reduce((sum, p) => sum + (p.datasets[0]?.itemCount ?? 0), 0).toLocaleString()}
+              {collectionProjects.reduce((sum: any, p: any) => sum + (p.datasets[0]?.itemCount ?? 0), 0).toLocaleString()}
             </strong>
             <span>已采集条数</span>
           </div>
@@ -133,7 +133,7 @@ export default async function OperatorCollection() {
               <div>创建时间</div>
               <div>操作</div>
             </div>
-            {collectionProjects.map((p) => (
+            {collectionProjects.map((p: any) => (
               <div className="tableDataRow" key={p.id}>
                 <div className="projectCode mono">{p.code}</div>
                 <div>

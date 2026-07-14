@@ -49,21 +49,21 @@ export default async function AgentManagementPage() {
     console.error("Database error:", e);
   }
 
-  const allActions = projects.flatMap((p) =>
-    p.agentSessions.flatMap((s) =>
-      s.actions.map((a) => ({ action: a, session: s, project: p }))
+  const allActions = projects.flatMap((p: any) =>
+    p.agentSessions.flatMap((s: any) =>
+      s.actions.map((a: any) => ({ action: a, session: s, project: p }))
     )
   );
 
-  const pendingActions = allActions.filter((x) => x.action.status === "PREVIEW");
-  const authorizedActions = allActions.filter((x) =>
+  const pendingActions = allActions.filter((x: any) => x.action.status === "PREVIEW");
+  const authorizedActions = allActions.filter((x: any) =>
     ["AUTHORIZED", "EXECUTED", "DONE"].includes(x.action.status)
   );
   const rejectedActions = allActions.filter(
-    (x) => x.action.status === "REJECTED"
+    (x: any) => x.action.status === "REJECTED"
   );
-  const activeSessions = projects.flatMap((p) =>
-    p.agentSessions.map((s) => ({ session: s, project: p }))
+  const activeSessions = projects.flatMap((p: any) =>
+    p.agentSessions.map((s: any) => ({ session: s, project: p }))
   );
 
   return (

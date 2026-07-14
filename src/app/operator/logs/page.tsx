@@ -21,8 +21,8 @@ export default async function OperationLogsPage() {
   }
 
   const logs = projects
-    .flatMap((p) => p.operationLogs.map((log) => ({ log, project: p })))
-    .sort((a, b) => b.log.createdAt.getTime() - a.log.createdAt.getTime())
+    .flatMap((p: any) => p.operationLogs.map((log: any) => ({ log, project: p })))
+    .sort((a: any, b: any) => b.log.createdAt.getTime() - a.log.createdAt.getTime())
     .slice(0, 50);
 
   return (

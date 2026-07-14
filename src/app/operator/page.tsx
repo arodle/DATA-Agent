@@ -55,25 +55,25 @@ export default async function OperatorWorkbench() {
   }
 
   const activeProjects = projects.filter(
-    (p) => !["COMPLETED", "CANCELLED"].includes(p.executionStatus)
+    (p: any) => !["COMPLETED", "CANCELLED"].includes(p.executionStatus)
   );
   const pendingReviewProjects = projects.filter(
-    (p) => p.executionStatus === "PENDING_REVIEW"
+    (p: any) => p.executionStatus === "PENDING_REVIEW"
   );
   const totalDataItems = projects.reduce(
-    (sum, p) => sum + p.datasets.reduce((s, d) => s + (d.itemCount ?? 0), 0),
+    (sum: any, p: any) => sum + p.datasets.reduce((s: any, d: any) => s + (d.itemCount ?? 0), 0),
     0
   );
 
   const recentLogs = projects
-    .flatMap((p) => p.operationLogs.map((log) => ({ log, project: p })))
-    .sort((a, b) => b.log.createdAt.getTime() - a.log.createdAt.getTime())
+    .flatMap((p: any) => p.operationLogs.map((log: any) => ({ log, project: p })))
+    .sort((a: any, b: any) => b.log.createdAt.getTime() - a.log.createdAt.getTime())
     .slice(0, 8);
 
-  const pendingActions = projects.flatMap((p) =>
+  const pendingActions = projects.flatMap((p: any) =>
     (p.agentSessions[0]?.actions ?? [])
-      .filter((a) => a.status === "PREVIEW")
-      .map((a) => ({ action: a, project: p }))
+      .filter((a: any) => a.status === "PREVIEW")
+      .map((a: any) => ({ action: a, project: p }))
   );
 
   return (
@@ -151,7 +151,7 @@ export default async function OperatorWorkbench() {
                   <div>创建时间</div>
                   <div>操作</div>
                 </div>
-                {activeProjects.slice(0, 6).map((p, i) => (
+                {activeProjects.slice(0, 6).map((p: any, i) => (
                   <div className="tableDataRow" key={p.id}>
                     <div className="col-check">{i + 1}</div>
                     <div className="projectCode mono">{p.code}</div>
@@ -171,7 +171,7 @@ export default async function OperatorWorkbench() {
                         {statusLabel[p.executionStatus] ?? p.executionStatus}
                       </span>
                     </div>
-                    <div>{p.datasets.reduce((s, d) => s + (d.itemCount ?? 0), 0).toLocaleString()}</div>
+                    <div>{p.datasets.reduce((s: any, d: any) => s + (d.itemCount ?? 0), 0).toLocaleString()}</div>
                     <div>{p.currentStage ?? "-"}</div>
                     <div>{p.operator?.name ?? p.operator?.email ?? "-"}</div>
                     <div className="mono">{formatDate(p.createdAt)}</div>

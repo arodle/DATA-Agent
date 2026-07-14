@@ -122,14 +122,14 @@ export default async function ReviewCenterPage() {
     realReviewItems.length > 0 ? realReviewItems : mockReviewItems;
 
   const pendingToolConfigs = projects.reduce(
-    (sum, p) =>
+    (sum: any, p: any) =>
       sum +
-      p.toolConfigs.filter((t) =>
+      p.toolConfigs.filter((t: any) =>
         ["DRAFT", "PENDING", "PENDING_REVIEW"].includes(t.status)
       ).length,
     0
   );
-  const pendingRequirements = projects.filter((p) => p.requirement).length;
+  const pendingRequirements = projects.filter((p: any) => p.requirement).length;
   const pendingAcceptance = 3;
   const processedToday = 12;
 
