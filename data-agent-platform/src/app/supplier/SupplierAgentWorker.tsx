@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface Message {
   id: string;
@@ -25,6 +25,7 @@ const defaultRules: AnnotRule[] = [
 
 export default function SupplierAgentWorker() {
   const [rules] = useState<AnnotRule[]>(defaultRules);
+  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -37,8 +38,10 @@ export default function SupplierAgentWorker() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (isOpen) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isOpen]);
 
   const handleSend = (text?: string) => {
     const content = text || inputValue.trim();
@@ -78,40 +81,64 @@ export default function SupplierAgentWorker() {
   };
 
   return (
-    <aside className="sAgentSidebar sAgentSidebarWorker">
-      <div className="sAgentSideHeader">
-        <span className="opAgentAvatar">📋</span>
-        <div>
-          <strong>标注辅助</strong>
-          <span className="opAgentStatus"><span className="statusDot" /> 规则模式</span>
-        </div>
-      </div>
+    <>
+      <button
+        className="sAgentFloatBtn worker"
+        onClick={() => setIsOpen(true)}
+        title="标注辅助 Agent"
+      >
+        <span className="sAgentFloatIcon">📋</span>
+        <span className="sAgentFloatLabel">标注助手</span>
+      </button>
 
-      <div className="sAgentRulesBanner">
-        <span>📐</span> 基于项目经理导入的 {rules.length} 条规则
-      </div>
-
-      <div className="sAgentSideMessages">
-        {messages.map((msg) => (
-          <div key={msg.id} className={`opAgentMsg ${msg.role}`}>
-            <div className="opAgentMsgBubble"><p style={{ whiteSpace: "pre-wrap" }}>{msg.content}</p></div>
-            <span className="opAgentMsgTime">{msg.timestamp}</span>
+      {isOpen && (
+        <div className="sAgentFullPanel sAgentWorkerPanel">
+          <div className="sAgentFullHeader">
+            <div className="sAgentFullHeaderLeft">
+              <span className="sAgentFullAvatar">📋</span>
+              <div>
+                <strong>标注辅助</strong>
+                <span className="sAgentFullStatus"><span className="statusDot" /> 规则模式</span>
+              </div>
+            </div>
+            <button className="sAgentFullClose" onClick={() => setIsOpen(false)}>✕</button>
           </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
 
-      <div className="sAgentSidePrompts">
-        <button className="quickPromptBtn" onClick={() => handleSend("查看全部规则")}>查看全部规则</button>
-        <button className="quickPromptBtn" onClick={() => handleSend("遮挡和截断怎么标")}>遮挡/截断规则</button>
-        <button className="quickPromptBtn" onClick={() => handleSend("框有什么精度要求")}>框精度要求</button>
-      </div>
+          <div className="sAgentFullBanner">
+            <span>📐</span> 基于项目经理导入的 {rules.length} 条规则
+          </div>
 
-      <div className="sAgentSideInput">
-        <textarea value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="查询标注规则..." className="opAgentInput" rows={1}
-          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }} />
-        <button className="opAgentSendBtn" onClick={() => handleSend()}>查询</button>
-      </div>
-    </aside>
+          <div className="sAgentFullMessages">
+            {messages.map((msg) => (
+              <div key={msg.id} className={`sAgentFullMsg ${msg.role}`}>
+                <div className="sAgentFullMsgBubble">
+                  <p style={{ whiteSpace: "pre-wrap", margin: 0 }}>{msg.content}</p>
+                </div>
+                <span className="sAgentFullMsgTime">{msg.timestamp}</span>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+
+          <div className="sAgentFullPrompts">
+            <button className="sAgentFullPromptBtn" onClick={() => handleSend("查看全部规则")}>查看全部规则</button>
+            <button className="sAgentFullPromptBtn" onClick={() => handleSend("遮挡和截断怎么标")}>遮挡/截断规则</button>
+            <button className="sAgentFullPromptBtn" onClick={() => handleSend("框有什么精度要求")}>框精度要求</button>
+          </div>
+
+          <div className="sAgentFullInput">
+            <textarea
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="查询标注规则..."
+              className="sAgentFullInputArea"
+              rows={1}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+            />
+            <button className="sAgentFullSendBtn" onClick={() => handleSend()}>查询</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

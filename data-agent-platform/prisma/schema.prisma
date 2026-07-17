@@ -15,9 +15,10 @@ model Organization {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  members  OrganizationMember[]
-  projects Project[]            @relation("ProjectOwnerOrg")
-  supplier Supplier?
+  members          OrganizationMember[]
+  projects         Project[]            @relation("ProjectOwnerOrg")
+  supplier         Supplier?
+  cloudConnections CloudConnection[]
 }
 
 model User {
@@ -36,6 +37,7 @@ model User {
   agentSessions    AgentSession[]
   operationLogs    OperationLog[]
   skills           Skill[]              @relation("SkillAuthor")
+  cloudConnections CloudConnection[]
 }
 
 model OrganizationMember {
@@ -252,6 +254,23 @@ model PublicAsset {
   isOfficial  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model CloudConnection {
+  id           String    @id @default(cuid())
+  name         String
+  type         String    // OWN_CLOUD | THIRD_PARTY
+  provider     String    // COMPANY_CLOUD | ALIYUN_OSS | AWS_S3 | TENCENT_COS | HUAWEI_OBS | MINIO
+  ownerOrgId   String?
+  creatorId    String
+  config       Json      // endpoint, region, bucket, prefix, credentials, etc.
+  status       String    @default("ACTIVE")
+  lastTestedAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  organization Organization? @relation(fields: [ownerOrgId], references: [id])
+  creator      User          @relation(fields: [creatorId], references: [id])
 }
 
 model ToolTemplate {

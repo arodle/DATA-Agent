@@ -1,27 +1,30 @@
 {
-    "name":  "data-agent-platform",
-    "version":  "0.1.0",
-    "private":  true,
-    "scripts":  {
-                    "dev":  "next dev --webpack",
-                    "build": "prisma generate && next build",
-                    "start":  "next start",
-                    "lint":  "eslint",
-                    "seed":  "node prisma/seed.js"
-                },
-    "dependencies":  {
-                         "@prisma/client":  "^6.19.3",
-                         "next":  "16.2.10",
-                         "prisma":  "^6.19.3",
-                         "react":  "19.2.4",
-                         "react-dom":  "19.2.4"
-                     },
-    "devDependencies":  {
-                            "@types/node":  "^20",
-                            "@types/react":  "^19",
-                            "@types/react-dom":  "^19",
-                            "eslint":  "^9",
-                            "eslint-config-next":  "16.2.10",
-                            "typescript":  "^5"
-                        }
+    "name": "data-agent-platform",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev --webpack",
+        "build": "prisma generate && next build",
+        "start": "next start",
+        "lint": "eslint",
+        "seed": "node prisma/seed.js"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.19.3",
+        "next": "16.2.10",
+        "prisma": "^6.19.3",
+        "react": "19.2.4",
+        "react-dom": "19.2.4"
+    },
+    "devDependencies": {
+        "@types/node": "^20",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "eslint": "^9",
+        "eslint-config-next": "16.2.10",
+        "pptxgenjs": "^4.0.1",
+        "puppeteer": "^25.3.0",
+        "sharp": "^0.35.3",
+        "typescript": "^5"
+    }
 }

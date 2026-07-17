@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type AssetTab = "datasets" | "dataVersions" | "labelVersions" | "schema" | "acRules" | "lineage" | "quality" | "storage";
+type AssetTab = "datasets" | "dataVersions" | "labelVersions" | "schema" | "acRules" | "lineage" | "quality" | "storage" | "builtin";
 
 interface DatasetVersion {
   id: string;
@@ -51,7 +51,10 @@ export default function OperatorAssetsClient({
     { key: "lineage", label: "数据血缘", icon: "🔗" },
     { key: "quality", label: "数据质量", icon: "📊" },
     { key: "storage", label: "数据存储", icon: "☁️" },
+    { key: "builtin", label: "内置资产", icon: "🏛️" },
   ];
+
+  const [builtinSubTab, setBuiltinSubTab] = useState("builtin-source");
 
   return (
     <div className="opWorkbench">
@@ -510,6 +513,215 @@ export default function OperatorAssetsClient({
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {activeTab === "builtin" && (
+            <div className="assetsPanel">
+              <div className="cardHeader">
+                <h3 className="cardTitle">🏛️ 内置资产</h3>
+                <span className="statusBadge green">运营管理</span>
+              </div>
+              <p style={{ fontSize: 13, color: "#697889", margin: "0 0 20px", lineHeight: 1.6 }}>
+                平台沉淀的四类核心资产：数据源规划成熟方案、供应商与报价工期基准、标准化规范与脚本质检资产、完整历史项目包。支持一键复用，加速项目交付。
+              </p>
+
+              <div className="settingsTabs" style={{ marginBottom: 20 }}>
+                {[
+                  { key: "builtin-source", label: "📊 数据源方案", },
+                  { key: "builtin-supplier", label: "🏭 供应商报价", },
+                  { key: "builtin-standard", label: "📐 规范脚本", },
+                  { key: "builtin-project", label: "📦 项目包", },
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setBuiltinSubTab(tab.key)}
+                    className={`settingsTab ${builtinSubTab === tab.key ? "active" : ""}`}
+                  >
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              {builtinSubTab === "builtin-source" && (
+                <div className="builtinGrid">
+                  {/* 纯仿真方案 */}
+                  <div className="builtinCard">
+                    <div className="builtinCardHead">
+                      <span className="builtinCardIcon">🎮</span>
+                      <div><strong>纯仿真方案</strong><span className="builtinTag green">推荐</span></div>
+                    </div>
+                    <ul className="builtinList">
+                      <li>适用：边缘场景、极端天气、稀有目标</li>
+                      <li>精度：100% 精确标注（无人工误差）</li>
+                      <li>速度：5,000-10,000张/天</li>
+                      <li>成本：约 0.3-0.8元/张</li>
+                      <li>工具：CARLA/AirSim 集成</li>
+                    </ul>
+                    <button className="linkBtn">复用方案</button>
+                  </div>
+                  {/* 成品数据集采购 */}
+                  <div className="builtinCard">
+                    <div className="builtinCardHead">
+                      <span className="builtinCardIcon">🛒</span>
+                      <div><strong>成品数据集采购</strong><span className="builtinTag blue">高频</span></div>
+                    </div>
+                    <ul className="builtinList">
+                      <li>适用：快速启动、冷启动基线</li>
+                      <li>数据：CityScapes/BDD100K/COCO/KITTI/nuScenes</li>
+                      <li>交付：1-3个工作日</li>
+                      <li>规模：5,000-200,000张可选</li>
+                      <li>含 Schema 适配脚本</li>
+                    </ul>
+                    <button className="linkBtn">复用方案</button>
+                  </div>
+                  {/* 采标一体 */}
+                  <div className="builtinCard">
+                    <div className="builtinCardHead">
+                      <span className="builtinCardIcon">📷</span>
+                      <div><strong>采标一体方案</strong><span className="builtinTag green">推荐</span></div>
+                    </div>
+                    <ul className="builtinList">
+                      <li>适用：完整项目链一站式</li>
+                      <li>流程：采集→清洗→预标→标注→验收</li>
+                      <li>规模：5,000-100,000张</li>
+                      <li>周期：1-4个月</li>
+                      <li>含采集方案+标注规范+验收全套</li>
+                    </ul>
+                    <button className="linkBtn">复用方案</button>
+                  </div>
+                  {/* 纯采集 */}
+                  <div className="builtinCard">
+                    <div className="builtinCardHead">
+                      <span className="builtinCardIcon">🚗</span>
+                      <div><strong>纯采集方案</strong><span className="builtinTag">灵活</span></div>
+                    </div>
+                    <ul className="builtinList">
+                      <li>适用：自研标注、只要原始数据</li>
+                      <li>方式：车载/无人机/固定相机</li>
+                      <li>规模：5,000-200,000张</li>
+                      <li>周期：1-2个月</li>
+                      <li>含场景规划+设备方案</li>
+                    </ul>
+                    <button className="linkBtn">复用方案</button>
+                  </div>
+                  {/* 仿真+采集混合 */}
+                  <div className="builtinCard">
+                    <div className="builtinCardHead">
+                      <span className="builtinCardIcon">🎯</span>
+                      <div><strong>仿真+采集混合</strong><span className="builtinTag blue">高频</span></div>
+                    </div>
+                    <ul className="builtinList">
+                      <li>适用：真实场景+边缘覆盖</li>
+                      <li>配比：15K仿真 + 35K采集（典型）</li>
+                      <li>仿真覆盖：夜间/雨雪/雾天/隧道</li>
+                      <li>周期：2-3个月</li>
+                      <li>含仿真配置+采集方案</li>
+                    </ul>
+                    <button className="linkBtn">复用方案</button>
+                  </div>
+                  {/* 采购+标注混合 */}
+                  <div className="builtinCard">
+                    <div className="builtinCardHead">
+                      <span className="builtinCardIcon">🔗</span>
+                      <div><strong>采购+标注混合</strong><span className="builtinTag">综合</span></div>
+                    </div>
+                    <ul className="builtinList">
+                      <li>适用：有成品数据+需要标注</li>
+                      <li>模式：成品采购+自主/外包标注</li>
+                      <li>规模：灵活配置</li>
+                      <li>周期：1-3个月</li>
+                      <li>含数据集适配+标注执行方案</li>
+                    </ul>
+                    <button className="linkBtn">复用方案</button>
+                  </div>
+                </div>
+              )}
+
+              {builtinSubTab === "builtin-supplier" && (
+                <>
+                  <h4>标注类供应商</h4>
+                  <div className="supplierTable">
+                    <div className="supplierRow supplierHead">
+                      <span>供应商</span><span>专项</span><span>单价</span><span>产能</span><span>返修率</span><span>评分</span><span>标准工期</span><span>试标报价</span>
+                    </div>
+                    {[
+                      ["标注星球","2D框/车辆","0.8元/框","20,000框/天","2.3%","⭐⭐⭐⭐⭐ 4.8","3个月/50K","0.75元/框"],
+                      ["AI标注工厂","2D框/行人","0.72元/框","15,000框/天","3.1%","⭐⭐⭐⭐ 4.5","2.5个月/50K","0.68元/框"],
+                      ["数据工匠","2D框/通用","0.68元/框","12,000框/天","3.8%","⭐⭐⭐⭐ 4.3","3.5个月/50K","0.65元/框"],
+                      ["标注大师","分割/3D","2.5元/框","5,000框/天","1.8%","⭐⭐⭐⭐⭐ 4.9","2个月/10K","2.2元/框"],
+                    ].map((r,i) => (
+                      <div className="supplierRow" key={i}>
+                        <span className="supplierName">{r[0]}</span>
+                        <span>{r[1]}</span><span className="mono">{r[2]}</span>
+                        <span>{r[3]}</span><span className="good">{r[4]}</span>
+                        <span>{r[5]}</span><span>{r[6]}</span><span className="mono">{r[7]}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <h4 style={{ marginTop: 24 }}>采集类供应商</h4>
+                  <div className="supplierTable">
+                    <div className="supplierRow supplierHead">
+                      <span>供应商</span><span>场景</span><span>单价</span><span>产能</span><span>设备</span><span>评分</span><span>标准工期</span>
+                    </div>
+                    {[
+                      ["采集先锋","城市道路","1.2元/张","3,000张/天","5台车","⭐⭐⭐⭐ 4.5","1.5个月/50K"],
+                      ["视觉猎手","室内/园区","0.8元/张","5,000张/天","3台设备","⭐⭐⭐⭐ 4.3","1个月/50K"],
+                      ["航拍专家","航空/遥感","5.0元/张","500张/天","2架无人机","⭐⭐⭐⭐ 4.6","2个月/20K"],
+                    ].map((r,i) => (
+                      <div className="supplierRow" key={i}>
+                        <span className="supplierName">{r[0]}</span><span>{r[1]}</span>
+                        <span className="mono">{r[2]}</span><span>{r[3]}</span>
+                        <span>{r[4]}</span><span>{r[5]}</span><span>{r[6]}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {builtinSubTab === "builtin-standard" && (
+                <div className="builtinGrid">
+                  {[
+                    { icon:"📋", title:"标注规范模板", tag:"6个模板", tagCls:"green", items:["2D框标注规范 v2.2","语义分割规范 v1.5","OCR文字标注 v2.0","3D点云标注 v1.3","关键点标注 v1.2","视频标注 v1.8"] },
+                    { icon:"✅", title:"AC验收规则", tag:"3大类", tagCls:"blue", items:["框精度AC：≤3px/5px/10px","漏标率AC：≤2%/3%/5%","交叉验证：2轮/3轮","含自动化验收脚本","质量报告模板"] },
+                    { icon:"🏗️", title:"Schema资产库", tag:"5种格式", items:["COCO JSON（目标检测）","YOLO TXT","Pascal VOC XML","CityScapes JSON（分割）","KITTI Label（3D）"] },
+                    { icon:"🔧", title:"处理脚本", tag:"12个脚本", tagCls:"blue", items:["数据清洗（去重/去模糊）","预标脚本（YOLOv8）","格式转换 YOLO↔COCO","数据集划分 train/val/test","标注可视化","质量报告生成"] },
+                    { icon:"📊", title:"质量报告模板", tag:"4种", tagCls:"green", items:["批次验收质量报告","供应商质量分析","标采员问题统计","项目终期总结"] },
+                    { icon:"🔗", title:"API工具集成", tag:"推荐", items:["预标 API（YOLOv8/ResNet）","仿真生成 API（CARLA）","Cloud Storage连接器","Webhook任务通知"] },
+                  ].map((c,i) => (
+                    <div className="builtinCard" key={i}>
+                      <div className="builtinCardHead">
+                        <span className="builtinCardIcon">{c.icon}</span>
+                        <div><strong>{c.title}</strong><span className={`builtinTag${c.tagCls ? " "+c.tagCls : ""}`}>{c.tag}</span></div>
+                      </div>
+                      <ul className="builtinList">{c.items.map((it,j)=><li key={j}>{it}</li>)}</ul>
+                      <button className="linkBtn">查看详情</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {builtinSubTab === "builtin-project" && (
+                <div className="projectArchiveList">
+                  {[
+                    { name:"PRJ-A23K：城市道路车辆2D框标注", meta:"48,000张 | 3个月 | 评分 4.8 | 2025-12", tag:"可复用", tagCls:"green", assets:[["📊 数据方案","仿真+采集（15K+33K）"],["📋 标注规范","v2.1（12条规则）"],["✅ AC规则","≤3px,3轮交叉验证"],["🏗️ Schema","COCO JSON/5类"],["🏭 供应商","标注星球/0.8元/框"],["🔧 脚本","清洗+预标+转换"]] },
+                    { name:"PRJ-B12M：城市道路行人车辆检测", meta:"36,000张 | 2.5个月 | 评分 4.6 | 2025-10", tag:"可复用", tagCls:"blue", assets:[["📊 数据方案","成品采购（CityScapes）"],["📋 标注规范","v1.9（行人属性）"],["✅ AC规则","≤5px,2轮交叉"],["🏗️ Schema","COCO JSON/人行+车辆"],["🏭 供应商","AI标注工厂/0.72元/框"]] },
+                    { name:"PRJ-C04L：高速场景车辆标注", meta:"62,000张 | 4个月 | 评分 4.3 | 2025-08", tag:"可复用", assets:[["📊 数据方案","纯采集（车载+无人机）"],["📋 标注规范","v1.7（高速专项）"],["🔧 脚本","图像对齐+拼接"]] },
+                  ].map((p,i) => (
+                    <div className="archiveCard" key={i}>
+                      <div className="archiveHeader">
+                        <span className="archiveIcon">📦</span>
+                        <div className="archiveInfo"><strong>{p.name}</strong><span className="archiveMeta">{p.meta}</span></div>
+                        <span className={`builtinTag${p.tagCls ? " "+p.tagCls : ""}`}>{p.tag}</span>
+                      </div>
+                      <div className="archiveAssets">
+                        {p.assets.map((a,j)=>(<div className="archiveAssetItem" key={j}><span className="archiveAssetLabel">{a[0]}</span><span>{a[1]}</span></div>))}
+                      </div>
+                      <button className="primaryBtn archiveBtn">一键复用整套项目</button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

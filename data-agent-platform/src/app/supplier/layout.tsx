@@ -14,14 +14,13 @@ interface NavItem {
 }
 
 const navConfig: NavItem[] = [
-  { label: "任务管理", href: "/supplier", icon: "📋", roles: ["manager", "pm", "worker"] },
+  { label: "任务管理", href: "/supplier", icon: "📋", roles: ["manager", "worker"] },
   { label: "任务拆分", href: "/supplier/split", icon: "🔀", roles: ["manager"] },
-  { label: "标采执行", href: "/supplier/annotation", icon: "✏️", roles: ["pm", "worker"] },
-  { label: "需求方对话", href: "/supplier/chat/project-vehicle-2d", icon: "💬", roles: ["pm"] },
-  { label: "标注规则", href: "/supplier/rules", icon: "📐", roles: ["pm", "worker"] },
-  { label: "质量分析", href: "/supplier/quality", icon: "📊", roles: ["manager", "pm"] },
+  { label: "标采执行", href: "/supplier/annotation", icon: "✏️", roles: ["manager", "worker"] },
+  { label: "标注规则", href: "/supplier/rules", icon: "📐", roles: ["manager", "worker"] },
+  { label: "质量分析", href: "/supplier/quality", icon: "📊", roles: ["manager"] },
   { label: "团队管理", href: "/supplier/team", icon: "👥", roles: ["manager"] },
-  { label: "数据交付", href: "/supplier/delivery", icon: "📦", roles: ["manager", "pm", "worker"] },
+  { label: "数据交付", href: "/supplier/delivery", icon: "📦", roles: ["manager", "worker"] },
   { label: "结算记录", href: "/supplier/settlement", icon: "💰", roles: ["manager"] },
 ];
 
@@ -47,12 +46,6 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
               onClick={() => setRole("manager")}
             >
               负责人
-            </button>
-            <button
-              className={`sRoleBtn ${role === "pm" ? "active" : ""}`}
-              onClick={() => setRole("pm")}
-            >
-              项目经理
             </button>
             <button
               className={`sRoleBtn ${role === "worker" ? "active" : ""}`}
@@ -88,10 +81,14 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
 
       <section className={`roleWorkspace ${isWorkspace ? "full" : ""}`}>
         {children}
-      </section>
 
-      {(role === "manager" || role === "pm") && !isWorkspace && <SupplierAgentFull role={role} />}
-      {role === "worker" && !isWorkspace && <SupplierAgentWorker />}
+        {!isWorkspace && (
+          <>
+            {role === "manager" && <SupplierAgentFull role="manager" />}
+            {role === "worker" && <SupplierAgentWorker />}
+          </>
+        )}
+      </section>
     </main>
   );
 }

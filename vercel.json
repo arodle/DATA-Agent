@@ -1,6 +1,5 @@
 {
-  "installCommand": "cd data-agent-platform && npm install",
-  "buildCommand": "cd data-agent-platform && npm run build",
+  "buildCommand": "cd data-agent-platform && npm install && prisma generate && next build",
   "outputDirectory": "data-agent-platform/.next",
-  "framework": "nextjs"
+  "installCommand": "cd data-agent-platform && npm install"
 }

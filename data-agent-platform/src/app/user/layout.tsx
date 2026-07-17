@@ -28,11 +28,13 @@ export default function UserLayout({
 }) {
   const pathname = usePathname();
   const [projectOpen, setProjectOpen] = useState(true);
+  const isWorkspace = pathname === "/user/workspace" || pathname.startsWith("/user/workspace/");
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <main className="roleShell userShell">
+    <main className={`roleShell userShell${isWorkspace ? " noRoleSidebar" : ""}`}>
+      {!isWorkspace && (
       <aside className="roleSidebar">
         <div className="roleBrand">Data Agent / 用户端</div>
         <nav className="roleNav">
@@ -85,6 +87,7 @@ export default function UserLayout({
           </div>
         </div>
       </aside>
+      )}
       <section className="roleWorkspace">
         {children}
       </section>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import UnifiedInputBar from "./UnifiedInputBar";
 
 interface ChatMessage {
   id: string;
@@ -141,28 +142,17 @@ export default function ChatPanel({ projectId, projectCode, projectName, role, i
         <div ref={bottomRef} />
       </div>
 
-      <div className="chatInputBar">
-        <textarea
-          className="chatInput"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={
-            role === "user"
-              ? "输入消息，与供应商沟通..."
-              : "输入消息，与需求方沟通..."
-          }
-          rows={2}
-          disabled={sending}
-        />
-        <button
-          className="chatSendBtn"
-          onClick={sendMessage}
-          disabled={sending || !input.trim()}
-        >
-          {sending ? "..." : "发送"}
-        </button>
-      </div>
+      <UnifiedInputBar
+        value={input}
+        onChange={setInput}
+        onSend={sendMessage}
+        placeholder={
+          role === "user"
+            ? "输入消息，与供应商沟通..."
+            : "输入消息，与需求方沟通..."
+        }
+        sending={sending}
+      />
     </div>
   );
 }

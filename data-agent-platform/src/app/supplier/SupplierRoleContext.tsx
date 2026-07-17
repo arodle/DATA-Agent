@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 
-export type SupplierRole = "manager" | "pm" | "worker";
+export type SupplierRole = "manager" | "worker";
 
 interface SupplierRoleContextType {
   role: SupplierRole;
@@ -12,14 +12,13 @@ interface SupplierRoleContextType {
 
 const roleNames: Record<SupplierRole, string> = {
   manager: "张总",
-  pm: "王经理",
   worker: "标注员小李",
 };
 
 const SupplierRoleContext = createContext<SupplierRoleContextType | null>(null);
 
 export function SupplierRoleProvider({ children }: { children: ReactNode }) {
-  const [role, setRole] = useState<SupplierRole>("pm");
+  const [role, setRole] = useState<SupplierRole>("manager");
 
   return (
     <SupplierRoleContext.Provider value={{ role, setRole, userName: roleNames[role] }}>

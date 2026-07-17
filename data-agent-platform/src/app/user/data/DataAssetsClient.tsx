@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import CloudStorageBrowser from "./CloudStorageBrowser";
 
 export type DatasetItem = {
   id: string;
@@ -532,92 +533,14 @@ export default function DataAssetsClient({ datasets, files, publicAssets }: Prop
             </>
           )}
 
+
           {mainTab === "storage" && (
             <div className="dataPanel">
               <div className="dataPanelHead">
-                <h3>云存储接入</h3>
+                <h3>云存储数据浏览</h3>
+                <span className="storagePrivacyTag">平台不存储数据，仅读取元信息</span>
               </div>
-              <div className="storageInfo">
-                <div className="storageBanner">
-                  <span className="storageBannerIcon">☁️</span>
-                  <div>
-                    <strong>平台不存储您的数据</strong>
-                    <p>数据保留在您自己的云存储中，平台仅提供跳转和本地拉取能力</p>
-                  </div>
-                </div>
-              </div>
-              <div className="cloudStorageList">
-                {datasets.map((ds) => {
-                  const storagePath = ds.storagePath ?? "";
-                  const isOSS = storagePath.includes("oss") || storagePath.includes("aliyun");
-                  const isS3 = storagePath.includes("s3") || storagePath.includes("aws");
-                  const isGCS = storagePath.includes("gcs") || storagePath.includes("google");
-                  const provider = isOSS ? "阿里云 OSS" : isS3 ? "AWS S3" : isGCS ? "Google Cloud" : "云存储";
-                  const providerIcon = isOSS ? "🟠" : isS3 ? "🟡" : isGCS ? "🔵" : "☁️";
-
-                  return (
-                    <div className="cloudStorageCard" key={ds.id}>
-                      <div className="cloudStorageHead">
-                        <span className="cloudProviderIcon">{providerIcon}</span>
-                        <div className="cloudStorageInfo">
-                          <strong>{ds.name}</strong>
-                          <span className="cloudProvider">{provider} · {ds.format ?? "RAW"}</span>
-                        </div>
-                        <span className="cloudItemCount">{ds.itemCount?.toLocaleString() ?? "-"} 条</span>
-                      </div>
-                      <div className="cloudStoragePath">
-                        <span className="cloudPathLabel">存储地址</span>
-                        <span className="cloudPathValue">{storagePath || "未配置"}</span>
-                      </div>
-                      <div className="cloudStorageActions">
-                        <button className="cloudBtn primary">
-                          <span>↗</span> 跳转云存储
-                        </button>
-                        <button className="cloudBtn">
-                          <span>⬇</span> 拉取到本地
-                        </button>
-                        <button className="linkBtn">查看配置</button>
-                      </div>
-                    </div>
-                  );
-                })}
-                {datasets.length === 0 && (
-                  <div className="emptyState">暂无已接入的云存储</div>
-                )}
-              </div>
-              <div className="storageHelp">
-                <div className="storageHelpHead">接入新存储</div>
-                <div className="storageHelpGrid">
-                  <button className="storageHelpCard">
-                    <span className="storageHelpIcon">🟠</span>
-                    <div>
-                      <strong>阿里云 OSS</strong>
-                      <p>配置 OSS Bucket 接入</p>
-                    </div>
-                  </button>
-                  <button className="storageHelpCard">
-                    <span className="storageHelpIcon">🟡</span>
-                    <div>
-                      <strong>AWS S3</strong>
-                      <p>配置 S3 Bucket 接入</p>
-                    </div>
-                  </button>
-                  <button className="storageHelpCard">
-                    <span className="storageHelpIcon">🔵</span>
-                    <div>
-                      <strong>Google Cloud</strong>
-                      <p>配置 GCS Bucket 接入</p>
-                    </div>
-                  </button>
-                  <button className="storageHelpCard">
-                    <span className="storageHelpIcon">🖥️</span>
-                    <div>
-                      <strong>本地路径</strong>
-                      <p>映射本地或 NFS 目录</p>
-                    </div>
-                  </button>
-                </div>
-              </div>
+              <CloudStorageBrowser />
             </div>
           )}
 

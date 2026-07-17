@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createDraftProject } from "@/app/actions";
-import { storageAssetOptions } from "@/lib/storageCatalog";
+import DataConnectionSelector from "@/components/DataConnectionSelector";
 
 const currentUser = {
   name: "林同学",
@@ -61,25 +61,10 @@ export default function NewProjectPage() {
             </select>
           </label>
 
-          <label className="field span2">
-            <span>选择数据资产</span>
-            <select name="storageAssetId" defaultValue={storageAssetOptions[0].id}>
-              {storageAssetOptions.map((asset) => (
-                <option key={asset.id} value={asset.id}>
-                  {asset.name} / {asset.itemCount} 条 / {asset.modality} / {asset.format}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <section className="assetHint span2">
-            {storageAssetOptions.map((asset) => (
-              <article key={asset.id}>
-                <strong>{asset.name}</strong>
-                <span>{asset.description}</span>
-              </article>
-            ))}
-          </section>
+          <div className="field span2">
+            <span>选择数据连接</span>
+            <DataConnectionSelector />
+          </div>
 
           <label className="field span2">
             <span>目标模型或用途</span>

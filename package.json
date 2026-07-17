@@ -1,13 +1,9 @@
 {
-  "name": "data-agent-platform-root",
+  "name": "data-pm",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cd data-agent-platform && npm run dev",
     "build": "cd data-agent-platform && npm install && npm run build",
-    "start": "cd data-agent-platform && npm run start"
-  },
-  "dependencies": {
-    "next": "16.2.10"
+    "start": "cd data-agent-platform && npm start"
   }
 }

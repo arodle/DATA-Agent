@@ -43,7 +43,7 @@ export default function RulesPage() {
         <div>
           <h2>标注规则库</h2>
           <p>
-            {role === "pm"
+            {role === "manager"
               ? "管理标注规则，从需求方对话中提取并增强后下发给标注员"
               : "由项目经理从需求方对话中提取和增强的标注规则"}
           </p>
@@ -71,7 +71,7 @@ export default function RulesPage() {
         ))}
       </div>
 
-      {role === "pm" && (
+      {role === "manager" && (
         <div className="rulesImport">
           <div className="rulesImportTitle">📥 导入规则文件</div>
           <p>将导出的 .txt 规则文件拖入此处，或点击上传。导入后标注员的Agent将自动加载最新规则。</p>

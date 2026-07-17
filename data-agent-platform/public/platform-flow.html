@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据标注平台 · 完整业务流程图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0f;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #e4e4e7;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+  .container { max-width: 1300px; margin: 0 auto; }
+  h1 { text-align: center; font-size: 22px; font-weight: 600; margin-bottom: 8px; color: #f4f4f5; }
+  .subtitle { text-align: center; font-size: 13px; color: #71717a; margin-bottom: 32px; }
+  .flow-wrapper {
+    background: #111114;
+    border: 1px solid #27272a;
+    border-radius: 16px;
+    padding: 24px;
+    overflow-x: auto;
+  }
+  svg { display: block; margin: 0 auto; }
+  .legend {
+    display: flex; justify-content: center; gap: 18px; margin-top: 20px; flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #a1a1aa; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .legend-line { width: 24px; height: 2px; border-radius: 1px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🏗️ Data PM 平台 · 完整业务流程图</h1>
+  <p class="subtitle">数据资产 · 算力资源 · 模型中心 · 标采项目 · Agent 全链路贯穿</p>
+
+  <div class="flow-wrapper">
+    <svg viewBox="0 0 1280 1750" width="100%" height="auto" style="min-width: 1200px;">
+
+      <defs>
+        <marker id="a-ds" viewBox="0 0 8 8" refX="7" refY="4" markerW="7" markerH="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#60a5fa"/></marker>
+        <marker id="a-cp" viewBox="0 0 8 8" refX="7" refY="4" markerW="7" markerH="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#8b5cf6"/></marker>
+        <marker id="a-ml" viewBox="0 0 8 8" refX="7" refY="4" markerW="7" markerH="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#e879f9"/></marker>
+        <marker id="a-ap" viewBox="0 0 8 8" refX="7" refY="4" markerW="7" markerH="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#d4a853"/></marker>
+        <marker id="a-ag" viewBox="0 0 8 8" refX="7" refY="4" markerW="7" markerH="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#18c57a"/></marker>
+        <marker id="a-red" viewBox="0 0 8 8" refX="7" refY="4" markerW="7" markerH="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#f87171"/></marker>
+      </defs>
+
+      <!-- ========== MODULE HEADERS ========== -->
+      <!-- Lane 1: 数据资产 -->
+      <rect x="20" y="15" width="230" height="36" rx="8" fill="#60a5fa" opacity="0.12"/>
+      <rect x="20" y="15" width="230" height="36" rx="8" fill="none" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="135" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">📊 数据资产</text>
+      <rect x="20" y="53" width="112" height="22" rx="5" fill="#60a5fa" opacity="0.08"/>
+      <text x="76" y="68" text-anchor="middle" font-size="10" fill="#60a5fa">用户 /user/data</text>
+      <rect x="138" y="53" width="112" height="22" rx="5" fill="#60a5fa" opacity="0.08"/>
+      <text x="194" y="68" text-anchor="middle" font-size="10" fill="#60a5fa">运营 /operator/assets</text>
+
+      <!-- Lane 2: 算力资源 -->
+      <rect x="270" y="15" width="230" height="36" rx="8" fill="#8b5cf6" opacity="0.12"/>
+      <rect x="270" y="15" width="230" height="36" rx="8" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="385" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#8b5cf6">⚡ 算力资源</text>
+      <rect x="270" y="53" width="112" height="22" rx="5" fill="#8b5cf6" opacity="0.08"/>
+      <text x="326" y="68" text-anchor="middle" font-size="10" fill="#8b5cf6">用户 /user/compute</text>
+      <rect x="388" y="53" width="112" height="22" rx="5" fill="#8b5cf6" opacity="0.08"/>
+      <text x="444" y="68" text-anchor="middle" font-size="10" fill="#8b5cf6">🤖 算力调度Agent</text>
+
+      <!-- Lane 3: 模型中心 -->
+      <rect x="520" y="15" width="230" height="36" rx="8" fill="#e879f9" opacity="0.12"/>
+      <rect x="520" y="15" width="230" height="36" rx="8" fill="none" stroke="#e879f9" stroke-width="1.5"/>
+      <text x="635" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#e879f9">🧠 模型中心</text>
+      <rect x="520" y="53" width="112" height="22" rx="5" fill="#e879f9" opacity="0.08"/>
+      <text x="576" y="68" text-anchor="middle" font-size="10" fill="#e879f9">用户 /user/models</text>
+      <rect x="638" y="53" width="112" height="22" rx="5" fill="#e879f9" opacity="0.08"/>
+      <text x="694" y="68" text-anchor="middle" font-size="10" fill="#e879f9">🤖 模型Agent</text>
+
+      <!-- Lane 4: 标采项目 -->
+      <rect x="770" y="15" width="230" height="36" rx="8" fill="#d4a853" opacity="0.12"/>
+      <rect x="770" y="15" width="230" height="36" rx="8" fill="none" stroke="#d4a853" stroke-width="1.5"/>
+      <text x="885" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#d4a853">🏷️ 标采项目</text>
+      <rect x="770" y="53" width="112" height="22" rx="5" fill="#d4a853" opacity="0.08"/>
+      <text x="826" y="68" text-anchor="middle" font-size="10" fill="#d4a853">用户 /user/annotation</text>
+      <rect x="888" y="53" width="112" height="22" rx="5" fill="#d4a853" opacity="0.08"/>
+      <text x="944" y="68" text-anchor="middle" font-size="10" fill="#d4a853">供应商 /supplier</text>
+
+      <!-- Lane 5: Agent 系统（贯穿） -->
+      <rect x="1020" y="15" width="230" height="36" rx="8" fill="#18c57a" opacity="0.12"/>
+      <rect x="1020" y="15" width="230" height="36" rx="8" fill="none" stroke="#18c57a" stroke-width="1.5"/>
+      <text x="1135" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#18c57a">🤖 Agent 系统</text>
+      <rect x="1020" y="53" width="112" height="22" rx="5" fill="#18c57a" opacity="0.08"/>
+      <text x="1076" y="68" text-anchor="middle" font-size="10" fill="#18c57a">/user/agent</text>
+      <rect x="1138" y="53" width="112" height="22" rx="5" fill="#18c57a" opacity="0.08"/>
+      <text x="1194" y="68" text-anchor="middle" font-size="10" fill="#18c57a">训练/反馈闭环</text>
+
+      <!-- Lane dividers -->
+      <line x1="255" y1="82" x2="255" y2="1710" stroke="#27272a" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="505" y1="82" x2="505" y2="1710" stroke="#27272a" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="755" y1="82" x2="755" y2="1710" stroke="#27272a" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="1005" y1="82" x2="1005" y2="1710" stroke="#27272a" stroke-width="1" stroke-dasharray="4,4"/>
+
+      <!-- ===== HELPER: box ===== -->
+      <script type="text/plain" id="_">
+        function B(x,y,w,h,txt,clr,sz,sub,d){var f= d?'#0a0a0f':'#18181b';var s=d?'3,2':(d===undefined?'1.5':'1');
+        return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="8" fill="'+f+'" stroke="'+clr+'" stroke-width="'+s+'" stroke-dasharray="'+(d?'3,2':'none')+'"/>\n<text x="'+(x+w/2)+'" y="'+(y+h/2+4)+'" text-anchor="middle" font-size="'+sz+'" font-weight="600" fill="'+clr+'">'+txt+'</text>';}
+      </script>
+
+      <!-- ================================================================ -->
+      <!-- PHASE 1: 资源准备与配置 -->
+      <!-- ================================================================ -->
+      <rect x="0" y="88" width="1260" height="24" rx="4" fill="#18181b"/>
+      <text x="20" y="105" font-size="11" font-weight="600" fill="#71717a">① 资源准备与配置</text>
+
+      <!-- 数据资产: 数据集管理 -->
+      <rect x="30" y="122" width="215" height="48" rx="8" fill="#18181b" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="137" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#60a5fa">📦 数据集管理</text>
+      <text x="137" y="158" text-anchor="middle" font-size="9" fill="#71717a">上传/导入/版本管理</text>
+
+      <!-- 数据资产→算力 连线 -->
+      <path d="M248 146 L265 146" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#a-ds)"/>
+
+      <!-- 算力资源: 算力申请 -->
+      <rect x="280" y="122" width="215" height="48" rx="8" fill="#18181b" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="387" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#8b5cf6">⚡ 算力申请/配置</text>
+      <text x="387" y="158" text-anchor="middle" font-size="9" fill="#71717a">GPU集群 · 存储配额</text>
+
+      <!-- 算力→模型 连线 -->
+      <path d="M498 146 L515 146" fill="none" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#a-cp)"/>
+
+      <!-- 模型中心: 模型导入 -->
+      <rect x="530" y="122" width="215" height="48" rx="8" fill="#18181b" stroke="#e879f9" stroke-width="1.5"/>
+      <text x="637" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#e879f9">🧠 模型导入/注册</text>
+      <text x="637" y="158" text-anchor="middle" font-size="9" fill="#71717a">预训练模型 · 自定义模型</text>
+
+      <!-- 模型→标采 连线 -->
+      <path d="M748 146 L765 146" fill="none" stroke="#e879f9" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#a-ml)"/>
+
+      <!-- 标采: 需求提出 -->
+      <rect x="780" y="122" width="215" height="48" rx="8" fill="#18181b" stroke="#d4a853" stroke-width="1.5"/>
+      <text x="887" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#d4a853">📝 标注/采集需求</text>
+      <text x="887" y="158" text-anchor="middle" font-size="9" fill="#71717a">需求文档 · 规范定义</text>
+
+      <!-- Agent: 需求结构化 -->
+      <rect x="1030" y="122" width="215" height="48" rx="8" fill="#0a0a0f" stroke="#18c57a" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="1137" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#18c57a">🤖 需求结构化</text>
+      <text x="1137" y="158" text-anchor="middle" font-size="9" fill="#71717a">Agent 辅助拆解 & 自动生成方案</text>
+
+      <path d="M998 146 L1025 146" fill="none" stroke="#d4a853" stroke-width="1" stroke-dasharray="2,2" marker-end="url(#a-ag)"/>
+
+      <!-- 向下箭头 -->
+      <path d="M387 173 L387 205" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#a-cp)"/>
+      <path d="M887 173 L887 205" fill="none" stroke="#d4a853" stroke-width="2" marker-end="url(#a-ap)"/>
+
+      <!-- ================================================================ -->
+      <!-- PHASE 2: 模型训练与预标注 -->
+      <!-- ================================================================ -->
+      <rect x="0" y="185" width="1260" height="24" rx="4" fill="#1a1a2e"/>
+      <text x="20" y="202" font-size="11" font-weight="600" fill="#18c57a">② 模型训练 & 预标注</text>
+
+      <!-- 算力: GPU调度 -->
+      <rect x="280" y="218" width="215" height="48" rx="8" fill="#18181b" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="387" y="238" text-anchor="middle" font-size="11" font-weight="600" fill="#8b5cf6">🚀 GPU集群调度</text>
+      <text x="387" y="254" text-anchor="middle" font-size="9" fill="#71717a">资源分配 · 任务队列 · 监控</text>
+
+      <!-- 算力→模型 连线 -->
+      <path d="M498 242 L515 242" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#a-cp)"/>
+
+      <!-- 模型: 训练/预标注 -->
+      <rect x="530" y="218" width="215" height="64" rx="8" fill="#18181b" stroke="#e879f9" stroke-width="1.5"/>
+      <text x="637" y="240" text-anchor="middle" font-size="11" font-weight="600" fill="#e879f9">🏋️ 模型训练 / 微调</text>
+      <text x="637" y="256" text-anchor="middle" font-size="9" fill="#71717a">预标注推理 · ModelRun记录</text>
+      <text x="637" y="270" text-anchor="middle" font-size="9" fill="#71717a">PrelabelRun · 置信度评估</text>
+
+      <!-- 模型→标采 连线 -->
+      <path d="M748 250 L765 250" fill="none" stroke="#e879f9" stroke-width="2" marker-end="url(#a-ml)"/>
+
+      <!-- 标采: 预标注结果 -->
+      <rect x="780" y="218" width="215" height="64" rx="8" fill="#18181b" stroke="#d4a853" stroke-width="1.5"/>
+      <text x="887" y="240" text-anchor="middle" font-size="11" font-weight="600" fill="#d4a853">📋 预标注结果接收</text>
+      <text x="887" y="256" text-anchor="middle" font-size="9" fill="#71717a">作为人工标注参考基线</text>
+      <text x="887" y="270" text-anchor="middle" font-size="9" fill="#71717a">ProjectModelBinding 绑定</text>
+
+      <!-- Agent: 训练建议 -->
+      <rect x="1030" y="218" width="215" height="48" rx="8" fill="#0a0a0f" stroke="#18c57a" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="1137" y="238" text-anchor="middle" font-size="11" font-weight="600" fill="#18c57a">🤖 训练建议 & 超参推荐</text>
+      <text x="1137" y="254" text-anchor="middle" font-size="9" fill="#71717a">TrainingRecommendation</text>
+
+      <path d="M998 242 L1025 242" fill="none" stroke="#e879f9" stroke-width="1" stroke-dasharray="2,2" marker-end="url(#a-ag)"/>
+
+      <!-- 向下箭头 -->
+      <path d="M887 285 L887 320" fill="none" stroke="#d4a853" stroke-width="2" marker-end="url(#a-ap)"/>
+      <path d="M1137 269 L1137 320" fill="none" stroke="#18c57a" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#a-ag)"/>
+
+      <!-- ================================================================ -->
+      <!-- PHASE 3: 标采项目执行（核心） -->
+      <!-- ================================================================ -->
+      <rect x="0" y="300" width="1260" height="24" rx="4" fill="#1a1a2e"/>
+      <text x="20" y="317" font-size="11" font-weight="600" fill="#d4a853">③ 标采项目执行（核心流程）</text>
+
+      <!-- 数据资产: 数据准备 -->
+      <rect x="30" y="335" width="215" height="48" rx="8" fill="#18181b" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="137" y="355" text-anchor="middle" font-size="11" font-weight="600" fill="#60a5fa">📊 数据资产就绪</text>
+      <text x="137" y="371" text-anchor="middle" font-size="9" fill="#71717a">数据集版本锁定 · 分发</text>
+
+      <path d="M248 360 L445 360" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#a-ds)"/>
+
+      <!-- 运营: 项目创建 & 供应商选择 -->
+      <rect x="280" y="335" width="350" height="48" rx="8" fill="#18181b" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="455" y="355" text-anchor="middle" font-size="11" font-weight="600" fill="#a78bfa">🏭 运营：创建项目 & 供应商选择 / 指派</text>
+      <text x="455" y="371" text-anchor="middle" font-size="9" fill="#71717a">/operator/annotation · 审核 → 供应商管理</text>
+
+      <!-- 运营→标采 连线 -->
+      <path d="M635 360 L770 360" fill="none" stroke="#a78bfa" stroke-width="2" marker-end="url(#a-ap)"/>
+
+      <!-- 标采项目核心流程 大框 -->
+      <rect x="780" y="335" width="450" height="420" rx="12" fill="#0f1117" stroke="#d4a853" stroke-width="1.5" stroke-opacity="0.3"/>
+      <rect x="780" y="335" width="450" height="26" rx="12" fill="#d4a853" fill-opacity="0.06"/>
+      <text x="1005" y="353" text-anchor="middle" font-size="11" font-weight="700" fill="#d4a853">🏷️ 标采项目执行流程</text>
+
+      <!-- 供应商确认接单 -->
+      <rect x="790" y="370" width="160" height="38" rx="8" fill="#18181b" stroke="#d4a853" stroke-width="1.5"/>
+      <text x="870" y="385" text-anchor="middle" font-size="10" font-weight="600" fill="#d4a853">✅ 供应商确认接单</text>
+      <text x="870" y="399" text-anchor="middle" font-size="8" fill="#71717a">/supplier 任务管理</text>
+
+      <!-- 供应商→试标 -->
+      <path d="M953 390 L975 390" fill="none" stroke="#d4a853" stroke-width="1.5" marker-end="url(#a-ap)"/>
+
+      <!-- 试采试标 -->
+      <rect x="980" y="370" width="210" height="38" rx="8" fill="#18181b" stroke="#d4a853" stroke-width="1.5"/>
+      <text x="1085" y="385" text-anchor="middle" font-size="10" font-weight="600" fill="#d4a853">🧪 试采试标（准入）</text>
+      <text x="1085" y="399" text-anchor="middle" font-size="8" fill="#71717a">少量数据验证 · 质检≥95%</text>
+
+      <!-- 试标→群聊 -->
+      <path d="M1085 411 L1085 435" fill="none" stroke="#d4a853" stroke-width="1.5" marker-end="url(#a-ap)"/>
+
+      <!-- 需求方确认 -->
+      <rect x="980" y="418" width="160" height="38" rx="8" fill="#18181b" stroke="#f87171" stroke-width="1.5"/>
+      <text x="1060" y="433" text-anchor="middle" font-size="10" font-weight="600" fill="#f87171">⚠ 需求方确认</text>
+      <text x="1060" y="447" text-anchor="middle" font-size="8" fill="#71717a">不通过 → 返工修改</text>
+
+      <!-- 群聊大框 -->
+      <rect x="790" y="440" width="430" height="145" rx="10" fill="#0a0f0b" stroke="#18c57a" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- 群聊标题 -->
+      <text x="1005" y="458" text-anchor="middle" font-size="10" font-weight="700" fill="#18c57a">💬 项目群聊 · 规则制定（需求方 + PM + PM Agent + 运营）</text>
+
+      <!-- 群聊消息1 -->
+      <rect x="800" y="468" width="200" height="24" rx="6" fill="#18181b" stroke="#60a5fa" stroke-width="1"/>
+      <text x="900" y="484" text-anchor="middle" font-size="9" fill="#60a5fa">林同学：遮挡50%→truncated</text>
+
+      <rect x="1010" y="468" width="200" height="24" rx="6" fill="#18181b" stroke="#d4a853" stroke-width="1"/>
+      <text x="1110" y="484" text-anchor="middle" font-size="9" fill="#d4a853">王经理：夜间也归truncated</text>
+
+      <!-- 群聊消息2 -->
+      <rect x="800" y="496" width="200" height="24" rx="6" fill="#0a0a0f" stroke="#d4a853" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="900" y="512" text-anchor="middle" font-size="9" fill="#d4a853">🤖 PM Agent：提取4条规则</text>
+
+      <rect x="1010" y="496" width="200" height="24" rx="6" fill="#0a0a0f" stroke="#a78bfa" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="1110" y="512" text-anchor="middle" font-size="9" fill="#a78bfa">🤖 运营Agent：记录归档</text>
+
+      <!-- 规则文档卡片 -->
+      <rect x="800" y="528" width="380" height="36" rx="8" fill="#131620" stroke="#27272a" stroke-width="1"/>
+      <text x="990" y="546" text-anchor="middle" font-size="9" fill="#e4e4e7">📄 标注规则文档 v1.0（PM Agent生成）</text>
+      <text x="990" y="558" text-anchor="middle" font-size="8" fill="#71717a">1.遮挡truncated · 2.夜间规则 · 3.框容差 · 4.重叠校验</text>
+
+      <!-- 决策节点 -->
+      <rect x="790" y="572" width="78" height="28" rx="14" fill="none" stroke="#f87171" stroke-width="1.5"/>
+      <text x="829" y="590" text-anchor="middle" font-size="9" fill="#f87171">驳回修改</text>
+      <rect x="880" y="572" width="90" height="28" rx="14" fill="#18c57a"/>
+      <text x="925" y="590" text-anchor="middle" font-size="9" fill="#0a0a0a">确认并转交</text>
+
+      <!-- 决策连线 -->
+      <path d="M990 530 L990 569" fill="none" stroke="#18c57a" stroke-width="1.5" marker-end="url(#a-ag)"/>
+
+      <!-- 标采执行 -->
+      <rect x="790" y="610" width="160" height="44" rx="8" fill="#18181b" stroke="#f97316" stroke-width="1.5"/>
+      <text x="870" y="627" text-anchor="middle" font-size="10" font-weight="600" fill="#f97316">✏️ 接收规则 · 批量标注</text>
+      <text x="870" y="643" text-anchor="middle" font-size="8" fill="#71717a">标注员 + Agent辅助</text>
+
+      <!-- 质检 -->
+      <rect x="960" y="610" width="120" height="44" rx="8" fill="#18181b" stroke="#d4a853" stroke-width="1.5"/>
+      <text x="1020" y="627" text-anchor="middle" font-size="10" font-weight="600" fill="#d4a853">🔍 PM质检</text>
+      <text x="1020" y="643" text-anchor="middle" font-size="8" fill="#71717a">抽检/全检</text>
+
+      <!-- 返工箭头 -->
+      <path d="M960 632 L955 632" fill="none" stroke="#f87171" stroke-width="1.5" marker-end="url(#a-red)"/>
+
+      <!-- 交付 -->
+      <rect x="1090" y="610" width="120" height="44" rx="8" fill="#18181b" stroke="#f97316" stroke-width="1.5"/>
+      <text x="1150" y="627" text-anchor="middle" font-size="10" font-weight="600" fill="#f97316">📦 分批交付</text>
+      <text x="1150" y="643" text-anchor="middle" font-size="8" fill="#71717a">提交验收</text>
+
+      <!-- 标采内部连线 -->
+      <path d="M870 390 L870 437" fill="none" stroke="#d4a853" stroke-width="1.5" marker-end="url(#a-ap)"/>
+      <path d="M870 590 L870 607" fill="none" stroke="#d4a853" stroke-width="1.5" marker-end="url(#a-ap)"/>
+      <path d="M953 632 L957 632" fill="none" stroke="#d4a853" stroke-width="1.5" marker-end="url(#a-ap)"/>
+      <path d="M1083 632 L1087 632" fill="none" stroke="#f97316" stroke-width="1.5" marker-end="url(#a-ml)"/>
+
+      <!-- Agent: 规则辅助 -->
+      <rect x="1030" y="335" width="215" height="48" rx="8" fill="#0a0a0f" stroke="#18c57a" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="1137" y="355" text-anchor="middle" font-size="11" font-weight="600" fill="#18c57a">🤖 PM Agent：规则提取</text>
+      <text x="1137" y="371" text-anchor="middle" font-size="9" fill="#71717a">群聊 → 提取 → 文档 → 确认</text>
+
+      <!-- 向下箭头 -->
+      <path d="M137 386 L137 430" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#a-ds)"/>
+      <path d="M1150 657 L1150 690" fill="none" stroke="#f97316" stroke-width="2" marker-end="url(#a-ml)"/>
+
+      <!-- ================================================================ -->
+      <!-- PHASE 4: 验收交付 -->
+      <!-- ================================================================ -->
+      <rect x="0" y="770" width="1260" height="24" rx="4" fill="#18181b"/>
+      <text x="20" y="787" font-size="11" font-weight="600" fill="#71717a">④ 验收 & 交付</text>
+
+      <!-- 数据资产: 验收数据入库 -->
+      <rect x="30" y="805" width="215" height="48" rx="8" fill="#18181b" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="137" y="825" text-anchor="middle" font-size="11" font-weight="600" fill="#60a5fa">📊 验收数据入库</text>
+      <text x="137" y="841" text-anchor="middle" font-size="9" fill="#71717a">DatasetVersion · 增量版本</text>
+
+      <!-- 运营: 验收/结算 -->
+      <rect x="280" y="805" width="215" height="48" rx="8" fill="#18181b" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="387" y="825" text-anchor="middle" font-size="11" font-weight="600" fill="#a78bfa">💰 完整验收 & 结算</text>
+      <text x="387" y="841" text-anchor="middle" font-size="9" fill="#71717a">/operator/finance · 开票/回款</text>
+
+      <!-- 用户验收 -->
+      <rect x="530" y="805" width="215" height="48" rx="8" fill="#18181b" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="637" y="825" text-anchor="middle" font-size="11" font-weight="600" fill="#60a5fa">📦 用户验收确认</text>
+      <text x="637" y="841" text-anchor="middle" font-size="9" fill="#71717a">阶段验收 / 完整验收</text>
+
+      <!-- 供应商交付 -->
+      <rect x="780" y="805" width="215" height="48" rx="8" fill="#18181b" stroke="#f97316" stroke-width="1.5"/>
+      <text x="887" y="825" text-anchor="middle" font-size="11" font-weight="600" fill="#f97316">📦 完整交付</text>
+      <text x="887" y="841" text-anchor="middle" font-size="9" fill="#71717a">全部批次 · 交付报告</text>
+
+      <!-- Agent: 验收辅助 -->
+      <rect x="1030" y="805" width="215" height="48" rx="8" fill="#0a0a0f" stroke="#18c57a" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="1137" y="825" text-anchor="middle" font-size="11" font-weight="600" fill="#18c57a">🤖 验收辅助 & 自动对账</text>
+      <text x="1137" y="841" text-anchor="middle" font-size="9" fill="#71717a">抽样对比 · 费用核算</text>
+
+      <!-- 连线 -->
+      <path d="M248 830 L275 830" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#a-ds)"/>
+      <path d="M498 830 L525 830" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="3,3"/>
+      <path d="M998 830 L1025 830" fill="none" stroke="#f97316" stroke-width="1" stroke-dasharray="2,2" marker-end="url(#a-ag)"/>
+
+      <!-- 交付箭头 -->
+      <path d="M887 805 L887 780 L637 780 L637 800" fill="none" stroke="#f87171" stroke-width="2" marker-end="url(#a-ds)"/>
+      <text x="760" y="775" text-anchor="middle" font-size="9" fill="#f87171">交付验收</text>
+
+      <!-- 验收通过箭头 -->
+      <path d="M637 830 L500 830" fill="none" stroke="#60a5fa" stroke-width="2" marker-end="url(#a-ds)"/>
+
+      <!-- 向下 -->
+      <path d="M137 856 L137 900" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#a-ds)"/>
+      <path d="M637 856 L637 900" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#a-ds)"/>
+      <path d="M1137 856 L1137 900" fill="none" stroke="#18c57a" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#a-ag)"/>
+
+      <!-- ================================================================ -->
+      <!-- PHASE 5: 数据回流 & 模型迭代 -->
+      <!-- ================================================================ -->
+      <rect x="0" y="870" width="1260" height="24" rx="4" fill="#1a1a2e"/>
+      <text x="20" y="887" font-size="11" font-weight="600" fill="#18c57a">⑤ 数据回流 · 模型迭代 · Agent 训练</text>
+
+      <!-- 标采数据回流 -->
+      <rect x="30" y="905" width="215" height="60" rx="8" fill="#18181b" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="137" y="925" text-anchor="middle" font-size="10" font-weight="600" fill="#60a5fa">📊 标注数据回流</text>
+      <text x="137" y="941" text-anchor="middle" font-size="8" fill="#71717a">DatasetVersion 增量合并</text>
+      <text x="137" y="954" text-anchor="middle" font-size="8" fill="#71717a">PublicAsset 发布</text>
+
+      <path d="M248 935 L275 935" fill="none" stroke="#60a5fa" stroke-width="2" marker-end="url(#a-ds)"/>
+
+      <!-- 模型训练迭代 -->
+      <rect x="280" y="905" width="460" height="60" rx="8" fill="#18181b" stroke="#e879f9" stroke-width="1.5"/>
+      <text x="510" y="925" text-anchor="middle" font-size="10" font-weight="600" fill="#e879f9">🧠 模型迭代：新数据 → 训练 → 评估 → 部署</text>
+      <text x="510" y="941" text-anchor="middle" font-size="8" fill="#71717a">TrainingRecommendation · ModelRun(新版本) · 精度提升</text>
+      <text x="510" y="954" text-anchor="middle" font-size="8" fill="#71717a">算力调度 → GPU集群训练 → 新权重发布 → 更新预标注模型</text>
+
+      <path d="M743 935 L775 935" fill="none" stroke="#e879f9" stroke-width="2" marker-end="url(#a-ml)"/>
+
+      <!-- Agent对话训练 -->
+      <rect x="790" y="905" width="215" height="60" rx="8" fill="#0a0a0f" stroke="#d4a853" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="897" y="925" text-anchor="middle" font-size="10" font-weight="600" fill="#d4a853">💬 对话数据标注</text>
+      <text x="897" y="941" text-anchor="middle" font-size="8" fill="#71717a">ChatAnnotation · 清洗/标注</text>
+      <text x="897" y="954" text-anchor="middle" font-size="8" fill="#71717a">/operator/chat/annotation</text>
+
+      <path d="M1008 935 L1025 935" fill="none" stroke="#d4a853" stroke-width="2" marker-end="url(#a-ag)"/>
+
+      <!-- Agent训练闭环 -->
+      <rect x="1030" y="905" width="215" height="60" rx="8" fill="#0a0a0f" stroke="#18c57a" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="1137" y="925" text-anchor="middle" font-size="10" font-weight="600" fill="#18c57a">🤖 Agent 训练闭环</text>
+      <text x="1137" y="941" text-anchor="middle" font-size="8" fill="#71717a">AgentTrainingExample</text>
+      <text x="1137" y="954" text-anchor="middle" font-size="8" fill="#71717a">Skill版本升级 · 能力提升</text>
+
+      <!-- 反馈闭环回 Phase 1 -->
+      <path d="M1137 975 L1137 149 L1090 149 L250 149" fill="none" stroke="#18c57a" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#a-ag)"/>
+      <text x="700" y="142" text-anchor="middle" font-size="9" fill="#18c57a">模型升级 → 优化预标注 → 反哺标采质量（正反馈闭环）</text>
+
+      <path d="M897 975 L897 149 L770 149" fill="none" stroke="#d4a853" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a-ap)"/>
+      <text x="830" y="142" text-anchor="middle" font-size="8" fill="#d4a853">Agent能力提升</text>
+
+      <!-- ================================================================ -->
+      <!-- 数据资产垂直流程补充 -->
+      <!-- ================================================================ -->
+      <rect x="0" y="990" width="1260" height="24" rx="4" fill="#18181b"/>
+      <text x="20" y="1007" font-size="11" font-weight="600" fill="#71717a">⑥ 平台运营管理（贯穿）</text>
+
+      <rect x="30" y="1025" width="215" height="48" rx="8" fill="#18181b" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="137" y="1045" text-anchor="middle" font-size="10" font-weight="600" fill="#60a5fa">📊 数据资产运营</text>
+      <text x="137" y="1061" text-anchor="middle" font-size="9" fill="#71717a">公共资产 · 格式模板 · 检索</text>
+
+      <rect x="280" y="1025" width="215" height="48" rx="8" fill="#18181b" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="387" y="1045" text-anchor="middle" font-size="10" font-weight="600" fill="#a78bfa">👥 供应商管理</text>
+      <text x="387" y="1061" text-anchor="middle" font-size="9" fill="#71717a">/operator/suppliers · 评分</text>
+
+      <rect x="530" y="1025" width="215" height="48" rx="8" fill="#18181b" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="637" y="1045" text-anchor="middle" font-size="10" font-weight="600" fill="#a78bfa">🔍 质量监控 & 缺陷分析</text>
+      <text x="637" y="1061" text-anchor="middle" font-size="9" fill="#71717a">/operator/quality · QualityEvent</text>
+
+      <rect x="780" y="1025" width="215" height="48" rx="8" fill="#18181b" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="887" y="1045" text-anchor="middle" font-size="10" font-weight="600" fill="#a78bfa">📋 审核中心</text>
+      <text x="887" y="1061" text-anchor="middle" font-size="9" fill="#71717a">/operator/review · 工具/需求/验收</text>
+
+      <rect x="1030" y="1025" width="215" height="48" rx="8" fill="#18181b" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="1137" y="1045" text-anchor="middle" font-size="10" font-weight="600" fill="#a78bfa">📝 操作日志 & 复盘</text>
+      <text x="1137" y="1061" text-anchor="middle" font-size="9" fill="#71717a">OperationLog · Retrospective</text>
+
+      <!-- ================================================================ -->
+      <!-- 模块间交叉连线总结 -->
+      <!-- ================================================================ -->
+      <rect x="30" y="1095" width="1200" height="95" rx="10" fill="#0f1117" stroke="#27272a" stroke-width="1"/>
+
+      <text x="50" y="1120" font-size="12" font-weight="700" fill="#e4e4e7">🔄 模块间协作关系总结</text>
+
+      <!-- Row 1 -->
+      <rect x="50" y="1135" width="180" height="22" rx="5" fill="#18181b" stroke="#60a5fa" stroke-width="1"/>
+      <text x="140" y="1150" text-anchor="middle" font-size="9" fill="#60a5fa">数据资产 → 标采项目</text>
+      <text x="240" y="1150" font-size="9" fill="#71717a">数据集版本锁定，分发给标采执行，验收后增量回流</text>
+
+      <rect x="550" y="1135" width="180" height="22" rx="5" fill="#18181b" stroke="#8b5cf6" stroke-width="1"/>
+      <text x="640" y="1150" text-anchor="middle" font-size="9" fill="#8b5cf6">算力资源 → 模型中心</text>
+      <text x="740" y="1150" font-size="9" fill="#71717a">GPU调度提供训练/推理算力</text>
+
+      <!-- Row 2 -->
+      <rect x="50" y="1161" width="180" height="22" rx="5" fill="#18181b" stroke="#e879f9" stroke-width="1"/>
+      <text x="140" y="1176" text-anchor="middle" font-size="9" fill="#e879f9">模型中心 → 标采项目</text>
+      <text x="240" y="1176" font-size="9" fill="#71717a">预标注结果作为人工标注参考基线，标采数据回流训练</text>
+
+      <rect x="550" y="1161" width="180" height="22" rx="5" fill="#18181b" stroke="#18c57a" stroke-width="1"/>
+      <text x="640" y="1176" text-anchor="middle" font-size="9" fill="#18c57a">Agent系统 → 全部模块</text>
+      <text x="740" y="1176" font-size="9" fill="#71717a">需求拆解/规则提取/训练建议/验收辅助/自动对账/能力闭环</text>
+
+      <!-- ================================================================ -->
+      <!-- 角色矩阵 -->
+      <!-- ================================================================ -->
+      <rect x="30" y="1215" width="1200" height="55" rx="10" fill="#0f1117" stroke="#27272a" stroke-width="1"/>
+      <text x="50" y="1238" font-size="11" font-weight="700" fill="#a1a1aa">👥 角色矩阵：</text>
+      <rect x="130" y="1225" width="130" height="28" rx="6" fill="#18181b" stroke="#60a5fa" stroke-width="1"/>
+      <text x="195" y="1243" text-anchor="middle" font-size="9" fill="#60a5fa">需求方 (user端)</text>
+      <rect x="280" y="1225" width="130" height="28" rx="6" fill="#18181b" stroke="#a78bfa" stroke-width="1"/>
+      <text x="345" y="1243" text-anchor="middle" font-size="9" fill="#a78bfa">运营 (operator端)</text>
+      <rect x="430" y="1225" width="130" height="28" rx="6" fill="#18181b" stroke="#d4a853" stroke-width="1"/>
+      <text x="495" y="1243" text-anchor="middle" font-size="9" fill="#d4a853">供应商负责人/PM</text>
+      <rect x="580" y="1225" width="130" height="28" rx="6" fill="#18181b" stroke="#f97316" stroke-width="1"/>
+      <text x="645" y="1243" text-anchor="middle" font-size="9" fill="#f97316">供应商标注员</text>
+      <rect x="730" y="1225" width="130" height="28" rx="6" fill="#0a0a0f" stroke="#18c57a" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="795" y="1243" text-anchor="middle" font-size="9" fill="#18c57a">🤖 Agent(每角色)</text>
+
+      <!-- ================================================================ -->
+      <!-- 图例 -->
+      <!-- ================================================================ -->
+      <rect x="30" y="1285" width="1200" height="32" rx="8" fill="#18181b" stroke="#27272a" stroke-width="1"/>
+      <circle cx="60" cy="1301" r="5" fill="#60a5fa"/>
+      <text x="72" y="1305" font-size="9" fill="#a1a1aa">数据资产</text>
+      <circle cx="150" cy="1301" r="5" fill="#8b5cf6"/>
+      <text x="162" y="1305" font-size="9" fill="#a1a1aa">算力资源</text>
+      <circle cx="232" cy="1301" r="5" fill="#e879f9"/>
+      <text x="244" y="1305" font-size="9" fill="#a1a1aa">模型中心</text>
+      <circle cx="314" cy="1301" r="5" fill="#d4a853"/>
+      <text x="326" y="1305" font-size="9" fill="#a1a1aa">标采项目</text>
+      <circle cx="396" cy="1301" r="5" fill="#a78bfa"/>
+      <text x="408" y="1305" font-size="9" fill="#a1a1aa">运营</text>
+      <circle cx="468" cy="1301" r="5" fill="#18c57a"/>
+      <text x="480" y="1305" font-size="9" fill="#a1a1aa">Agent系统</text>
+      <line x1="560" y1="1301" x2="600" y2="1301" stroke="#71717a" stroke-width="1.5"/>
+      <text x="608" y="1305" font-size="9" fill="#a1a1aa">实线 = 主流程</text>
+      <line x1="690" y1="1301" x2="730" y2="1301" stroke="#18c57a" stroke-width="1.5" stroke-dasharray="3,3"/>
+      <text x="738" y="1305" font-size="9" fill="#a1a1aa">虚线 = 数据回流/Agent辅助</text>
+
+    </svg>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div><span>数据资产</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div><span>算力资源</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e879f9"></div><span>模型中心</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d4a853"></div><span>标采项目</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div><span>运营管理</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#18c57a"></div><span>Agent系统</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

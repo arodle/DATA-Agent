@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import CloudStorageClient from "./CloudStorageClient";
 
-type SettingTab = "profile" | "notification" | "agent" | "integrations" | "security";
+type SettingTab = "profile" | "notification" | "agent" | "integrations" | "security" | "cloud";
 
 export default function UserSettings() {
   const [activeTab, setActiveTab] = useState<SettingTab>("profile");
@@ -11,6 +12,7 @@ export default function UserSettings() {
     { key: "profile", label: "个人信息", icon: "👤" },
     { key: "notification", label: "通知设置", icon: "🔔" },
     { key: "agent", label: "Agent 设置", icon: "🤖" },
+    { key: "cloud", label: "云存储接入", icon: "☁️" },
     { key: "integrations", label: "集成配置", icon: "🔗" },
     { key: "security", label: "安全设置", icon: "🔒" },
   ];
@@ -400,30 +402,14 @@ export default function UserSettings() {
           </div>
         )}
 
+        {activeTab === "cloud" && (
+          <div className="settingsPanel">
+            <CloudStorageClient />
+          </div>
+        )}
+
         {activeTab === "integrations" && (
           <div className="settingsPanel">
-            <div className="settingsSection">
-              <h3 className="sectionTitle">云存储集成</h3>
-              <div className="integrationList">
-                <div className="integrationItem">
-                  <div className="integrationIcon">☁️</div>
-                  <div>
-                    <strong>阿里云 OSS</strong>
-                    <p>已连接 · bucket: data-agent-prod</p>
-                  </div>
-                  <button className="ghostBtn">配置</button>
-                </div>
-                <div className="integrationItem">
-                  <div className="integrationIcon">☁️</div>
-                  <div>
-                    <strong>腾讯云 COS</strong>
-                    <p>未连接</p>
-                  </div>
-                  <button className="primaryBtn">连接</button>
-                </div>
-              </div>
-            </div>
-
             <div className="settingsSection">
               <h3 className="sectionTitle">模型服务集成</h3>
               <div className="integrationList">

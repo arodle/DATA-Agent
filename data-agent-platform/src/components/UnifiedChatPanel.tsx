@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import UnifiedInputBar from "./UnifiedInputBar";
 
 interface ChatMessage {
   id: string;
@@ -146,10 +147,13 @@ export default function UnifiedChatPanel({
               )}
               <div ref={bottomRef} />
             </div>
-            <div className="commandLine">
-              <input placeholder="告诉 Agent 你的目标，例如：帮我生成一版需求文档..." />
-              <button>预览</button>
-            </div>
+            <UnifiedInputBar
+                value={input}
+                onChange={setInput}
+                onSend={sendMessage}
+                placeholder="告诉 Agent 你的目标，例如：帮我生成一版需求文档..."
+                sending={sending}
+              />
           </>
         ) : (
           <div className="unifiedSupplierChat">
@@ -192,24 +196,13 @@ export default function UnifiedChatPanel({
               ))}
               <div ref={bottomRef} />
             </div>
-            <div className="chatInputBar">
-              <textarea
-                className="chatInput"
+            <UnifiedInputBar
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
+                onChange={setInput}
+                onSend={sendMessage}
                 placeholder="输入消息，与供应商沟通..."
-                rows={2}
-                disabled={sending}
+                sending={sending}
               />
-              <button
-                className="chatSendBtn"
-                onClick={sendMessage}
-                disabled={sending || !input.trim()}
-              >
-                {sending ? "..." : "发送"}
-              </button>
-            </div>
           </div>
         )}
       </div>
