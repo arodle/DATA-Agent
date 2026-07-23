@@ -1,0 +1,642 @@
+【一、前端页面数据库打通情况】
+页面路径,页面名称,所属模块,打通状态,数据来源说明
+/auth/signin,登录页,Auth,N/A,"登录页，不涉及数据库查询"
+/(root),首页,Other,N/A,"重定向到登录或工作台"
+/operator/agent-console,Dashboard,AI Agent Console,已打通,"prisma直接查询"
+/operator/agent-console/studio,Agent Studio,AI Agent Console,已打通,"prisma查询workflow+nodes+edges+skills+tools+models+knowledge；save/publish API已对接"
+/operator/agent-console/test,测试与发布,AI Agent Console,已打通,"prisma直接查询"
+/operator/agent-console/monitor,运行监控,AI Agent Console,已打通,"prisma直接查询"
+/operator/agent-console/knowledge/operation,知识运营中心,AI Agent Console,已打通,"prisma直接查询"
+/operator/agent-console/knowledge/assets,知识资产中心,AI Agent Console,已打通,"prisma直接查询"
+/operator/agent-console/knowledge/graph,知识关系图谱,AI Agent Console,已打通,"prisma直接查询"
+/operator/agent-console/rag,RAG检索中心,AI Agent Console,已打通,"prisma直接查询；向量搜索API已实现"
+/operator/agent-console/models,模型服务,AI Agent Console,已打通,"prisma直接查询"
+/operator/agent-console/settings,权限与审计,AI Agent Console,已打通,"prisma直接查询"
+/operator,运营工作台,Operator,已打通,"prisma直接查询"
+/operator/projects,项目管理,Operator,已打通,"prisma直接查询"
+/operator/projects/[code],项目详情,Operator,已打通,"prisma直接查询"
+/operator/collection,数据采集,Operator,已打通,"prisma直接查询"
+/operator/annotation,数据标注,Operator,已打通,"prisma直接查询"
+/operator/quality,质量监控,Operator,已打通,"prisma直接查询"
+/operator/quality/defects,缺陷库,Operator,未打通,"静态页面，无数据库查询"
+/operator/review,项目审核,Operator,已打通,"prisma直接查询"
+/operator/finance,财务结算,Operator,已打通,"prisma直接查询"
+/operator/suppliers,供应商管理,Operator,未打通,"纯静态模拟数据"
+/operator/agent,Agent助手,Operator,已打通,"调用API + prisma"
+/operator/logs,操作日志,Operator,已打通,"prisma直接查询"
+/operator/assets,数据资产中心,Operator,已打通,"prisma直接查询"
+/operator/settings,系统设置,Operator,未打通,"纯静态页面"
+/operator/permissions,权限管理,Operator,未打通,"纯静态模拟数据"
+/user,用户首页,User,N/A,"重定向到/user/workspace"
+/user/workspace,用户工作台,User,已打通,"prisma直接查询"
+/user/projects/[code],项目详情,User,已打通,"prisma直接查询"
+/user/projects/[code]/chat,项目对话,User,已打通,"prisma直接查询"
+/user/agent,Agent助手,User,已打通,"prisma直接查询"
+/user/models,模型中心,User,已打通,"prisma直接查询"
+/user/data,数据管理,User,已打通,"prisma直接查询"
+/user/annotation,数据标注,User,已打通,"prisma直接查询"
+/user/collection,数据采集,User,已打通,"prisma直接查询"
+/user/compute,计算资源,User,未打通,"纯静态模拟数据"
+/user/settings,设置中心,User,未打通,"纯静态页面"
+/user/workflow-demo,工作流演示,User,未打通,"演示页，模拟数据"
+/supplier,供应商工作台,Supplier,未打通,"纯静态模拟数据"
+/supplier/annotation,标注工作台,Supplier,未打通,"纯静态模拟数据"
+/supplier/annotation/[batchId],标注详情,Supplier,未打通,"纯静态模拟数据"
+/supplier/chat/[projectId],供应商沟通,Supplier,未打通,"纯静态模拟数据"
+/supplier/delivery,交付管理,Supplier,未打通,"纯静态模拟数据"
+/supplier/team,团队管理,Supplier,未打通,"纯静态模拟数据"
+/supplier/quality,质量管理,Supplier,未打通,"纯静态模拟数据"
+/supplier/split,数据拆分,Supplier,未打通,"纯静态模拟数据"
+/supplier/rules,规则中心,Supplier,未打通,"纯静态模拟数据"
+/supplier/settlement,结算中心,Supplier,未打通,"纯静态模拟数据"
+/projects/new,新建项目,Other,部分打通,"前端表单已有，提交后走API创建项目但部分字段未映射"
+
+统计,已打通:29页,未打通:18页,N/A:3页,总页面数:50页,打通率:62%
+
+【二、API路由打通情况】
+API路径,功能,状态,说明
+/api/agent-console/workflow/create,创建Workflow,已打通,"Prisma创建AgentWorkflow记录"
+/api/agent-console/workflow/save,保存Workflow草稿,已打通,"Prisma upsert nodes+edges，支持configJson/runtimeConfig"
+/api/agent-console/workflow/publish,发布Workflow版本,已打通,"Prisma创建版本快照，自动递增版本号"
+/api/agent-console/workflow/run,运行Workflow,部分打通,"基础执行器已实现，但仅顺序执行节点，未实现条件分支/业务路由/知识检索"
+/api/agent-console/knowledge,知识管理CRUD,已打通,"Prisma增删改查Knowledge"
+/api/agent-console/rag/search,RAG向量检索,已打通,"查询KnowledgeEmbedding执行向量搜索"
+/api/agent/chat,Agent聊天,已打通,"DeepSeek API调用+AgentSession/Message持久化"
+/api/auth/register,用户注册,已打通,"Prisma创建User+OrganizationMember"
+
+【三、Workflow系统数据打通情况】
+模块,状态,说明
+AgentWorkflow表,已打通,"创建/查询/更新完整"
+AgentWorkflowNode表,已打通,"保存含configJson/runtimeConfig/description/inputSchema/outputSchema"
+AgentWorkflowEdge表,已打通,"sourceNodeId/targetNodeId/sourcePort/targetPort/condition"
+WorkflowVariable表,已打通,"Schema已定义，前端Input Node支持userInputs/runtimeContext配置"
+AgentSessionTrace表,Schema已定义,"Prisma模型已建，但无API写入执行记录"
+AgentNodeExecution表,Schema已定义,"Prisma模型已建，但无API写入节点执行详情"
+React Flow画布,已打通,"节点拖拽/连线/右键菜单/缩放/平移全部工作"
+节点配置面板,已打通,"动态渲染11种节点类型配置字段，含分组/变量端口/Runtime Context"
+Input Node升级,已打通,"企业级入口节点：用户输入字段编辑+Runtime Context展示+变量系统"
+连线风格,已打通,"Dify风格bezier浅灰连线，无箭头"
+版本发布,已打通,"版本号自动递增+旧版本快照保留"
+
+【四、未打通模块详情】
+模块,涉及页面,缺失内容,优先级
+供应商全模块,/supplier/* 8个页面,"所有供应商页面使用静态模拟数据，未连接Supplier/ProjectTask/SupplierChat表",高
+缺陷库,/operator/quality/defects,"使用静态数据，未连接QualityEvent表查询",中
+供应商管理(运营侧),/operator/suppliers,"使用静态模拟数据，未连接Supplier表",高
+系统设置,/operator/settings,"纯静态页面，无数据库操作",低
+权限管理,/operator/permissions,"纯静态模拟数据，未连接OrganizationMember表",中
+计算资源,/user/compute,"纯静态模拟数据，平台不提供GPU仅做推荐",低
+设置中心,/user/settings,"纯静态页面",低
+工作流演示,/user/workflow-demo,"演示页，模拟数据",低
+Runtime执行引擎,/api/agent-console/workflow/run,"仅顺序执行，未实现条件分支/业务路由/知识检索/Agent Skill绑定",高
+执行记录,AgentSessionTrace+AgentNodeExecution,"Schema已建但无API写入，测试/监控页面无法展示真实Trace",高
+
+【五、数据库表结构（Prisma Schema）】
+模型名（表名）,字段名,数据类型,是否必填,默认值,关系/备注
+Organization,id,String,是,"cuid()",主键
+Organization,name,String,是,,
+Organization,type,String,是,,
+Organization,description,String?,否,,
+Organization,createdAt,DateTime,是,"now()",
+Organization,updatedAt,DateTime,是,,自动更新
+Organization,members,OrganizationMember[],否,,数组
+Organization,projects,Project[],否,,"数组, @relation(""ProjectOwnerOrg"")"
+Organization,supplier,Supplier?,否,,
+Organization,cloudConnections,CloudConnection[],否,,数组
+User,id,String,是,"cuid()",主键
+User,name,String,是,,
+User,email,String,是,,唯一
+User,emailVerified,DateTime?,否,,
+User,phone,String?,否,,
+User,avatarUrl,String?,否,,
+User,password,String?,否,,
+User,createdAt,DateTime,是,"now()",
+User,updatedAt,DateTime,是,,自动更新
+User,orgMembers,OrganizationMember[],否,,数组
+User,createdProjects,Project[],否,,"数组, @relation(""ProjectCreator"")"
+User,operatedProjects,Project[],否,,"数组, @relation(""ProjectOperator"")"
+User,projectMembers,ProjectMember[],否,,数组
+User,agentSessions,AgentSession[],否,,数组
+User,operationLogs,OperationLog[],否,,数组
+User,skills,Skill[],否,,"数组, @relation(""SkillAuthor"")"
+User,cloudConnections,CloudConnection[],否,,数组
+OrganizationMember,id,String,是,"cuid()",主键
+OrganizationMember,organizationId,String,是,,
+OrganizationMember,userId,String,是,,
+OrganizationMember,role,String,是,,
+OrganizationMember,createdAt,DateTime,是,"now()",
+OrganizationMember,organization,Organization,是,,"@relation(fields: [organizationId], references: [id])"
+OrganizationMember,user,User,是,,"@relation(fields: [userId], references: [id])"
+Supplier,id,String,是,"cuid()",主键
+Supplier,organizationId,String,是,,唯一
+Supplier,capabilityTags,Json?,否,,
+Supplier,supportedModes,Json?,否,,
+Supplier,qualityLevel,String?,否,,
+Supplier,efficiencyRange,String?,否,,
+Supplier,riskNote,String?,否,,
+Supplier,status,String,是,"ACTIVE",
+Supplier,organization,Organization,是,,"@relation(fields: [organizationId], references: [id])"
+Supplier,tasks,ProjectTask[],否,,数组
+Project,id,String,是,"cuid()",主键
+Project,code,String,是,,唯一
+Project,name,String,是,,
+Project,mode,String,是,,
+Project,ownerOrgId,String,是,,
+Project,creatorId,String,是,,
+Project,operatorId,String?,否,,
+Project,executionStatus,String,是,"DRAFT",
+Project,operationStatus,String,是,"NO_NEED",
+Project,currentStage,String,是,"CREATE",
+Project,priority,String?,否,,
+Project,startDate,DateTime?,否,,
+Project,expectedEndDate,DateTime?,否,,
+Project,completedAt,DateTime?,否,,
+Project,budgetName,String?,否,,
+Project,budgetAmount,Float?,否,,
+Project,companyName,String?,否,,
+Project,departmentName,String?,否,,
+Project,contactName,String?,否,,
+Project,contactInfo,String?,否,,
+Project,currentRisk,String?,否,,
+Project,nextAction,String?,否,,
+Project,createdAt,DateTime,是,"now()",
+Project,updatedAt,DateTime,是,,自动更新
+Project,ownerOrg,Organization,是,,"@relation(""ProjectOwnerOrg"", fields: [ownerOrgId], references: [id])"
+Project,creator,User,是,,"@relation(""ProjectCreator"", fields: [creatorId], references: [id])"
+Project,operator,User?,否,,"@relation(""ProjectOperator"", fields: [operatorId], references: [id])"
+Project,members,ProjectMember[],否,,数组
+Project,requirement,ProjectRequirement?,否,,
+Project,stages,ProjectStage[],否,,数组
+Project,tasks,ProjectTask[],否,,数组
+Project,datasets,Dataset[],否,,数组
+Project,toolConfigs,ProjectToolConfig[],否,,数组
+Project,prelabelRuns,PrelabelRun[],否,,数组
+Project,qualityEvents,QualityEvent[],否,,数组
+Project,modelBindings,ProjectModelBinding[],否,,数组
+Project,trainingRuns,ModelRun[],否,,数组
+Project,agentSessions,AgentSession[],否,,数组
+Project,operationLogs,OperationLog[],否,,数组
+Project,retrospectives,ProjectRetrospective[],否,,数组
+Project,supplierChats,SupplierChat[],否,,数组
+ProjectMember,id,String,是,"cuid()",主键
+ProjectMember,projectId,String,是,,
+ProjectMember,userId,String,是,,
+ProjectMember,role,String,是,,
+ProjectMember,canEdit,Boolean,是,"false",
+ProjectMember,canAudit,Boolean,是,"false",
+ProjectMember,createdAt,DateTime,是,"now()",
+ProjectMember,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+ProjectMember,user,User,是,,"@relation(fields: [userId], references: [id])"
+ProjectRequirement,id,String,是,"cuid()",主键
+ProjectRequirement,projectId,String,是,,唯一
+ProjectRequirement,title,String,是,,
+ProjectRequirement,demandType,String,是,,
+ProjectRequirement,dataModality,String,是,,
+ProjectRequirement,scenario,String?,否,,
+ProjectRequirement,estimatedVolume,Int?,否,,
+ProjectRequirement,acceptanceCriteria,String?,否,,
+ProjectRequirement,safetyRequirement,String?,否,,
+ProjectRequirement,sampleStatus,String?,否,,
+ProjectRequirement,rawDocumentUrl,String?,否,,
+ProjectRequirement,agentStructuredJson,Json?,否,,
+ProjectRequirement,createdAt,DateTime,是,"now()",
+ProjectRequirement,updatedAt,DateTime,是,,自动更新
+ProjectRequirement,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+ProjectStage,id,String,是,"cuid()",主键
+ProjectStage,projectId,String,是,,
+ProjectStage,type,String,是,,
+ProjectStage,status,String,是,"PENDING",
+ProjectStage,summary,String?,否,,
+ProjectStage,startedAt,DateTime?,否,,
+ProjectStage,completedAt,DateTime?,否,,
+ProjectStage,sortOrder,Int,是,,
+ProjectStage,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+ProjectTask,id,String,是,"cuid()",主键
+ProjectTask,projectId,String,是,,
+ProjectTask,name,String,是,,
+ProjectTask,executorType,String,是,,
+ProjectTask,supplierId,String?,否,,
+ProjectTask,stage,String,是,,
+ProjectTask,status,String,是,"DRAFT",
+ProjectTask,dataVolume,Int?,否,,
+ProjectTask,estimatedEffort,Float?,否,,
+ProjectTask,actualEffort,Float?,否,,
+ProjectTask,plannedStart,DateTime?,否,,
+ProjectTask,plannedEnd,DateTime?,否,,
+ProjectTask,actualEnd,DateTime?,否,,
+ProjectTask,risk,String?,否,,
+ProjectTask,resultSummary,String?,否,,
+ProjectTask,createdAt,DateTime,是,"now()",
+ProjectTask,updatedAt,DateTime,是,,自动更新
+ProjectTask,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+ProjectTask,supplier,Supplier?,否,,"@relation(fields: [supplierId], references: [id])"
+ProjectTask,datasets,Dataset[],否,,数组
+ProjectTask,qualityEvents,QualityEvent[],否,,数组
+ProjectTask,chats,SupplierChat[],否,,数组
+Dataset,id,String,是,"cuid()",主键
+Dataset,projectId,String,是,,
+Dataset,taskId,String?,否,,
+Dataset,name,String,是,,
+Dataset,type,String,是,,
+Dataset,modality,String?,否,,
+Dataset,itemCount,Int?,否,,
+Dataset,format,String?,否,,
+Dataset,storagePath,String?,否,,
+Dataset,version,String,是,"v1",
+Dataset,source,String?,否,,
+Dataset,createdAt,DateTime,是,"now()",
+Dataset,updatedAt,DateTime,是,,自动更新
+Dataset,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+Dataset,task,ProjectTask?,否,,"@relation(fields: [taskId], references: [id])"
+Dataset,files,FileObject[],否,,数组
+Dataset,versions,DatasetVersion[],否,,数组
+Dataset,modelRuns,ModelRun[],否,,数组
+DatasetVersion,id,String,是,"cuid()",主键
+DatasetVersion,datasetId,String,是,,
+DatasetVersion,version,String,是,,
+DatasetVersion,changeNote,String?,否,,
+DatasetVersion,itemCount,Int?,否,,
+DatasetVersion,storagePath,String?,否,,
+DatasetVersion,createdById,String?,否,,
+DatasetVersion,createdAt,DateTime,是,"now()",
+DatasetVersion,dataset,Dataset,是,,"@relation(fields: [datasetId], references: [id])"
+FileObject,id,String,是,"cuid()",主键
+FileObject,datasetId,String?,否,,
+FileObject,filename,String,是,,
+FileObject,mimeType,String?,否,,
+FileObject,sizeBytes,BigInt?,否,,
+FileObject,storagePath,String,是,,
+FileObject,checksum,String?,否,,
+FileObject,assetType,String?,否,,
+FileObject,createdAt,DateTime,是,"now()",
+FileObject,dataset,Dataset?,否,,"@relation(fields: [datasetId], references: [id])"
+PublicAsset,id,String,是,"cuid()",主键
+PublicAsset,type,String,是,,
+PublicAsset,name,String,是,,
+PublicAsset,source,String?,否,,
+PublicAsset,license,String?,否,,
+PublicAsset,modality,String?,否,,
+PublicAsset,taskType,String?,否,,
+PublicAsset,format,String?,否,,
+PublicAsset,description,String?,否,,
+PublicAsset,tags,Json?,否,,
+PublicAsset,url,String?,否,,
+PublicAsset,metadata,Json?,否,,
+PublicAsset,isOfficial,Boolean,是,"false",
+PublicAsset,createdAt,DateTime,是,"now()",
+PublicAsset,updatedAt,DateTime,是,,自动更新
+CloudConnection,id,String,是,"cuid()",主键
+CloudConnection,name,String,是,,
+CloudConnection,type,String,是,,
+CloudConnection,provider,String,是,,
+CloudConnection,ownerOrgId,String?,否,,
+CloudConnection,creatorId,String,是,,
+CloudConnection,config,Json,是,,
+CloudConnection,status,String,是,"ACTIVE",
+CloudConnection,lastTestedAt,DateTime?,否,,
+CloudConnection,createdAt,DateTime,是,"now()",
+CloudConnection,updatedAt,DateTime,是,,自动更新
+CloudConnection,organization,Organization?,否,,"@relation(fields: [ownerOrgId], references: [id])"
+CloudConnection,creator,User,是,,"@relation(fields: [creatorId], references: [id])"
+ToolTemplate,id,String,是,"cuid()",主键
+ToolTemplate,name,String,是,,
+ToolTemplate,toolType,String,是,,
+ToolTemplate,modality,String?,否,,
+ToolTemplate,taskType,String?,否,,
+ToolTemplate,configSchema,Json?,否,,
+ToolTemplate,previewMode,String?,否,,
+ToolTemplate,description,String?,否,,
+ToolTemplate,isPublic,Boolean,是,"false",
+ToolTemplate,createdAt,DateTime,是,"now()",
+ToolTemplate,configs,ProjectToolConfig[],否,,数组
+ProjectToolConfig,id,String,是,"cuid()",主键
+ProjectToolConfig,projectId,String,是,,
+ProjectToolConfig,templateId,String?,否,,
+ProjectToolConfig,name,String,是,,
+ProjectToolConfig,configJson,Json,是,,
+ProjectToolConfig,previewJson,Json?,否,,
+ProjectToolConfig,status,String,是,"DRAFT",
+ProjectToolConfig,createdAt,DateTime,是,"now()",
+ProjectToolConfig,updatedAt,DateTime,是,,自动更新
+ProjectToolConfig,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+ProjectToolConfig,template,ToolTemplate?,否,,"@relation(fields: [templateId], references: [id])"
+PrelabelRun,id,String,是,"cuid()",主键
+PrelabelRun,projectId,String,是,,
+PrelabelRun,modelName,String,是,,
+PrelabelRun,imageName,String?,否,,
+PrelabelRun,inputPath,String?,否,,
+PrelabelRun,boxCount,Int,是,"0",
+PrelabelRun,status,String,是,"PREVIEW",
+PrelabelRun,resultJson,Json?,否,,
+PrelabelRun,confirmedAt,DateTime?,否,,
+PrelabelRun,createdAt,DateTime,是,"now()",
+PrelabelRun,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+QualityEvent,id,String,是,"cuid()",主键
+QualityEvent,projectId,String,是,,
+QualityEvent,taskId,String?,否,,
+QualityEvent,ruleId,String?,否,,
+QualityEvent,type,String,是,,
+QualityEvent,severity,String,是,,
+QualityEvent,sampleScope,String?,否,,
+QualityEvent,location,String?,否,,
+QualityEvent,impact,String?,否,,
+QualityEvent,status,String,是,"OPEN",
+QualityEvent,action,String?,否,,
+QualityEvent,rootCause,String?,否,,
+QualityEvent,needRework,Boolean,是,"false",
+QualityEvent,createdAt,DateTime,是,"now()",
+QualityEvent,closedAt,DateTime?,否,,
+QualityEvent,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+QualityEvent,task,ProjectTask?,否,,"@relation(fields: [taskId], references: [id])"
+QualityScript,id,String,是,"cuid()",主键
+QualityScript,name,String,是,,
+QualityScript,targetError,String,是,,
+QualityScript,modality,String?,否,,
+QualityScript,scriptType,String,是,,
+QualityScript,prompt,String?,否,,
+QualityScript,code,String?,否,,
+QualityScript,configJson,Json?,否,,
+QualityScript,createdBy,String?,否,,
+QualityScript,visibility,String,是,"PRIVATE",
+QualityScript,createdAt,DateTime,是,"now()",
+ModelEntity,id,String,是,"cuid()",主键
+ModelEntity,name,String,是,,
+ModelEntity,taskType,String,是,,
+ModelEntity,ownerOrgId,String?,否,,
+ModelEntity,source,String?,否,,
+ModelEntity,description,String?,否,,
+ModelEntity,createdAt,DateTime,是,"now()",
+ModelEntity,bindings,ProjectModelBinding[],否,,数组
+ModelEntity,runs,ModelRun[],否,,数组
+ProjectModelBinding,id,String,是,"cuid()",主键
+ProjectModelBinding,projectId,String,是,,
+ProjectModelBinding,modelId,String,是,,
+ProjectModelBinding,purpose,String?,否,,
+ProjectModelBinding,status,String,是,"BOUND",
+ProjectModelBinding,createdAt,DateTime,是,"now()",
+ProjectModelBinding,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+ProjectModelBinding,model,ModelEntity,是,,"@relation(fields: [modelId], references: [id])"
+ModelRun,id,String,是,"cuid()",主键
+ModelRun,projectId,String?,否,,
+ModelRun,modelId,String,是,,
+ModelRun,datasetId,String?,否,,
+ModelRun,runName,String,是,,
+ModelRun,externalUrl,String?,否,,
+ModelRun,tool,String?,否,,
+ModelRun,status,String,是,"IMPORTED",
+ModelRun,metricsJson,Json?,否,,
+ModelRun,badcaseJson,Json?,否,,
+ModelRun,conclusion,String?,否,,
+ModelRun,createdAt,DateTime,是,"now()",
+ModelRun,project,Project?,否,,"@relation(fields: [projectId], references: [id])"
+ModelRun,model,ModelEntity,是,,"@relation(fields: [modelId], references: [id])"
+ModelRun,dataset,Dataset?,否,,"@relation(fields: [datasetId], references: [id])"
+ModelRun,recommendations,TrainingRecommendation[],否,,数组
+TrainingRecommendation,id,String,是,"cuid()",主键
+TrainingRecommendation,modelRunId,String,是,,
+TrainingRecommendation,title,String,是,,
+TrainingRecommendation,reason,String,是,,
+TrainingRecommendation,nextDataNeed,String?,否,,
+TrainingRecommendation,priority,String?,否,,
+TrainingRecommendation,generatedBy,String,是,"AGENT",
+TrainingRecommendation,accepted,Boolean,是,"false",
+TrainingRecommendation,createdAt,DateTime,是,"now()",
+TrainingRecommendation,modelRun,ModelRun,是,,"@relation(fields: [modelRunId], references: [id])"
+AgentSession,id,String,是,"cuid()",主键
+AgentSession,projectId,String?,否,,
+AgentSession,userId,String,是,,
+AgentSession,context,String,是,,
+AgentSession,title,String?,否,,
+AgentSession,createdAt,DateTime,是,"now()",
+AgentSession,updatedAt,DateTime,是,,自动更新
+AgentSession,project,Project?,否,,"@relation(fields: [projectId], references: [id])"
+AgentSession,user,User,是,,"@relation(fields: [userId], references: [id])"
+AgentSession,messages,AgentMessage[],否,,数组
+AgentSession,actions,AgentAction[],否,,数组
+AgentMessage,id,String,是,"cuid()",主键
+AgentMessage,sessionId,String,是,,
+AgentMessage,role,String,是,,
+AgentMessage,content,String,是,,
+AgentMessage,metadata,Json?,否,,
+AgentMessage,createdAt,DateTime,是,"now()",
+AgentMessage,session,AgentSession,是,,"@relation(fields: [sessionId], references: [id])"
+AgentAction,id,String,是,"cuid()",主键
+AgentAction,sessionId,String,是,,
+AgentAction,projectId,String?,否,,
+AgentAction,actionType,String,是,,
+AgentAction,targetEntity,String?,否,,
+AgentAction,targetId,String?,否,,
+AgentAction,status,String,是,"PREVIEW",
+AgentAction,previewJson,Json,是,,
+AgentAction,diffJson,Json?,否,,
+AgentAction,resultJson,Json?,否,,
+AgentAction,authorizedBy,String?,否,,
+AgentAction,authorizedAt,DateTime?,否,,
+AgentAction,executedAt,DateTime?,否,,
+AgentAction,createdAt,DateTime,是,"now()",
+AgentAction,session,AgentSession,是,,"@relation(fields: [sessionId], references: [id])"
+OperationLog,id,String,是,"cuid()",主键
+OperationLog,projectId,String?,否,,
+OperationLog,userId,String?,否,,
+OperationLog,actorRole,String,是,,
+OperationLog,action,String,是,,
+OperationLog,detail,String?,否,,
+OperationLog,entityType,String?,否,,
+OperationLog,entityId,String?,否,,
+OperationLog,metadata,Json?,否,,
+OperationLog,createdAt,DateTime,是,"now()",
+OperationLog,project,Project?,否,,"@relation(fields: [projectId], references: [id])"
+OperationLog,user,User?,否,,"@relation(fields: [userId], references: [id])"
+ProjectRetrospective,id,String,是,"cuid()",主键
+ProjectRetrospective,projectId,String,是,,
+ProjectRetrospective,outcome,String,是,,
+ProjectRetrospective,successScore,Int?,否,,
+ProjectRetrospective,summary,String,是,,
+ProjectRetrospective,reusablePattern,Json?,否,,
+ProjectRetrospective,isTrainingCandidate,Boolean,是,"false",
+ProjectRetrospective,desensitized,Boolean,是,"false",
+ProjectRetrospective,createdAt,DateTime,是,"now()",
+ProjectRetrospective,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+AgentTrainingExample,id,String,是,"cuid()",主键
+AgentTrainingExample,sourceType,String,是,,
+AgentTrainingExample,sourceId,String?,否,,
+AgentTrainingExample,category,String?,否,,
+AgentTrainingExample,input,String,是,,
+AgentTrainingExample,expectedOutput,String,是,,
+AgentTrainingExample,context,String?,否,,
+AgentTrainingExample,qualityScore,Float?,否,,
+AgentTrainingExample,tags,Json?,否,,
+AgentTrainingExample,approved,Boolean,是,"false",
+AgentTrainingExample,createdAt,DateTime,是,"now()",
+SupplierChat,id,String,是,"cuid()",主键
+SupplierChat,projectId,String,是,,
+SupplierChat,taskId,String?,否,,
+SupplierChat,senderRole,String,是,,
+SupplierChat,senderId,String,是,,
+SupplierChat,senderName,String,是,,
+SupplierChat,content,String,是,,
+SupplierChat,contentType,String,是,"TEXT",
+SupplierChat,attachmentUrl,String?,否,,
+SupplierChat,createdAt,DateTime,是,"now()",
+SupplierChat,project,Project,是,,"@relation(fields: [projectId], references: [id])"
+SupplierChat,task,ProjectTask?,否,,"@relation(fields: [taskId], references: [id])"
+SupplierChat,annotation,ChatAnnotation?,否,,
+ChatAnnotation,id,String,是,"cuid()",主键
+ChatAnnotation,chatId,String,是,,唯一
+ChatAnnotation,isValuable,Boolean,是,"false",
+ChatAnnotation,category,String?,否,,
+ChatAnnotation,correctedReply,String?,否,,
+ChatAnnotation,note,String?,否,,
+ChatAnnotation,annotatedBy,String,是,,
+ChatAnnotation,annotatedAt,DateTime,是,"now()",
+ChatAnnotation,reviewStatus,String,是,"PENDING_ANNOTATION",
+ChatAnnotation,reviewedBy,String?,否,,
+ChatAnnotation,reviewedAt,DateTime?,否,,
+ChatAnnotation,trainingId,String?,否,,
+ChatAnnotation,chat,SupplierChat,是,,"@relation(fields: [chatId], references: [id])"
+Skill,id,String,是,"cuid()",主键
+Skill,authorId,String,是,,
+Skill,name,String,是,,
+Skill,category,String,是,,
+Skill,description,String?,否,,
+Skill,visibility,String,是,"PRIVATE",
+Skill,official,Boolean,是,"false",
+Skill,usageCount,Int,是,"0",
+Skill,rating,Float?,否,,
+Skill,createdAt,DateTime,是,"now()",
+Skill,updatedAt,DateTime,是,,自动更新
+Skill,author,User,是,,"@relation(""SkillAuthor"", fields: [authorId], references: [id])"
+Skill,versions,SkillVersion[],否,,数组
+SkillVersion,id,String,是,"cuid()",主键
+SkillVersion,skillId,String,是,,
+SkillVersion,version,String,是,,
+SkillVersion,inputSchema,Json?,否,,
+SkillVersion,outputSchema,Json?,否,,
+SkillVersion,prompt,String?,否,,
+SkillVersion,code,String?,否,,
+SkillVersion,changelog,String?,否,,
+SkillVersion,createdAt,DateTime,是,"now()",
+SkillVersion,skill,Skill,是,,"@relation(fields: [skillId], references: [id])"
+OfficialPost,id,String,是,"cuid()",主键
+OfficialPost,title,String,是,,
+OfficialPost,type,String,是,,
+OfficialPost,content,String,是,,
+OfficialPost,startsAt,DateTime?,否,,
+OfficialPost,endsAt,DateTime?,否,,
+OfficialPost,visibility,String,是,"PUBLIC",
+OfficialPost,createdAt,DateTime,是,"now()",
+Knowledge,id,String,是,"cuid()",主键
+Knowledge,title,String,是,,
+Knowledge,content,String,是,,
+Knowledge,type,String,是,,
+Knowledge,category,String?,否,,
+Knowledge,status,String,是,"DRAFT",
+Knowledge,confidence,Int,是,"80",
+Knowledge,tags,String?,否,,
+Knowledge,sourceType,String?,否,,
+Knowledge,sourceId,String?,否,,
+Knowledge,creatorId,String?,否,,
+Knowledge,reviewerId,String?,否,,
+Knowledge,publisherId,String?,否,,
+Knowledge,callCount,Int,是,"0",
+Knowledge,createdAt,DateTime,是,"now()",
+Knowledge,updatedAt,DateTime,是,,自动更新
+Knowledge,publishedAt,DateTime?,否,,
+Knowledge,relations,KnowledgeRelation[],否,,数组
+Knowledge,embedding,KnowledgeEmbedding?,否,,
+KnowledgeRelation,id,String,是,"cuid()",主键
+KnowledgeRelation,knowledgeId,String,是,,
+KnowledgeRelation,relationType,String,是,,
+KnowledgeRelation,targetType,String,是,,
+KnowledgeRelation,targetId,String,是,,
+KnowledgeRelation,createdBy,String?,否,,
+KnowledgeRelation,createdAt,DateTime,是,"now()",
+KnowledgeRelation,knowledge,Knowledge,是,,"@relation(fields: [knowledgeId], references: [id], onDelete: Cascade)"
+KnowledgeEmbedding,id,String,是,"cuid()",主键
+KnowledgeEmbedding,knowledgeId,String,是,,唯一
+KnowledgeEmbedding,vectorId,String?,否,,
+KnowledgeEmbedding,embeddingStatus,String,是,"PENDING",
+KnowledgeEmbedding,chunkCount,Int,是,"0",
+KnowledgeEmbedding,vectorDimension,Int?,否,,
+KnowledgeEmbedding,modelName,String?,否,,
+KnowledgeEmbedding,errorMessage,String?,否,,
+KnowledgeEmbedding,createdAt,DateTime,是,"now()",
+KnowledgeEmbedding,updatedAt,DateTime,是,,自动更新
+KnowledgeEmbedding,knowledge,Knowledge,是,,"@relation(fields: [knowledgeId], references: [id], onDelete: Cascade)"
+AgentWorkflow,id,String,是,"cuid()",主键
+AgentWorkflow,name,String,是,,
+AgentWorkflow,description,String?,否,,
+AgentWorkflow,status,String,是,"DRAFT",
+AgentWorkflow,version,String,是,"1.0.0",
+AgentWorkflow,canvasData,String?,否,,
+AgentWorkflow,skillIds,String?,否,,
+AgentWorkflow,knowledgeIds,String?,否,,
+AgentWorkflow,toolIds,String?,否,,
+AgentWorkflow,modelEntityId,String?,否,,
+AgentWorkflow,creatorId,String?,否,,
+AgentWorkflow,createdAt,DateTime,是,"now()",
+AgentWorkflow,updatedAt,DateTime,是,,自动更新
+AgentWorkflow,publishedAt,DateTime?,否,,
+AgentWorkflow,nodes,AgentWorkflowNode[],否,,数组
+AgentWorkflow,edges,AgentWorkflowEdge[],否,,数组
+AgentWorkflow,variables,WorkflowVariable[],否,,数组
+AgentWorkflowNode,id,String,是,"cuid()",主键
+AgentWorkflowNode,workflowId,String,是,,
+AgentWorkflowNode,nodeType,String,是,,
+AgentWorkflowNode,nodeName,String,是,,
+AgentWorkflowNode,description,String?,否,,
+AgentWorkflowNode,inputSchema,String?,否,,"JSON数组，定义输入变量"
+AgentWorkflowNode,outputSchema,String?,否,,"JSON数组，定义输出变量"
+AgentWorkflowNode,configJson,String?,否,,"节点配置，含userInputs/runtimeContext等"
+AgentWorkflowNode,runtimeConfig,String?,否,,"运行时配置，含timeout/retry等"
+AgentWorkflowNode,positionX,Int,是,"0",
+AgentWorkflowNode,positionY,Int,是,"0",
+AgentWorkflowNode,createdAt,DateTime,是,"now()",
+AgentWorkflowNode,workflow,AgentWorkflow,是,,"@relation(fields: [workflowId], references: [id])"
+AgentWorkflowEdge,id,String,是,"cuid()",主键
+AgentWorkflowEdge,workflowId,String,是,,
+AgentWorkflowEdge,sourceNodeId,String,是,,
+AgentWorkflowEdge,targetNodeId,String,是,,
+AgentWorkflowEdge,sourcePort,String?,否,,
+AgentWorkflowEdge,targetPort,String?,否,,
+AgentWorkflowEdge,condition,String?,否,,
+AgentWorkflowEdge,createdAt,DateTime,是,"now()",
+AgentWorkflowEdge,workflow,AgentWorkflow,是,,"@relation(fields: [workflowId], references: [id])"
+WorkflowVariable,id,String,是,"cuid()",主键
+WorkflowVariable,workflowNodeId,String,是,,
+WorkflowVariable,name,String,是,,
+WorkflowVariable,type,String,是,,
+WorkflowVariable,source,String?,否,,
+WorkflowVariable,sourceField,String?,否,,
+WorkflowVariable,description,String?,否,,
+WorkflowVariable,defaultValue,Json?,否,,
+WorkflowVariable,node,AgentWorkflowNode,是,,"@relation(fields: [workflowNodeId], references: [id])"
+AgentTestCase,id,String,是,"cuid()",主键
+AgentTestCase,workflowId,String?,否,,
+AgentTestCase,name,String,是,,
+AgentTestCase,input,String,是,,
+AgentTestCase,expected,String?,否,,
+AgentTestCase,category,String?,否,,
+AgentTestCase,tags,String?,否,,
+AgentTestCase,passed,Boolean?,否,,
+AgentTestCase,score,Float?,否,,
+AgentTestCase,createdAt,DateTime,是,"now()",
+AgentSessionTrace,id,String,是,"cuid()",主键
+AgentSessionTrace,sessionId,String,是,,
+AgentSessionTrace,question,String?,否,,
+AgentSessionTrace,status,String,是,"RUNNING",
+AgentSessionTrace,totalTokens,Int?,否,,
+AgentSessionTrace,durationMs,Int?,否,,
+AgentSessionTrace,createdAt,DateTime,是,"now()",
+AgentNodeExecution,id,String,是,"cuid()",主键
+AgentNodeExecution,traceId,String,是,,
+AgentNodeExecution,nodeId,String?,否,,
+AgentNodeExecution,nodeType,String?,否,,
+AgentNodeExecution,inputJson,Json?,否,,
+AgentNodeExecution,outputJson,Json?,否,,
+AgentNodeExecution,tokens,Int?,否,,
+AgentNodeExecution,durationMs,Int?,否,,
+AgentNodeExecution,errorMessage,String?,否,,
+AgentNodeExecution,createdAt,DateTime,是,"now()",
+
+统计,模型总数:39个,总字段数:520个（含Workflow升级新增字段）,,,

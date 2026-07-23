@@ -1,320 +1,213 @@
 import Link from "next/link";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-
-const statusLabel: Record<string, string> = {
-  DRAFT: "草稿",
-  PENDING_REVIEW: "待审核",
-  SELF_RUNNING: "用户自执行",
-  TOOL_RUNNING: "工具执行中",
-  AGENT_RUNNING: "Agent执行中",
-  SUPPLIER_RUNNING: "供应商执行中",
-  ACCEPTANCE: "验收中",
-  COMPLETED: "已完成",
-  PAUSED: "已暂停",
-  CANCELLED: "已取消",
-};
-
-const statusColor: Record<string, string> = {
-  DRAFT: "#9aa7b5",
-  PENDING_REVIEW: "#9b6400",
-  SELF_RUNNING: "#2d65c7",
-  TOOL_RUNNING: "#2d65c7",
-  AGENT_RUNNING: "#2d65c7",
-  SUPPLIER_RUNNING: "#2d65c7",
-  ACCEPTANCE: "#9b6400",
-  COMPLETED: "#0aa866",
-  PAUSED: "#9aa7b5",
-  CANCELLED: "#c41e3a",
-};
-
-function formatDate(date?: Date | null) {
-  return date ? date.toISOString().slice(0, 10) : "-";
-}
 
 export const dynamic = "force-dynamic";
 
-export default async function OperatorWorkbench() {
-  let projects: any[] = [];
-  try {
-    projects = await prisma.project.findMany({
-      orderBy: { code: "asc" },
-      include: {
-        creator: true,
-        operator: true,
-        stages: { orderBy: { sortOrder: "asc" } },
-        datasets: { orderBy: { createdAt: "asc" } },
-        toolConfigs: { orderBy: { createdAt: "desc" }, take: 1 },
-        agentSessions: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
-          include: { actions: { orderBy: { createdAt: "asc" } } },
-        },
-        operationLogs: { orderBy: { createdAt: "desc" }, take: 5 },
+const text = {
+  home: "\u9996\u9875",
+  defaultUser: "\u5f20\u4e09",
+  morning: "\u65e9\u4e0a\u597d",
+  noon: "\u4e2d\u5348\u597d",
+  afternoon: "\u4e0b\u5348\u597d",
+  evening: "\u665a\u4e0a\u597d",
+  todayTodo: "\u4eca\u65e5\u5f85\u529e",
+  viewAll: "\u67e5\u770b\u5168\u90e8",
+  myNeeds: "\u6211\u7684\u9700\u6c42",
+  communicating: "\u6c9f\u901a\u4e2d",
+  todayNew: "\u4eca\u65e5\u65b0\u589e",
+  aiNewNeeds: "AI\u53d1\u73b0\u65b0\u9700\u6c42",
+  myProjects: "\u6211\u7684\u9879\u76ee",
+  annotationProjects: "\u6807\u6ce8\u7ba1\u7406",
+  collectionProjects: "\u91c7\u96c6\u7ba1\u7406",
+  todayDone: "\u4eca\u65e5\u5b8c\u6210",
+  recent: "\u6700\u8fd1\u52a8\u6001",
+  shortcuts: "\u5feb\u6377\u5165\u53e3",
+  pendingReview: "\u5f85\u5ba1\u6838\u9700\u6c42",
+  pendingReply: "\u5f85\u56de\u590d\u5ba2\u6237",
+  pendingQuote: "\u5f85\u786e\u8ba4\u62a5\u4ef7",
+  openException: "\u5f85\u5904\u7406\u5f02\u5e38",
+  requirement: "\u9700\u6c42\u7ba1\u7406",
+  annotation: "\u6807\u6ce8\u7ba1\u7406",
+  collection: "\u91c7\u96c6\u7ba1\u7406",
+  supplier: "\u4f9b\u5e94\u5546\u7ba1\u7406",
+  finance: "\u8d39\u7528\u7ba1\u7406",
+  noRecent: "\u6682\u65e0\u6700\u8fd1\u52a8\u6001",
+  agentConfirmed: "Agent \u52a8\u4f5c\u5df2\u786e\u8ba4",
+  aiFound: "AI \u8bc6\u522b\u51fa\u65b0\u7684",
+};
+
+const icons = {
+  bell: "\uD83D\uDD14",
+  wave: "\uD83D\uDC4B",
+  chat: "\uD83D\uDCAC",
+  clipboard: "\uD83D\uDCCB",
+  camera: "\uD83D\uDCF7",
+  people: "\uD83D\uDC65",
+  money: "\uD83D\uDCB0",
+};
+
+function formatTime(date?: Date | null) {
+  if (!date) return "--:--";
+  return date.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+function greeting() {
+  const hour = new Date().getHours();
+  if (hour < 11) return text.morning;
+  if (hour < 14) return text.noon;
+  if (hour < 18) return text.afternoon;
+  return text.evening;
+}
+
+function isToday(date?: Date | null) {
+  if (!date) return false;
+  const now = new Date();
+  return new Date(date).toDateString() === now.toDateString();
+}
+
+function projectKind(project: any) {
+  const stages = new Set((project.tasks ?? []).map((task: any) => task.stage));
+  if (stages.has("ANNOTATION") || project.mode === "ANNOTATION") return "annotation";
+  if (stages.has("COLLECTION") || project.mode === "COLLECTION") return "collection";
+  return "other";
+}
+
+export default async function OperatorHomePage() {
+  const session = await auth().catch(() => null);
+  const currentUser = session?.user?.name || session?.user?.email || text.defaultUser;
+
+  const projects = await prisma.project.findMany({
+    orderBy: { updatedAt: "desc" },
+    include: {
+      ownerOrg: true,
+      operator: true,
+      tasks: true,
+      qualityEvents: true,
+      operationLogs: {
+        include: { user: true },
+        orderBy: { createdAt: "desc" },
+        take: 5,
       },
-    });
-  } catch (e) {
-    console.error("Database error:", e);
-  }
+      agentSessions: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        include: { actions: { orderBy: { createdAt: "desc" } } },
+      },
+    },
+  });
 
-  const activeProjects = projects.filter(
-    (p: any) => !["COMPLETED", "CANCELLED"].includes(p.executionStatus)
-  );
-  const pendingReviewProjects = projects.filter(
-    (p: any) => p.executionStatus === "PENDING_REVIEW"
-  );
-  const totalDataItems = projects.reduce(
-    (sum: any, p: any) => sum + p.datasets.reduce((s: any, d: any) => s + (d.itemCount ?? 0), 0),
-    0
-  );
+  const pendingReview = projects.filter((project: any) => project.executionStatus === "PENDING_REVIEW").length;
+  const pendingReply = projects.filter((project: any) => project.agentSessions[0]?.actions?.some((action: any) => action.status === "PREVIEW")).length;
+  const pendingQuote = projects.filter((project: any) => !project.budgetAmount || project.executionStatus === "DRAFT").length;
+  const openExceptions = projects.filter((project: any) => project.qualityEvents.some((event: any) => event.status === "OPEN")).length;
+  const highPriority = projects.filter((project: any) => project.priority === "HIGH" || project.currentRisk === "HIGH").length;
+  const todayWork = pendingReview + pendingReply + pendingQuote + openExceptions;
 
-  const recentLogs = projects
-    .flatMap((p: any) => p.operationLogs.map((log: any) => ({ log, project: p })))
-    .sort((a: any, b: any) => b.log.createdAt.getTime() - a.log.createdAt.getTime())
-    .slice(0, 8);
+  const annotationProjects = projects.filter((project: any) => projectKind(project) === "annotation").length;
+  const collectionProjects = projects.filter((project: any) => projectKind(project) === "collection").length;
+  const completedToday = projects.filter((project: any) => project.executionStatus === "COMPLETED" && isToday(project.updatedAt)).length;
+  const todayNew = projects.filter((project: any) => isToday(project.createdAt)).length;
+  const aiDiscovered = projects.filter((project: any) => project.agentSessions.length > 0).length;
+  const inCommunication = projects.filter((project: any) => ["DRAFT", "PENDING_REVIEW", "SELF_RUNNING"].includes(project.executionStatus)).length;
 
-  const pendingActions = projects.flatMap((p: any) =>
-    (p.agentSessions[0]?.actions ?? [])
-      .filter((a: any) => a.status === "PREVIEW")
-      .map((a: any) => ({ action: a, project: p }))
-  );
+  const recentActivities = projects
+    .flatMap((project: any) => {
+      const org = project.ownerOrg?.name || project.companyName || project.name;
+      const latestAction = project.agentSessions[0]?.actions?.[0];
+      const actionActivity = latestAction
+        ? [{
+            id: `action-${latestAction.id}`,
+            time: latestAction.createdAt,
+            org,
+            text: `${text.aiFound} ${latestAction.actionType}`,
+            href: `/operator/projects/${project.code}`,
+          }]
+        : [];
+      const logActivities = project.operationLogs.map((log: any) => ({
+        id: log.id,
+        time: log.createdAt,
+        org,
+        text: log.action === "AUTHORIZE_AGENT_ACTION" ? text.agentConfirmed : log.action,
+        href: `/operator/projects/${project.code}`,
+      }));
+      return [...actionActivity, ...logActivities];
+    })
+    .sort((a: any, b: any) => new Date(b.time).getTime() - new Date(a.time).getTime())
+    .slice(0, 4);
+
+  const todoItems = [
+    { tone: "red", label: text.pendingReview, count: pendingReview, href: "/operator/annotation?status=PENDING_REVIEW" },
+    { tone: "yellow", label: text.pendingReply, count: pendingReply, href: "/operator/conversations" },
+    { tone: "green", label: text.pendingQuote, count: pendingQuote, href: "/operator/finance" },
+    { tone: "blue", label: text.openException, count: openExceptions, href: "/operator/quality" },
+  ];
 
   return (
-    <div className="opWorkbench">
-      <div className="opBanner">
-        <div className="opBannerIcon">🔧</div>
-        <div className="opBannerInfo">
-          <strong>运营管理工作台</strong>
-          <p>项目审核 · 供应商分配 · 质量监控 · 全链路管理</p>
+    <div className="operatorHomePage">
+      <header className="operatorHomeTopbar">
+        <Link href="/operator" className="operatorHomeLogo">Data Agent</Link>
+        <strong>{text.home}</strong>
+        <div className="operatorHomeUser">
+          <span className="operatorBell">{icons.bell}<i>3</i></span>
+          <span>{currentUser} &#9662;</span>
         </div>
-        <div className="opBannerStats">
-          <div>
-            <strong>{activeProjects.length}</strong>
-            <span>进行中项目</span>
-          </div>
-          <div>
-            <strong className="warn">{pendingActions.length}</strong>
-            <span>待授权动作</span>
-          </div>
-          <div>
-            <strong>{projects.length}</strong>
-            <span>总项目数</span>
-          </div>
+      </header>
+
+      <section className="operatorGreeting">
+        <h1>{icons.wave} {greeting()}，{currentUser}</h1>
+        <p>今天有 {todayWork} 个工作需要处理，其中 {highPriority} 个为高优先级。</p>
+      </section>
+
+      <section className="operatorHomePanel">
+        <div className="operatorHomePanelHead">
+          <h2>{text.todayTodo}</h2>
+          <Link href="/operator/conversations">{text.viewAll}</Link>
         </div>
+        <div className="operatorTodoRows">
+          {todoItems.map((item) => (
+            <Link href={item.href} className="operatorTodoRow" key={item.label}>
+              <span className={`operatorTodoDot ${item.tone}`} />
+              <strong>{item.label}</strong>
+              <b>{item.count}</b>
+              <i>&gt;</i>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <div className="operatorHomeCards">
+        <section className="operatorMiniCard">
+          <h2>{text.myNeeds}</h2>
+          <div><span>{text.communicating}</span><strong>{inCommunication}</strong></div>
+          <div><span>{text.todayNew}</span><strong>{todayNew}</strong></div>
+          <div><span>{text.aiNewNeeds}</span><strong>{aiDiscovered}</strong></div>
+        </section>
+        <section className="operatorMiniCard">
+          <h2>{text.myProjects}</h2>
+          <div><span>{text.annotationProjects}</span><strong>{annotationProjects}</strong></div>
+          <div><span>{text.collectionProjects}</span><strong>{collectionProjects}</strong></div>
+          <div><span>{text.todayDone}</span><strong>{completedToday}</strong></div>
+        </section>
       </div>
 
-      <div className="workspaceStats">
-        <div className="statCard">
-          <span className="statIcon">📋</span>
-          <div>
-            <strong>{pendingReviewProjects.length}</strong>
-            <span>待审核项目</span>
-          </div>
+      <section className="operatorHomePanel">
+        <div className="operatorHomePanelHead">
+          <h2>{text.recent}</h2>
+          <Link href="/operator/logs">{text.viewAll}</Link>
         </div>
-        <div className="statCard">
-          <span className="statIcon">✅</span>
-          <div>
-            <strong>12</strong>
-            <span>待处理审核任务</span>
-          </div>
+        <div className="operatorActivityRows">
+          {recentActivities.map((item: any) => (
+            <Link href={item.href} className="operatorActivityRow" key={item.id}>
+              <time>{formatTime(item.time)}</time>
+              <strong>{item.org}</strong>
+              <span>{item.text}</span>
+              <i>&gt;</i>
+            </Link>
+          ))}
+          {recentActivities.length === 0 && <div className="operatorEmptyRow">{text.noRecent}</div>}
         </div>
-        <div className="statCard">
-          <span className="statIcon">📊</span>
-          <div>
-            <strong>98.5%</strong>
-            <span>平均质检得分</span>
-          </div>
-        </div>
-        <div className="statCard">
-          <span className="statIcon">🏭</span>
-          <div>
-            <strong>8</strong>
-            <span>合作供应商</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="opMainRow">
-        <div className="opMainLeft">
-          <div className="card">
-            <div className="cardHeader">
-              <h3 className="cardTitle">进行中的项目</h3>
-              <Link href="/operator/projects" className="linkBtn">查看全部 →</Link>
-            </div>
-            <div className="cardBody noPadding">
-              <div className="projectTable">
-                <div className="tableHeadRow">
-                  <div></div>
-                  <div>项目编号</div>
-                  <div>项目名称</div>
-                  <div>状态</div>
-                  <div>数据量</div>
-                  <div>当前阶段</div>
-                  <div>运营负责人</div>
-                  <div>创建时间</div>
-                  <div>操作</div>
-                </div>
-                {activeProjects.slice(0, 6).map((p: any, i) => (
-                  <div className="tableDataRow" key={p.id}>
-                    <div className="col-check">{i + 1}</div>
-                    <div className="projectCode mono">{p.code}</div>
-                    <div>
-                      <Link href={`/operator/projects/${p.code}`} className="projectNameLink">
-                        {p.name}
-                      </Link>
-                    </div>
-                    <div>
-                      <span
-                        className="detailStatus"
-                        style={{
-                          background: (statusColor[p.executionStatus] ?? "#9aa7b5") + "20",
-                          color: statusColor[p.executionStatus] ?? "#9aa7b5",
-                        }}
-                      >
-                        {statusLabel[p.executionStatus] ?? p.executionStatus}
-                      </span>
-                    </div>
-                    <div>{p.datasets.reduce((s: any, d: any) => s + (d.itemCount ?? 0), 0).toLocaleString()}</div>
-                    <div>{p.currentStage ?? "-"}</div>
-                    <div>{p.operator?.name ?? p.operator?.email ?? "-"}</div>
-                    <div className="mono">{formatDate(p.createdAt)}</div>
-                    <div>
-                      <Link href={`/operator/projects/${p.code}`} className="linkBtn">详情</Link>
-                    </div>
-                  </div>
-                ))}
-                {activeProjects.length === 0 && (
-                  <div className="tableDataRow" style={{ justifyContent: "center", color: "#9aa7b5" }}>
-                    暂无进行中的项目
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="card" style={{ marginTop: "14px" }}>
-            <div className="cardHeader">
-              <h3 className="cardTitle">待授权 Agent 动作</h3>
-              <span className="cardTag warning">{pendingActions.length} 待处理</span>
-            </div>
-            <div className="cardBody">
-              {pendingActions.length > 0 ? (
-                <div className="todoList">
-                  {pendingActions.map(({ action, project }) => (
-                    <div className="todoItem" key={action.id}>
-                      <div className="todoContent">
-                        <div className="todoTitle">{project.code} · {project.name}</div>
-                        <div className="todoDesc">
-                          动作类型：{action.actionType} · 状态：待授权
-                        </div>
-                      </div>
-                      <span className="statusBadge pending">待授权</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="emptyState">暂无待授权动作</div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="opMainRight">
-          <div className="card">
-            <div className="cardHeader">
-              <h3 className="cardTitle">待我审核</h3>
-              <span className="cardTag warning">12</span>
-            </div>
-            <div className="cardBody">
-              <div className="todoList">
-                <div className="todoItem">
-                  <div className="todoContent">
-                    <div className="todoTitle">PRJ-001 工具配置审核</div>
-                    <div className="todoDesc">2D框标注工具配置待审批</div>
-                  </div>
-                  <span className="statusBadge pending">待审核</span>
-                </div>
-                <div className="todoItem">
-                  <div className="todoContent">
-                    <div className="todoTitle">PRJ-002 需求文档审核</div>
-                    <div className="todoDesc">V2.0 需求文档变更待确认</div>
-                  </div>
-                  <span className="statusBadge pending">待审核</span>
-                </div>
-                <div className="todoItem">
-                  <div className="todoContent">
-                    <div className="todoTitle">PRJ-003 验收报告审核</div>
-                    <div className="todoDesc">第一批次标注数据验收</div>
-                  </div>
-                  <span className="statusBadge blue">验收中</span>
-                </div>
-                <div className="todoItem">
-                  <div className="todoContent">
-                    <div className="todoTitle">PRJ-004 供应商分配</div>
-                    <div className="todoDesc">3家候选供应商待分配</div>
-                  </div>
-                  <span className="statusBadge pending">待分配</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="card" style={{ marginTop: "14px" }}>
-            <div className="cardHeader">
-              <h3 className="cardTitle">最近操作</h3>
-              <Link href="/operator/logs" className="linkBtn">全部 →</Link>
-            </div>
-            <div className="cardBody">
-              <div className="activityList">
-                {recentLogs.map(({ log, project }) => (
-                  <div className="activityItem" key={log.id}>
-                    <div className="activityDot" />
-                    <div className="activityContent">
-                      <div className="activityText">
-                        <strong>{project.code}</strong> {log.action}：{log.detail}
-                      </div>
-                      <div className="activityTime">
-                        {formatDate(log.createdAt)} · {log.actorRole}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {recentLogs.length === 0 && (
-                  <div className="emptyState">暂无操作记录</div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="card" style={{ marginTop: "14px" }}>
-            <div className="cardHeader">
-              <h3 className="cardTitle">质量概览</h3>
-              <span className="cardTag green">98.5%</span>
-            </div>
-            <div className="cardBody">
-              <div className="opQualityRow">
-                <span>质检通过率</span>
-                <strong>99.1%</strong>
-              </div>
-              <div className="opQualityRow">
-                <span>平均质量得分</span>
-                <strong>98.5%</strong>
-              </div>
-              <div className="opQualityRow">
-                <span>缺陷类型</span>
-                <strong>漏标 / 错标 / 框偏移</strong>
-              </div>
-              <div className="opQualityRow">
-                <span>未解决事件</span>
-                <strong className="warn">3</strong>
-              </div>
-              <div className="opQualityRow">
-                <span>本月已解决</span>
-                <strong>44</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

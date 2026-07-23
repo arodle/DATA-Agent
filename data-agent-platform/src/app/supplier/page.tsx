@@ -1,246 +1,145 @@
-"use client";
+﻿import { prisma } from "@/lib/prisma";
+import SupplierTaskActions from "./SupplierTaskActions";
 
-import { useSupplierRole } from "./SupplierRoleContext";
-import { useState } from "react";
-
-interface BatchTask {
-  id: string;
-  name: string;
-  project: string;
-  type: string;
-  assigned: number;
-  completed: number;
-  deadline: string;
-  status: "执行中" | "待启动" | "已完成" | "审核中";
+function formatDate(date?: Date | null) {
+  return date ? date.toISOString().slice(0, 10) : "-";
 }
 
-const mockTasks: BatchTask[] = [
-  { id: "BATCH-042", name: "车辆 2D 框质检与返修", project: "PRJ-001 自动驾驶", type: "质检/返修", assigned: 8000, completed: 4880, deadline: "2026-07-15", status: "执行中" },
-  { id: "BATCH-043", name: "行人关键点标注", project: "PRJ-003 行人检测", type: "标注", assigned: 5000, completed: 0, deadline: "2026-07-18", status: "待启动" },
-  { id: "BATCH-044", name: "骑行人属性质检", project: "PRJ-001 自动驾驶", type: "质检", assigned: 3000, completed: 2100, deadline: "2026-07-14", status: "执行中" },
-  { id: "BATCH-045", name: "语音转写标注", project: "PRJ-004 语音识别", type: "标注", assigned: 3200, completed: 2560, deadline: "2026-07-16", status: "执行中" },
-  { id: "BATCH-046", name: "交通场景分类标注", project: "PRJ-002 交通识别", type: "标注", assigned: 6000, completed: 6000, deadline: "2026-07-10", status: "已完成" },
-];
+function taskStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    DRAFT: "草稿",
+    PUBLISHED: "待启动",
+    RUNNING: "执行中",
+    SUBMITTED: "审核中",
+    COMPLETED: "已完成",
+    REJECTED: "已驳回",
+  };
+  return labels[status] ?? status;
+}
 
-const teamStats = {
-  teams: 3,
-  members: 51,
-  online: 35,
-  activeProjects: 4,
-};
+function stageLabel(stage: string) {
+  const labels: Record<string, string> = {
+    ANNOTATION: "数据标注",
+    COLLECTION: "数据采集",
+    QUALITY: "质量检查",
+    DELIVERY: "交付验收",
+  };
+  return labels[stage] ?? stage;
+}
 
-export default function SupplierTaskPage() {
-  const { role, userName } = useSupplierRole();
-  const [selectedTask, setSelectedTask] = useState<BatchTask | null>(null);
+export const dynamic = "force-dynamic";
 
-  const totalProgress = Math.round(
-    mockTasks.reduce((s, t) => s + t.completed, 0) / mockTasks.reduce((s, t) => s + t.assigned, 0) * 100
-  );
+export default async function SupplierTaskPage() {
+  const tasks = await prisma.projectTask.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 80,
+    include: {
+      project: { select: { code: true, name: true, currentStage: true } },
+      supplier: { include: { organization: true } },
+      qualityEvents: true,
+      datasets: true,
+    },
+  });
 
-  if (!selectedTask) {
-    return (
-      <div className="sPage">
-        <div className="agentBanner sBanner">
-          <span className="agentBannerIcon">📋</span>
-          <div>
-            <strong>任务管理</strong>
-            <p>{role === "manager" ? "团队任务分配与进度追踪" : "我的任务列表与领取"}</p>
-          </div>
-        </div>
-
-        {role === "manager" && (
-          <div className="workspaceStats">
-            <div className="statCard">
-              <span className="statIcon">👥</span>
-              <div>
-                <strong>{teamStats.members}</strong>
-                <span>团队成员</span>
-              </div>
-            </div>
-            <div className="statCard">
-              <span className="statIcon">🟢</span>
-              <div>
-                <strong>{teamStats.online}</strong>
-                <span>今日在线</span>
-              </div>
-            </div>
-            <div className="statCard">
-              <span className="statIcon">📁</span>
-              <div>
-                <strong>{teamStats.activeProjects}</strong>
-                <span>进行中项目</span>
-              </div>
-            </div>
-            <div className="statCard">
-              <span className="statIcon">📈</span>
-              <div>
-                <strong>{totalProgress}%</strong>
-                <span>整体进度</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {role === "worker" && (
-          <div className="workspaceStats">
-            <div className="statCard">
-              <span className="statIcon">📋</span>
-              <div>
-                <strong>{mockTasks.filter((t) => t.status === "执行中").length}</strong>
-                <span>进行中任务</span>
-              </div>
-            </div>
-            <div className="statCard">
-              <span className="statIcon">✅</span>
-              <div>
-                <strong>{mockTasks.filter((t) => t.status === "已完成").length}</strong>
-                <span>已完成</span>
-              </div>
-            </div>
-            <div className="statCard">
-              <span className="statIcon">📊</span>
-              <div>
-                <strong>{totalProgress}%</strong>
-                <span>完成率</span>
-              </div>
-            </div>
-            <div className="statCard">
-              <span className="statIcon">🏆</span>
-              <div>
-                <strong>96.8%</strong>
-                <span>质检通过率</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="card">
-          <div className="cardHeader">
-            <h3 className="cardTitle">{role === "manager" ? "团队任务列表" : "我的任务列表"}</h3>
-            <div className="opTableActions">
-              <input type="text" placeholder="搜索任务批次..." className="ghostBtn" style={{ width: 180 }} />
-              <select className="ghostBtn">
-                <option>全部状态</option>
-                <option>执行中</option>
-                <option>待启动</option>
-                <option>已完成</option>
-              </select>
-              {role === "manager" && <button className="primaryBtn">领取新任务</button>}
-            </div>
-          </div>
-          <div className="cardBody noPadding">
-            <div className="projectTable">
-              <div className="tableHeadRow">
-                <div>批次编号</div>
-                <div>任务名称</div>
-                <div>所属项目</div>
-                <div>任务类型</div>
-                <div>分配量</div>
-                <div>完成量</div>
-                <div>进度</div>
-                <div>截止日期</div>
-                <div>状态</div>
-                <div>操作</div>
-              </div>
-              {mockTasks.map((task) => {
-                const pct = task.assigned > 0 ? Math.round(task.completed / task.assigned * 100) : 0;
-                return (
-                  <div className="tableDataRow" key={task.id} onClick={() => setSelectedTask(task)} style={{ cursor: "pointer" }}>
-                    <div className="projectCode mono">{task.id}</div>
-                    <div><strong>{task.name}</strong></div>
-                    <div className="mono" style={{ color: "#697889" }}>{task.project}</div>
-                    <div><span className="tinyTag">{task.type}</span></div>
-                    <div className="mono">{task.assigned.toLocaleString()}</div>
-                    <div className="mono">{task.completed.toLocaleString()}</div>
-                    <div>
-                      <div className="sProgressBar">
-                        <div className="sProgressFill" style={{ width: `${pct}%` }} />
-                      </div>
-                      <span style={{ fontSize: 12, color: "#697889" }}>{pct}%</span>
-                    </div>
-                    <div className="mono">{task.deadline}</div>
-                    <div>
-                      <span className={`pill small ${task.status === "执行中" ? "" : task.status === "已完成" ? "" : "pending"}`}
-                        style={{
-                          background: task.status === "执行中" ? "#e8f5e9" : task.status === "已完成" ? "#e3f2fd" : "#fff3e0",
-                          color: task.status === "执行中" ? "#2e7d32" : task.status === "已完成" ? "#1565c0" : "#e65100",
-                        }}
-                      >{task.status}</span>
-                    </div>
-                    <div>
-                      <button className="linkBtn" onClick={(e) => { e.stopPropagation(); setSelectedTask(task); }}>查看详情</button>
-                      {role === "worker" && task.status === "待启动" && <button className="linkBtn" onClick={(e) => e.stopPropagation()}>领取</button>}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const activeTasks = tasks.filter((t) => ["PUBLISHED", "RUNNING", "SUBMITTED"].includes(t.status));
+  const completedTasks = tasks.filter((t) => t.status === "COMPLETED");
+  const totalAssigned = tasks.reduce((sum, task) => sum + (task.dataVolume ?? 0), 0);
+  const totalCompleted = tasks.reduce((sum, task) => {
+    if (task.status === "COMPLETED") return sum + (task.dataVolume ?? 0);
+    if (task.status === "SUBMITTED") return sum + (task.dataVolume ?? 0);
+    if (task.status === "RUNNING") return sum + Math.round((task.dataVolume ?? 0) * 0.45);
+    return sum;
+  }, 0);
+  const totalProgress = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
 
   return (
     <div className="sPage">
+      <div className="agentBanner sBanner">
+        <span className="agentBannerIcon">TASK</span>
+        <div>
+          <strong>任务管理</strong>
+          <p>真实 ProjectTask 数据 · Agent 授权后自动同步到供应商端</p>
+        </div>
+      </div>
+
+      <div className="workspaceStats">
+        <div className="statCard"><span className="statIcon">总</span><div><strong>{tasks.length}</strong><span>任务总数</span></div></div>
+        <div className="statCard"><span className="statIcon">进</span><div><strong>{activeTasks.length}</strong><span>进行中/待启动</span></div></div>
+        <div className="statCard"><span className="statIcon">完</span><div><strong>{completedTasks.length}</strong><span>已完成</span></div></div>
+        <div className="statCard"><span className="statIcon">量</span><div><strong>{totalProgress}%</strong><span>整体进度</span></div></div>
+      </div>
+
       <div className="card">
         <div className="cardHeader">
-          <h3 className="cardTitle">{selectedTask.id} {selectedTask.name}</h3>
-          <button className="ghostBtn" onClick={() => setSelectedTask(null)}>返回列表</button>
-        </div>
-        <div className="cardBody">
-          <div className="sTaskDetail">
-            <div className="sTaskInfo">
-              <div className="sTaskInfoGrid">
-                <div className="sTaskInfoItem">
-                  <span className="sTaskLabel">所属项目</span>
-                  <strong>{selectedTask.project}</strong>
-                </div>
-                <div className="sTaskInfoItem">
-                  <span className="sTaskLabel">任务类型</span>
-                  <strong>{selectedTask.type}</strong>
-                </div>
-                <div className="sTaskInfoItem">
-                  <span className="sTaskLabel">分配量</span>
-                  <strong>{selectedTask.assigned.toLocaleString()}</strong>
-                </div>
-                <div className="sTaskInfoItem">
-                  <span className="sTaskLabel">已完成</span>
-                  <strong>{selectedTask.completed.toLocaleString()}</strong>
-                </div>
-                <div className="sTaskInfoItem">
-                  <span className="sTaskLabel">截止日期</span>
-                  <strong>{selectedTask.deadline}</strong>
-                </div>
-                <div className="sTaskInfoItem">
-                  <span className="sTaskLabel">状态</span>
-                  <span className={`pill small ${selectedTask.status === "执行中" ? "" : "pending"}`}>{selectedTask.status}</span>
-                </div>
-              </div>
-              <div className="sTaskProgressSection">
-                <span className="sTaskLabel">总体进度</span>
-                <div className="sProgressBar large">
-                  <div className="sProgressFill" style={{ width: `${Math.round(selectedTask.completed / selectedTask.assigned * 100)}%` }} />
-                </div>
-                <strong className="sProgressText">{Math.round(selectedTask.completed / selectedTask.assigned * 100)}%</strong>
-              </div>
-            </div>
-            <div className="sTaskActions">
-              {role === "manager" && (
-                <>
-                  <button className="primaryBtn">分配任务</button>
-                  <button className="ghostBtn">查看进度</button>
-                  <button className="ghostBtn">导出报表</button>
-                </>
-              )}
-              {role === "worker" && (
-                <>
-                  <button className="primaryBtn">进入工作区</button>
-                  <button className="ghostBtn">提交结果</button>
-                </>
-              )}
-            </div>
+          <h3 className="cardTitle">供应商任务列表</h3>
+          <div className="opTableActions">
+            <input type="text" placeholder="搜索任务批次..." className="ghostBtn" style={{ width: 180 }} />
+            <select className="ghostBtn" defaultValue="ALL">
+              <option value="ALL">全部状态</option>
+              <option value="PUBLISHED">待启动</option>
+              <option value="RUNNING">执行中</option>
+              <option value="SUBMITTED">审核中</option>
+              <option value="COMPLETED">已完成</option>
+            </select>
           </div>
+        </div>
+        <div className="cardBody noPadding">
+          <div className="projectTable">
+            <div className="tableHeadRow">
+              <div>任务编号</div>
+              <div>任务名称</div>
+              <div>所属项目</div>
+              <div>任务类型</div>
+              <div>供应商</div>
+              <div>分配量</div>
+              <div>进度</div>
+              <div>截止日期</div>
+              <div>状态</div>
+              <div>质量事件 / 操作</div>
+            </div>
+            {tasks.map((task) => {
+              const assigned = task.dataVolume ?? 0;
+              const completed = task.status === "COMPLETED" || task.status === "SUBMITTED"
+                ? assigned
+                : task.status === "RUNNING"
+                  ? Math.round(assigned * 0.45)
+                  : 0;
+              const pct = assigned > 0 ? Math.round((completed / assigned) * 100) : 0;
+              return (
+                <div className="tableDataRow" key={task.id}>
+                  <div className="projectCode mono">{task.id.slice(0, 8).toUpperCase()}</div>
+                  <div><strong>{task.name}</strong><div style={{ color: "#697889", fontSize: 12 }}>{task.risk || "无风险提示"}</div></div>
+                  <div className="mono" style={{ color: "#697889" }}>{task.project.code} · {task.project.name}</div>
+                  <div><span className="tinyTag">{stageLabel(task.stage)}</span></div>
+                  <div>{task.supplier?.organization.name || "待分配"}</div>
+                  <div className="mono">{assigned ? assigned.toLocaleString() : "-"}</div>
+                  <div>
+                    <div className="sProgressBar"><div className="sProgressFill" style={{ width: `${pct}%` }} /></div>
+                    <span style={{ fontSize: 12, color: "#697889" }}>{pct}%</span>
+                  </div>
+                  <div className="mono">{formatDate(task.plannedEnd)}</div>
+                  <div><span className={`pill small ${task.status === "PUBLISHED" ? "pending" : ""}`}>{taskStatusLabel(task.status)}</span></div>
+                  <div>
+                    <span className="mono" style={{ marginRight: 8 }}>{task.qualityEvents.length}</span>
+                    <SupplierTaskActions taskId={task.id} status={task.status} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {tasks.length === 0 && (
+            <div className="emptyState" style={{ padding: 28 }}>
+              暂无真实任务。请到运营端 Agent 页面生成待授权动作并授权执行。
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="card" style={{ marginTop: 14 }}>
+        <div className="cardHeader"><h3 className="cardTitle">执行说明</h3><span className="cardTag">Agent 中台闭环</span></div>
+        <div className="cardBody">
+          <div className="lineageDetailItem"><strong>任务来源</strong><div style={{ color: "#697889", marginTop: 2 }}>运营端授权 CREATE_PROJECT_TASK 后自动创建 ProjectTask。</div></div>
+          <div className="lineageDetailItem"><strong>下一步</strong><div style={{ color: "#697889", marginTop: 2 }}>供应商启动任务后进入执行中，提交交付后自动创建质量验收事件。</div></div>
         </div>
       </div>
     </div>

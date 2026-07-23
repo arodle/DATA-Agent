@@ -9,34 +9,37 @@ const currentUser = {
   email: "lirenxuan@example.com",
 };
 
+async function createDraftProjectFromForm(formData: FormData) {
+  "use server";
+  await createDraftProject({
+    code: `PRJ-${Date.now().toString(36).toUpperCase()}`,
+    name: String(formData.get("projectName") || "未命名项目"),
+    mode: String(formData.get("mode") || "PROFESSIONAL"),
+    ownerOrgId: "org-autolab",
+    creatorId: "user-lin",
+    priority: "NORMAL",
+  });
+}
+
 export default function NewProjectPage() {
   return (
     <main className="formPage">
       <section className="formPanel compactFormPanel">
         <div className="formHeader">
           <div>
-            <p className="crumb">项目创建 / 系统已绑定当前用户与数据存储层</p>
+            <p className="crumb">项目创建 / 当前用户与数据存储已绑定</p>
             <h1>新建数据标采项目草稿</h1>
           </div>
           <Link className="secondaryLink" href="/">返回项目列表</Link>
         </div>
 
         <section className="boundUserCard" aria-label="当前用户">
-          <div>
-            <span>当前用户</span>
-            <strong>{currentUser.name}</strong>
-          </div>
-          <div>
-            <span>组织 / 部门</span>
-            <strong>{currentUser.organization} / {currentUser.department}</strong>
-          </div>
-          <div>
-            <span>联系方式</span>
-            <strong>{currentUser.email}</strong>
-          </div>
+          <div><span>当前用户</span><strong>{currentUser.name}</strong></div>
+          <div><span>组织 / 部门</span><strong>{currentUser.organization} / {currentUser.department}</strong></div>
+          <div><span>联系方式</span><strong>{currentUser.email}</strong></div>
         </section>
 
-        <form action={createDraftProject} className="formGrid compactGrid">
+        <form action={createDraftProjectFromForm} className="formGrid compactGrid">
           <label className="field span2">
             <span>任务名称</span>
             <input name="projectName" required placeholder="例如：城市道路车辆 2D 框标注" />
@@ -73,12 +76,12 @@ export default function NewProjectPage() {
 
           <label className="field span2">
             <span>一句话描述需求</span>
-            <textarea name="scenario" rows={4} placeholder="说清楚要做什么、用于什么模型或结论。数据量、格式、路径由已选数据资产自动带出。" />
+            <textarea name="scenario" rows={4} placeholder="说明要做什么、用于什么模型或结论。数据量、格式、路径可由已选数据资产自动带出。" />
           </label>
 
           <label className="field span2">
             <span>验收关注点</span>
-            <textarea name="acceptanceCriteria" rows={3} placeholder="例如：重点检查漏标、框偏移、类别错误；或先让 Agent 生成建议。" />
+            <textarea name="acceptanceCriteria" rows={3} placeholder="例如：重点检查漏标、框偏移、类别错误；也可以先让 Agent 生成建议。" />
           </label>
 
           <div className="formActions span2">

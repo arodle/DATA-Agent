@@ -22,13 +22,15 @@ model Organization {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String?  @unique
-  phone     String?
-  avatarUrl String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  emailVerified DateTime?
+  phone         String?
+  avatarUrl     String?
+  password      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   orgMembers       OrganizationMember[]
   createdProjects  Project[]            @relation("ProjectCreator")
@@ -581,4 +583,235 @@ model OfficialPost {
   endsAt     DateTime?
   visibility String    @default("PUBLIC")
   createdAt  DateTime  @default(now())
+}
+
+// ============================================================
+// 知识资产层（Agent中台核心）
+// ============================================================
+
+model Knowledge {
+  id            String    @id @default(cuid())
+  title         String
+  content       String
+  type          String    // 标注规则 / 质量案例 / 项目经验 / SOP流程 / 数据经验
+  category      String?   // 细分类目
+  status        String    @default("DRAFT") // DRAFT / PENDING / PUBLISHED / ARCHIVED
+  confidence    Int       @default(80)      // 可信度 0-100
+  tags          String?
+  sourceType    String?   // 来源类型：SupplierChat / QualityEvent / ProjectRetrospective / AgentMessage
+  sourceId      String?   // 来源记录ID
+  creatorId     String?
+  reviewerId    String?
+  publisherId   String?
+  callCount     Int       @default(0)       // 被Agent调用次数
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  publishedAt   DateTime?
+
+  relations      KnowledgeRelation[]
+  embedding      KnowledgeEmbedding?
+}
+
+model KnowledgeRelation {
+  id           String   @id @default(cuid())
+  knowledgeId  String
+  relationType String   // SOURCE_FROM / APPLY_TO / RELATED_TO / IMPACT
+  targetType   String   // Project / ProjectTask / Dataset / DatasetVersion / QualityEvent / Supplier / SupplierChat / ProjectRetrospective
+  targetId     String
+  createdBy    String?
+  createdAt    DateTime @default(now())
+
+  knowledge Knowledge @relation(fields: [knowledgeId], references: [id], onDelete: Cascade)
+
+  @@index([targetType, targetId])
+  @@index([knowledgeId])
+}
+
+model KnowledgeEmbedding {
+  id              String    @id @default(cuid())
+  knowledgeId     String    @unique
+  vectorId        String?   // 向量数据库中的ID
+  embeddingStatus String    @default("PENDING") // PENDING / PROCESSING / INDEXED / FAILED
+  chunkCount      Int       @default(0)
+  vectorDimension Int?
+  modelName       String?
+  errorMessage    String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  knowledge Knowledge @relation(fields: [knowledgeId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// Workflow Runtime 持久化层
+// ============================================================
+
+model AgentWorkflow {
+  id            String    @id @default(cuid())
+  name          String
+  description   String?
+  status        String    @default("DRAFT") // DRAFT / TESTING / REVIEW / PUBLISHED / OFFLINE
+  version       String    @default("1.0.0")
+  workflowJson  String?   // 画布完整状态（节点+连线）JSON备份
+  currentVersion String   @default("1.0.0")
+  category      String?   // 需求分析 / 质量诊断 / 供应商评估 / 数据治理 / 项目复盘
+  creatorId     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  publishedAt   DateTime?
+
+  nodes    AgentWorkflowNode[]
+  edges    AgentWorkflowEdge[]
+  versions AgentVersion[]
+  testCases AgentTestCase[]
+  executions AgentNodeExecution[]
+  sessionTraces AgentSessionTrace[]
+}
+
+model AgentWorkflowNode {
+  id            String   @id @default(cuid())
+  workflowId    String
+  nodeType      String   // INPUT / INTENT_CLASSIFIER / ENTITY_EXTRACTOR / BUSINESS_ROUTER / CONDITION / BUSINESS_DATA_QUERY / KNOWLEDGE_RETRIEVAL / TOOL / LLM / AGENT / OUTPUT
+  nodeName      String
+  description   String?
+  inputSchema   String?  // JSON: 输入 Schema（变量定义）
+  outputSchema  String?  // JSON: 输出 Schema（变量定义）
+  configJson    String?  // 节点业务配置：绑定的Skill/DataTable/Knowledge/Tool/Model/条件表达式
+  runtimeConfig String?  // JSON: 运行时配置（超时/重试/回退）
+  positionX     Int      @default(0)
+  positionY     Int      @default(0)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  workflow   AgentWorkflow        @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  executions AgentNodeExecution[]
+  variables  WorkflowVariable[]
+
+  @@index([workflowId])
+}
+
+model WorkflowVariable {
+  id                 String   @id @default(cuid())
+  workflowNodeId     String
+  name               String   // 变量名：query / intent / entities / result
+  type               String   // string / number / boolean / object / array
+  source             String?  // 来源节点ID
+  sourceField        String?  // 来源字段路径：intent / entities.project_id
+  description        String?
+  defaultValue       String?  // JSON 默认值
+  createdAt          DateTime @default(now())
+
+  node   AgentWorkflowNode @relation(fields: [workflowNodeId], references: [id], onDelete: Cascade)
+
+  @@unique([workflowNodeId, name])
+  @@index([workflowNodeId])
+}
+
+model AgentWorkflowEdge {
+  id            String   @id @default(cuid())
+  workflowId    String
+  sourceNodeId  String
+  targetNodeId  String
+  sourcePort    String?  // 出口端口标识（如 out / true / false）
+  targetPort    String?  // 入口端口标识（如 in）
+  condition     String?  // 条件表达式：condition / always / default
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  workflow AgentWorkflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([workflowId])
+  @@index([sourceNodeId])
+  @@index([targetNodeId])
+}
+
+model AgentVersion {
+  id            String   @id @default(cuid())
+  workflowId    String
+  version       String   // 语义化版本号 v1.0.0
+  skillVersion  String?  // Skill版本快照
+  promptVersion String?  // Prompt模板版本
+  toolConfig    String?  // JSON：工具配置快照
+  knowledgeScope String? // JSON：知识范围快照
+  modelVersion  String?  // ModelEntity版本快照
+  nodesSnapshot String?  // JSON：节点快照
+  edgesSnapshot String?  // JSON：连线快照
+  status        String   @default("DRAFT") // DRAFT / TESTING / REVIEW / PUBLISHED / ROLLBACK
+  changelog     String?
+  createdBy     String?
+  createdAt     DateTime @default(now())
+  publishedAt   DateTime?
+
+  workflow AgentWorkflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@unique([workflowId, version])
+  @@index([workflowId, status])
+}
+
+model AgentTestCase {
+  id          String   @id @default(cuid())
+  workflowId  String?
+  name        String
+  input       String
+  expected    String?
+  category    String?
+  tags        String?
+  passed      Boolean?
+  score       Float?
+  createdAt   DateTime @default(now())
+
+  workflow AgentWorkflow? @relation(fields: [workflowId], references: [id], onDelete: SetNull)
+}
+
+// ============================================================
+// Runtime 执行链路记录
+// ============================================================
+
+model AgentSessionTrace {
+  id            String   @id @default(cuid())
+  sessionId     String?  // 关联 AgentSession
+  workflowId    String?  // 关联 AgentWorkflow
+  workflowName  String?
+  version       String?  // 运行时使用的版本
+  userId        String?
+  question      String   // 用户问题
+  status        String   @default("RUNNING") // RUNNING / SUCCESS / FAILED / PARTIAL
+  totalTokens   Int      @default(0)
+  durationMs    Int      @default(0)
+  errorMessage  String?
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+
+  workflow    AgentWorkflow?       @relation(fields: [workflowId], references: [id], onDelete: SetNull)
+  nodeSteps   AgentNodeExecution[]
+
+  @@index([sessionId])
+  @@index([workflowId])
+  @@index([startedAt])
+}
+
+model AgentNodeExecution {
+  id            String    @id @default(cuid())
+  traceId       String
+  workflowId    String?
+  nodeId        String?   // AgentWorkflowNode.id
+  nodeType      String    // INPUT / AGENT / DATA / KNOWLEDGE / TOOL / LLM / CONDITION / OUTPUT
+  nodeName      String
+  stepOrder     Int       @default(0)
+  inputJson     String?   // JSON
+  outputJson    String?   // JSON
+  tokens        Int       @default(0)
+  durationMs    Int       @default(0)
+  status        String    @default("RUNNING") // RUNNING / SUCCESS / FAILED / SKIPPED
+  errorMessage  String?
+  startedAt     DateTime  @default(now())
+  completedAt   DateTime?
+
+  trace   AgentSessionTrace   @relation(fields: [traceId], references: [id], onDelete: Cascade)
+  node    AgentWorkflowNode?  @relation(fields: [nodeId], references: [id], onDelete: SetNull)
+  workflow AgentWorkflow?     @relation(fields: [workflowId], references: [id], onDelete: SetNull)
+
+  @@index([traceId, stepOrder])
+  @@index([nodeId])
 }

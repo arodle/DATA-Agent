@@ -2,93 +2,105 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import OperatorAgent from "./OperatorAgent";
 
-const navConfig = [
-  { label: "运营工作台", href: "/operator", icon: "🏠" },
+type NavItem = {
+  label: string;
+  href?: string;
+  children?: Array<{ label: string; href: string }>;
+};
+
+const labels = {
+  brand: "Data Agent / \u8fd0\u8425\u7aef",
+  home: "\u9996\u9875",
+  collection: "\u91c7\u96c6\u7ba1\u7406",
+  annotation: "\u6807\u6ce8\u7ba1\u7406",
+  conversation: "Conversation",
+  quality: "\u8d28\u91cf\u4e2d\u5fc3",
+  suppliers: "\u4f9b\u5e94\u5546\u7ba1\u7406",
+  agentConsole: "AI Agent \u4e2d\u53f0",
+  consoleHome: "\u4e2d\u53f0\u9996\u9875",
+  knowledgeAssets: "\u77e5\u8bc6\u8d44\u4ea7",
+  knowledgeGraph: "\u77e5\u8bc6\u56fe\u8c31",
+  knowledgeOperation: "\u77e5\u8bc6\u8fd0\u8425",
+  retrospectives: "\u7ecf\u9a8c\u590d\u76d8",
+  rag: "RAG \u8c03\u8bd5",
+  models: "\u6a21\u578b\u7ba1\u7406",
+  monitor: "\u8fd0\u884c\u76d1\u63a7",
+  finance: "\u8d39\u7528\u7ba1\u7406",
+  settings: "\u7cfb\u7edf\u8bbe\u7f6e",
+  user: "\u7528\u6237",
+  operator: "\u8fd0\u8425",
+  supplier: "\u4f9b\u5e94\u5546",
+};
+
+const navConfig: NavItem[] = [
+  { label: labels.home, href: "/operator" },
+  { label: labels.collection, href: "/operator/collection" },
+  { label: labels.annotation, href: "/operator/annotation" },
+  { label: labels.conversation, href: "/operator/conversations" },
+  { label: labels.quality, href: "/operator/quality" },
+  { label: labels.suppliers, href: "/operator/suppliers" },
   {
-    label: "项目运营",
-    icon: "📁",
+    label: labels.agentConsole,
     children: [
-      { label: "数据采集", href: "/operator/collection" },
-      { label: "数据标注", href: "/operator/annotation" },
+      { label: labels.consoleHome, href: "/operator/agent-console" },
+      { label: labels.knowledgeAssets, href: "/operator/agent-console/knowledge/assets" },
+      { label: labels.knowledgeGraph, href: "/operator/agent-console/knowledge/graph" },
+      { label: labels.knowledgeOperation, href: "/operator/agent-console/knowledge/operation" },
+      { label: labels.retrospectives, href: "/operator/agent-console/knowledge/retrospectives" },
+      { label: labels.rag, href: "/operator/agent-console/rag" },
+      { label: labels.models, href: "/operator/agent-console/models" },
+      { label: labels.monitor, href: "/operator/agent-console/monitor" },
     ],
   },
-  { label: "供应商管理", href: "/operator/suppliers", icon: "🏭" },
-  { label: "对话标注", href: "/operator/chat/annotation", icon: "🏷️" },
-  { label: "数据资产管理", href: "/operator/assets", icon: "📊" },
-  { label: "Agent 助手", href: "/operator/agent", icon: "🤖" },
-  { label: "财务结算", href: "/operator/finance", icon: "�" },
-  { label: "系统设置", href: "/operator/settings", icon: "⚙️" },
+  { label: labels.finance, href: "/operator/finance" },
+  { label: labels.settings, href: "/operator/settings" },
 ];
 
-export default function OperatorLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function OperatorLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [qualityOpen, setQualityOpen] = useState(true);
 
   const isActive = (href: string) =>
     href === "/operator" ? pathname === "/operator" : pathname === href || pathname.startsWith(href + "/");
 
+  const isGroupActive = (item: NavItem) => item.children?.some((child) => isActive(child.href)) ?? false;
+
   return (
-    <main className="roleShell operatorShell">
-      <aside className="roleSidebar">
-        <div className="roleBrand">Data Agent / 运营端</div>
-        <nav className="roleNav">
+    <main className="roleShell operatorShell operatorProjectShell operatorUnifiedShell">
+      <header className="operatorTopNav">
+        <Link href="/operator" className="operatorTopBrand">{labels.brand}</Link>
+        <nav className="operatorTopItems">
           {navConfig.map((item) => {
-            if ("children" in item && item.children) {
+            if (item.children) {
               return (
-                <div key={item.label}>
-                  <button
-                    className={`subNavHeader ${qualityOpen ? "open" : ""}`}
-                    onClick={() => setQualityOpen(!qualityOpen)}
-                  >
-                    <span className="navIcon">{item.icon}</span>
-                    <span className="navLabel">{item.label}</span>
-                    <span className="navArrow">{qualityOpen ? "▾" : "▸"}</span>
-                  </button>
-                  {qualityOpen && (
-                    <div className="subNavItems">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className={isActive(child.href) ? "subNavItem active" : "subNavItem"}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+                <div key={item.label} className={`operatorTopGroup ${isGroupActive(item) ? "active" : ""}`}>
+                  <Link href={item.children[0]?.href || "/operator/agent-console"} className="operatorTopGroupLabel">{item.label}</Link>
+                  <div className="operatorTopMenu">
+                    {item.children.map((child) => (
+                      <Link key={child.href} href={child.href} className={isActive(child.href) ? "active" : ""}>
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               );
             }
+
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={isActive(item.href) ? "roleNavItem active" : "roleNavItem"}
-              >
-                <span className="navIcon">{item.icon}</span>
-                <span className="navLabel">{item.label}</span>
+              <Link key={item.href} href={item.href || "/operator"} className={item.href && isActive(item.href) ? "active" : ""}>
+                {item.label}
               </Link>
             );
           })}
         </nav>
-        <div className="roleSwitcher">
-          <span>切换角色</span>
-          <div className="roleLinks">
-            <Link href="/user">用户</Link>
-            <Link href="/operator" className="active">运营</Link>
-            <Link href="/supplier">供应商</Link>
-          </div>
+        <div className="operatorTopRoles">
+          <Link href="/user">{labels.user}</Link>
+          <span>{labels.operator}</span>
+          <Link href="/supplier">{labels.supplier}</Link>
         </div>
-      </aside>
-      <section className="roleWorkspace">
+      </header>
+      <section className="roleWorkspace operatorProjectWorkspace operatorUnifiedWorkspace">
         {children}
       </section>
       <OperatorAgent />

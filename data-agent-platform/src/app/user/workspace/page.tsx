@@ -1,13 +1,18 @@
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import WorkspaceClient from "./WorkspaceClient";
 
 export default async function WorkspacePage() {
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/auth/signin?callbackUrl=/user/workspace");
+  }
+
   const projects = await prisma.project.findMany({
     orderBy: { createdAt: "desc" },
     take: 8,
-    include: {
-      datasets: true,
-    },
+    include: { datasets: true },
   });
 
   const stageMap: Record<string, string> = {
@@ -19,18 +24,12 @@ export default async function WorkspacePage() {
   };
 
   const allChats = await prisma.supplierChat.findMany({
-    where: {
-      senderRole: { in: ["USER", "PM", "SUPPLIER_LEADER"] },
-    },
+    where: { senderRole: { in: ["USER", "PM", "SUPPLIER_LEADER"] } },
     orderBy: { createdAt: "desc" },
     take: 50,
   });
 
-  const supplierChats = allChats.map((c) => ({
-    ...c,
-    createdAt: c.createdAt.toISOString(),
-  }));
-
+  const supplierChats = allChats.map((chat) => ({ ...chat, createdAt: chat.createdAt.toISOString() }));
   const projectUnreadCounts: Record<string, number> = {};
   allChats.forEach((chat) => {
     if (chat.senderRole === "PM" || chat.senderRole === "SUPPLIER_LEADER") {
@@ -38,24 +37,30 @@ export default async function WorkspacePage() {
     }
   });
 
-  const serialized = projects.map((p: typeof projects[0]) => {
-    const dataCount = p.datasets.reduce((s, d) => s + (d.itemCount ?? 0), 0);
+  const serialized = projects.map((project) => {
+    const dataCount = project.datasets.reduce((sum, dataset) => sum + (dataset.itemCount ?? 0), 0);
     return {
-      id: p.id,
-      code: p.code,
-      name: p.name,
-      executionStatus: p.executionStatus,
-      createdAt: p.createdAt.toISOString(),
-      stage: stageMap[p.currentStage] ?? p.currentStage,
+      id: project.id,
+      code: project.code,
+      name: project.name,
+      executionStatus: project.executionStatus,
+      createdAt: project.createdAt.toISOString(),
+      stage: stageMap[project.currentStage] ?? project.currentStage,
       dataCount,
-      unreadCount: projectUnreadCounts[p.id] || 0,
+      unreadCount: projectUnreadCounts[project.id] || 0,
     };
   });
 
   return (
     <WorkspaceClient
       projects={serialized}
-      initialSupplierChats={supplierChats as any}
+      initialSupplierChats={supplierChats}
+      currentUser={{
+        id: session.user.id,
+        name: session.user.name || "用户",
+        email: session.user.email || "",
+        avatarUrl: session.user.avatarUrl,
+      }}
     />
   );
 }
